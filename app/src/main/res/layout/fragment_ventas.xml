@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".Ventas.Ventas">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/BtnEscanearProducto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Escanear" />
+        <android.support.v7.widget.SearchView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ETnombreProducto"
+            android:hint="Ingresa el nombre o código"
+            android:layout_weight="1"
+            android:inputType="textCapSentences"/>
+        <Button
+            android:id="@+id/BtnHistorial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@mipmap/ic_history_black_24dp"
+            android:text="Historial"
+            android:textSize="12dp" />
+        <Button
+            android:id="@+id/BtnCarrito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@mipmap/ic_shopping_cart_black_24dp"
+            android:text="Carrito"
+            android:textSize="12dp" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18dp"
+        android:text="Productos" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/RVproductosVenta"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>
