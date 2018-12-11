@@ -1,8 +1,10 @@
 package com.example.ricardosernam.tienda.Provider;
 
-import android.content.UriMatcher;
-import android.net.Uri;
 import android.provider.BaseColumns;
+
+import com.example.ricardosernam.tienda.Ventas.ProductosVenta_class;
+
+import java.util.ArrayList;
 
 /**
  * Contract Class entre el provider y las aplicaciones
@@ -129,10 +131,13 @@ static {
 // Valores para la columna ESTADO
 public static final int ESTADO_OK = 0;
 public static final int ESTADO_SYNC = 1;
+public static final ArrayList<ProductosVenta_class> itemsProductosVenta= new ArrayList <>(); ///Arraylist que contiene los productos///
 
 
 /**
  * Estructura de la tabla
+ *
+ *
  */
 public static class Columnas implements BaseColumns {
 

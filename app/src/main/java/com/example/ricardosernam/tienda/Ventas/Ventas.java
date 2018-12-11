@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.ricardosernam.tienda.Carrito.Carrito;
 import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.Empleados.Empleados_ventasAdapter;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
@@ -32,7 +33,7 @@ public class Ventas extends Fragment {
     private RecyclerView.Adapter adapter;
     private android.support.v4.app.FragmentManager fm;
     private RecyclerView.LayoutManager lManager;
-    private Button escanear;
+    private Button escanear, carrito;
 
     private ArrayList<Productos_class> itemsProductos= new ArrayList <>(); ///Arraylist que contiene los productos///
 
@@ -48,12 +49,21 @@ public class Ventas extends Fragment {
         db=admin.getWritableDatabase();
         recycler = view.findViewById(R.id.RVproductosVenta); ///declaramos el recycler
         escanear= view.findViewById(R.id.BtnEscanearProducto);
+        carrito= view.findViewById(R.id.BtnCarrito);
+
 
         escanear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), Escanner.class);//intanciando el activity del scanner
                 startActivityForResult(intent,2);//inicializar el activity con RequestCode2
+            }
+        });
+
+        carrito.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito()).commit(); ///cambio de fragment
             }
         });
 
