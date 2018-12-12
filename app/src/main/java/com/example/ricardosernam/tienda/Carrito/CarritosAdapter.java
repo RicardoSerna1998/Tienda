@@ -3,6 +3,9 @@ package com.example.ricardosernam.tienda.Carrito;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +24,12 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
     private ArrayList<ProductosVenta_class> itemsProductosVenta;
     private actualizado Interfaz;
     private FragmentManager fm;
-    private Context context;
 
 
-    public CarritosAdapter(ArrayList<ProductosVenta_class> itemsProductosVenta, FragmentManager fm, Context context) {  ///recibe el arrayProductos como parametro y la interface
+    public CarritosAdapter(ArrayList<ProductosVenta_class> itemsProductosVenta, FragmentManager fm, actualizado Interfaz) {  ///recibe el arrayProductos como parametro y la interface
         this.itemsProductosVenta=itemsProductosVenta;
         this.fm=fm;
-        this.context=context;
+        this.Interfaz=Interfaz;
     }
     public  class Productos_ventasViewHolder extends RecyclerView.ViewHolder{    ////clase donde van los elementos del cardview
         // Campos respectivos de un item
@@ -41,6 +43,36 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
             subtotal=v.findViewById(R.id.TVsubTotalCarrito);
             cantidad=v.findViewById(R.id.ETcantidadCarrito);
             }
+    }
+    public static class watcherCalculo1 implements TextWatcher {   ///detecta cambios en los editText
+        private EditText cantidad;
+        private actualizado Interfaz;
+        private String  nombre;
+        private TextView subtotal;
+        private Float precio;
+
+        watcherCalculo1(String nombre, EditText cantidad, actualizado Interfaz, TextView subtotal, Float precio) {
+            this.nombre=nombre;
+            this.cantidad = cantidad;
+            this.Interfaz=Interfaz;
+            this.subtotal=subtotal;
+            this.precio=precio;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            if(!(TextUtils.isEmpty(cantidad.getText()))){
+                subtotal.setText("$"+String.valueOf((Float.parseFloat(cantidad.getText().toString()))*precio));
+                Interfaz.actualizar(Integer.parseInt(String.valueOf((cantidad.getText()))), nombre);
+            }
+        }
+        @Override
+        public void afterTextChanged(Editable editable) {
+        }
     }
 
     @Override
@@ -58,7 +90,10 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
     public void onBindViewHolder(final Productos_ventasViewHolder holder, final int position) {
         holder.producto.setText(itemsProductosVenta.get(position).getNombre());
         holder.precio.setText("$"+String.valueOf(itemsProductosVenta.get(position).getPrecio()));
-        holder.cantidad.setText(String.valueOf(itemsProductosVenta.get(position).getCantidad()));
+
+
+        holder.cantidad.setText(String.valueOf(Integer.valueOf(String.valueOf(itemsProductosVenta.get(position).getCantidad()))));
+
         holder.subtotal.setText("$"+String.valueOf(itemsProductosVenta.get(position).getSubtotal()));
 
         if(itemsProductosVenta.get(position).getTipo()==0) { ////0 son gramos
@@ -67,5 +102,7 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
         else{ //1 es piezas
             holder.unidad.setText("Pieza(s)");
         }
-        }
+        holder.cantidad.addTextChangedListener(new watcherCalculo1(String.valueOf(holder.producto.getText()), holder.cantidad, Interfaz, holder.subtotal, itemsProductosVenta.get(position).getPrecio()));
+
+    }
     }

@@ -19,23 +19,27 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
+import com.example.ricardosernam.tienda.Ventas.ProductosVenta_class;
 import com.example.ricardosernam.tienda.Ventas.Productos_class;
+import com.example.ricardosernam.tienda.Ventas.Ventas;
 import com.example.ricardosernam.tienda.Ventas.VentasAdapter;
+import com.example.ricardosernam.tienda._____interfazes.actualizado;
 
 import java.text.SimpleDateFormat;
 
 
 public class Carrito extends Fragment {
-    private Cursor fila, filaBusqueda;
+    private Cursor fila, datosSeleccionado;
     private SQLiteDatabase db;
     private RecyclerView recycler;
     private RecyclerView.Adapter adapter;
     private android.support.v4.app.FragmentManager fm;
     private RecyclerView.LayoutManager lManager;
     private TextView total;
-    private Button aceptar, eliminar;
+    private Button aceptar, eliminar, cerrar;
 
     public Carrito() {
         // Required empty public constructor
@@ -51,8 +55,12 @@ public class Carrito extends Fragment {
         View view= inflater.inflate(R.layout.fragment_carrito, container, false);
         aceptar=view.findViewById(R.id.BtnAceptarCompra);
         eliminar=view.findViewById(R.id.BtnAceptarCompra);
+        cerrar=view.findViewById(R.id.BtnCerrarCarrito);
         recycler = view.findViewById(R.id.RVproductosCarrito); ///declaramos el recycler
         total = view.findViewById(R.id.TVtotal); ///declaramos el recycle
+
+        DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
+        db=admin.getWritableDatabase();
 
 
         /*aceptar.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +127,12 @@ public class Carrito extends Fragment {
                 itemsProductos.removeAll(itemsProductos);
             }
         });*/
+        cerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas()).commit(); ///cambio de fragment
+            }
+        });
         rellenado_total();
         calcularTotal();
         return view;
@@ -126,7 +140,36 @@ public class Carrito extends Fragment {
     }
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         fm=getFragmentManager();
-        adapter = new CarritosAdapter(ContractParaProductos.itemsProductosVenta, fm, getContext());///llamamos al adaptador y le enviamos el array como parametro
+        adapter = new CarritosAdapter(ContractParaProductos.itemsProductosVenta, fm, new actualizado() {
+            @Override
+            public void actualizar(int cantidad, String nombre) {
+                datosSeleccionado=db.rawQuery("select precio, codigo_barras from inventario where nombre_producto='"+nombre+"'" ,null);
+                if(datosSeleccionado.moveToFirst()) {
+                    if(datosSeleccionado.getString(1)==null) {  ///fruta
+                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0),0, (cantidad/1000)*datosSeleccionado.getFloat(0)));//obtenemos el cardview seleccionado y lo agregamos a items2
+                    }
+                    else{   //pieza
+                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0),1, cantidad*datosSeleccionado.getFloat(0)));//obtenemos el cardview seleccionado y lo agregamos a items2
+                    }
+                }
+                ///comprobamos si se repite
+                for(int i=0; i<ContractParaProductos.itemsProductosVenta.size(); i++) {
+                    String dato=ContractParaProductos.itemsProductosVenta.get(i).getNombre();
+                    for(int j=i+1; j<ContractParaProductos.itemsProductosVenta.size(); j++) {
+                        if(dato.equals(ContractParaProductos.itemsProductosVenta.get(j).getNombre())){  ///si se repite
+                            if(ContractParaProductos.itemsProductosVenta.get(j).getCantidad()==0){  ///si es cero, lo eliminamos de la lista
+                                ContractParaProductos.itemsProductosVenta.remove(j);   ////eliminamos el previamente gregado
+                                ContractParaProductos.itemsProductosVenta.remove(i);   ////eliminamos el previamente agregado
+                            }
+                            else {
+                                ContractParaProductos.itemsProductosVenta.remove(i);   ////eliminamos el previamente agregado
+                            }
+                        }
+                    }
+                }
+                calcularTotal();
+            }
+        });///llamamos al adaptador y le enviamos el array como parametro
         lManager = new LinearLayoutManager(this.getActivity());  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);

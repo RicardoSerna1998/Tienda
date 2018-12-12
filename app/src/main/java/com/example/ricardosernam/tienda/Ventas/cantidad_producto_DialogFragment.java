@@ -112,7 +112,7 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
             @Override
             public void onClick(View view) {
                 if(validar()){   /////si  ya se pago todo bien
-                    ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto,Float.parseFloat(cantidad.getText().toString()),precio, tipo, cantidadSubtotal));
+                    ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Integer.parseInt(cantidad.getText().toString()),precio, tipo, cantidadSubtotal));
                     dismiss();
                     Toast.makeText(getContext(), "Agregado a Carrito", Toast.LENGTH_LONG).show();
                     //aceptarCompra.actualizar(0, null);

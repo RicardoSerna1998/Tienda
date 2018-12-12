@@ -63,7 +63,7 @@ public class Ventas extends Fragment {
         carrito.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito()).commit(); ///cambio de fragment
+                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito(), "Carrito").commit(); ///cambio de fragment
             }
         });
 

@@ -29,16 +29,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <EditText
-        android:gravity="center"
-        android:id="@+id/ETcantidadCarrito"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:enabled="false"
-        android:hint="Cantidad"
-        android:inputType="textCapSentences" />
+        <EditText
+            android:id="@+id/ETcantidadCarrito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="Cantidad"
+            android:inputType="textCapSentences|number" />
 
         <TextView
             android:id="@+id/TVunidadCarrito"
