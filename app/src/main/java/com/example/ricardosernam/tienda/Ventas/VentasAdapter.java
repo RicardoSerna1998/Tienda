@@ -32,11 +32,12 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
     }
     public  class Productos_ventasViewHolder extends RecyclerView.ViewHolder{    ////clase donde van los elementos del cardview
         // Campos respectivos de un item
-        public TextView producto, precio;
+        public TextView producto, precio, existentes;
         public Productos_ventasViewHolder(final View v) {   ////lo que se programe aqui es para cuando se le de clic a un item del recycler
             super(v);
             producto = v.findViewById(R.id.TVproducto);  ////Textview donde se coloca el nombre del producto
             precio=v.findViewById(R.id.TVprecio);
+            existentes=v.findViewById(R.id.TVexistentes);
         }
     }
 
@@ -55,6 +56,12 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
     public void onBindViewHolder(final Productos_ventasViewHolder holder, final int position) {
         holder.producto.setText(itemsProductos.get(position).getNombre());
         holder.precio.setText("$"+String.valueOf(itemsProductos.get(position).getPrecio()));
+        if(itemsProductos.get(position).getCodigo_barras()==null) { ////0 son gramos
+            holder.existentes.setText(String.valueOf(itemsProductos.get(position).getExistentes()) +" Gramos aún");
+        }
+        else{ //1 es piezas
+            holder.existentes.setText(String.valueOf(itemsProductos.get(position).getExistentes()) +" Pieza(s) aún");
+            }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

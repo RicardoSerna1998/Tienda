@@ -5,15 +5,16 @@ public class ProductosVenta_class {  ///clase para obtener productos para cobrar
     public Float precio;
     public int cantidad;
     public Float subtotal;
-    public int tipo;
+    public int tipo, idRemota;
 
 
-    public ProductosVenta_class(String nombre, int cantidad, Float precio, int tipo, Float subtotal) {   ///se manda desde el arrayProductos
+    public ProductosVenta_class(String nombre, int cantidad, Float precio, int tipo, Float subtotal, int idRemota) {   ///se manda desde el arrayProductos
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.precio = precio;
         this.tipo = tipo;
         this.subtotal=subtotal;
+        this.idRemota=idRemota;
     }
 
     public String getNombre() {
@@ -34,5 +35,8 @@ public class ProductosVenta_class {  ///clase para obtener productos para cobrar
     public int getTipo() {
         return tipo;
 }
+    public int getIdRemota() {
+        return idRemota;
+    }
 
 }

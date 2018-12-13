@@ -1,6 +1,8 @@
 package com.example.ricardosernam.tienda.Carrito;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -9,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,18 +26,19 @@ import java.util.ArrayList;
 public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Productos_ventasViewHolder>{  ///adaptador para el Fragmet Ventas
     private ArrayList<ProductosVenta_class> itemsProductosVenta;
     private actualizado Interfaz;
-    private FragmentManager fm;
+    private Context context;
 
 
-    public CarritosAdapter(ArrayList<ProductosVenta_class> itemsProductosVenta, FragmentManager fm, actualizado Interfaz) {  ///recibe el arrayProductos como parametro y la interface
+    public CarritosAdapter(ArrayList<ProductosVenta_class> itemsProductosVenta, Context context, actualizado Interfaz) {  ///recibe el arrayProductos como parametro y la interface
         this.itemsProductosVenta=itemsProductosVenta;
-        this.fm=fm;
+        this.context=context;
         this.Interfaz=Interfaz;
     }
     public  class Productos_ventasViewHolder extends RecyclerView.ViewHolder{    ////clase donde van los elementos del cardview
         // Campos respectivos de un item
         public TextView producto, precio, unidad, subtotal;
         public EditText cantidad;
+        public Button eliminar;
         public Productos_ventasViewHolder(final View v) {   ////lo que se programe aqui es para cuando se le de clic a un item del recycler
             super(v);
             producto = v.findViewById(R.id.TVproductoCarrito);  ////Textview donde se coloca el nombre del producto
@@ -42,7 +46,9 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
             precio=v.findViewById(R.id.TVprecioCarrito);
             subtotal=v.findViewById(R.id.TVsubTotalCarrito);
             cantidad=v.findViewById(R.id.ETcantidadCarrito);
-            }
+            eliminar=v.findViewById(R.id.BtnEliminarProducto);
+
+        }
     }
     public static class watcherCalculo1 implements TextWatcher {   ///detecta cambios en los editText
         private EditText cantidad;
@@ -90,11 +96,9 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
     public void onBindViewHolder(final Productos_ventasViewHolder holder, final int position) {
         holder.producto.setText(itemsProductosVenta.get(position).getNombre());
         holder.precio.setText("$"+String.valueOf(itemsProductosVenta.get(position).getPrecio()));
-
-
         holder.cantidad.setText(String.valueOf(Integer.valueOf(String.valueOf(itemsProductosVenta.get(position).getCantidad()))));
-
         holder.subtotal.setText("$"+String.valueOf(itemsProductosVenta.get(position).getSubtotal()));
+
 
         if(itemsProductosVenta.get(position).getTipo()==0) { ////0 son gramos
             holder.unidad.setText("Gramos");
@@ -104,5 +108,29 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
         }
         holder.cantidad.addTextChangedListener(new watcherCalculo1(String.valueOf(holder.producto.getText()), holder.cantidad, Interfaz, holder.subtotal, itemsProductosVenta.get(position).getPrecio()));
 
+        holder.eliminar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {////eliminamos un producto
+                AlertDialog.Builder eliminarProducto = new AlertDialog.Builder(context);
+                eliminarProducto .setTitle("Cuidado");
+                eliminarProducto .setMessage("¿Seguro que quieres eliminar este producto?");
+                eliminarProducto .setCancelable(false);
+                eliminarProducto .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface eliminarProducto , int id) {
+                        itemsProductosVenta.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position,itemsProductosVenta.size());
+                        //elimnarProducto.onClick(view, String.valueOf(holder.nombreP.getText()));
+                        eliminarProducto.dismiss();
+                    }
+                });
+                eliminarProducto .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface eliminarProducto , int id) {
+                        eliminarProducto .dismiss();
+                    }
+                });
+                eliminarProducto .show();
+            }
+        });
     }
     }

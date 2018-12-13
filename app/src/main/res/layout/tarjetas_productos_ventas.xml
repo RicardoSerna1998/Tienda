@@ -9,18 +9,37 @@
     android:background="@android:color/holo_blue_bright"
     android:orientation="horizontal">
 
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/TVproducto"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="50dp"
+        android:layout_weight="0"
         android:layout_gravity="center"
-        android:layout_weight="1"
         android:gravity="center"
         android:text="Jitomate"
-        app:autoSizeMaxTextSize="50sp"
-        app:autoSizeMinTextSize="40sp"
+        app:autoSizeMaxTextSize="40sp"
+        app:autoSizeMinTextSize="30sp"
         app:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="uniform" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/TVexistentes"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_weight="5"
+            android:gravity="center"
+            android:text="2000 gramos aún"
+            app:autoSizeMaxTextSize="25sp"
+            app:autoSizeMinTextSize="15sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform" />
+    </LinearLayout>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/TVprecio"

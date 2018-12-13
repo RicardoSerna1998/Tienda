@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -63,7 +64,12 @@ public class Ventas extends Fragment {
         carrito.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito(), "Carrito").commit(); ///cambio de fragment
+                if(ContractParaProductos.itemsProductosVenta.isEmpty()){
+                    Toast.makeText(getContext(), "No hay productos comprados aun", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito(), "Carrito").commit(); ///cambio de fragment
+                }
             }
         });
 
@@ -78,13 +84,13 @@ public class Ventas extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 if(!(TextUtils.isEmpty(newText))) {   ///el campo tiene algo
                     //if ((TextUtils.isDigitsOnly(newText))) {  ///si el campo tiene tan solo numeros es un codigo
-                        filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras from inventario where nombre_producto='" + newText + "'", null);
+                        filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existentes from inventario where nombre_producto='" + newText + "'", null);
                     //}
                     if (filaBusqueda.moveToFirst()) { ///si hay un elemento
                         itemsProductos.removeAll(itemsProductos);
-                        itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2)));
+                        itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
                         while (filaBusqueda.moveToNext()) {
-                            itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2)));
+                            itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
                         }
                     }
                     else{ ///El producto no existe
@@ -104,17 +110,18 @@ public class Ventas extends Fragment {
     }
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         fm=getFragmentManager();
-        fila=db.rawQuery("select nombre_producto, precio, codigo_barras from inventario" ,null);
+        fila=db.rawQuery("select nombre_producto, precio, codigo_barras, existentes from inventario order by codigo_barras" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
             itemsProductos.removeAll(itemsProductos);
-            itemsProductos.add(new Productos_class(fila.getString(0), fila.getFloat(1), fila.getString(2)));
+            itemsProductos.add(new Productos_class(fila.getString(0), fila.getFloat(1), fila.getString(2), fila.getFloat(3)));
             while (fila.moveToNext()) {
-                itemsProductos.add(new Productos_class(fila.getString(0), fila.getFloat(1), fila.getString(2)));
+                itemsProductos.add(new Productos_class(fila.getString(0), fila.getFloat(1), fila.getString(2), fila.getFloat(3)));
             }
         }
         adapter = new VentasAdapter(itemsProductos, fm, getContext());///llamamos al adaptador y le enviamos el array como parametro
         lManager = new LinearLayoutManager(this.getActivity());  //declaramos el layoutmanager
+        //lManager = new GridLayoutManager(this.getActivity(), 2);  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();

@@ -1,6 +1,8 @@
 package com.example.ricardosernam.tienda.Ventas;
 
 import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -14,12 +16,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
 
 @SuppressLint("ValidFragment")
 public class cantidad_producto_DialogFragment extends android.support.v4.app.DialogFragment {
     private LinearLayout botones;
+    private Cursor productoElegido;
+    private SQLiteDatabase db;
     private Button aceptar,cancelar, sumar, restar;
     private TextView precioProducto,subtotal, unidad, productoSelecionado;
     private EditText cantidad;
@@ -52,6 +57,9 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
         restar=rootView.findViewById(R.id.BtnRestar);
 
         cantidad.setSelection(cantidad.getText().length());
+        DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
+        db=admin.getWritableDatabase();
+
         if(tipo==1){   ///pieza
             unidad.setText("Pieza(s)");
             porcion=1;
@@ -112,9 +120,12 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
             @Override
             public void onClick(View view) {
                 if(validar()){   /////si  ya se pago todo bien
-                    ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Integer.parseInt(cantidad.getText().toString()),precio, tipo, cantidadSubtotal));
-                    dismiss();
-                    Toast.makeText(getContext(), "Agregado a Carrito", Toast.LENGTH_LONG).show();
+                    productoElegido= db.rawQuery("select idRemota from inventario where nombre_producto='"+producto+"'", null);
+                    if(productoElegido.moveToFirst()){
+                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Integer.parseInt(cantidad.getText().toString()),precio, tipo, cantidadSubtotal, productoElegido.getInt(0)));
+                        dismiss();
+                        Toast.makeText(getContext(), "Agregado a Carrito", Toast.LENGTH_LONG).show();
+                    }
                     //aceptarCompra.actualizar(0, null);
                 }
             }

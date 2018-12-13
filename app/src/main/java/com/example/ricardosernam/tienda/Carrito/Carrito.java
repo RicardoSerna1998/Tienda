@@ -1,12 +1,15 @@
 package com.example.ricardosernam.tienda.Carrito;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -26,13 +29,14 @@ import com.example.ricardosernam.tienda.Ventas.ProductosVenta_class;
 import com.example.ricardosernam.tienda.Ventas.Productos_class;
 import com.example.ricardosernam.tienda.Ventas.Ventas;
 import com.example.ricardosernam.tienda.Ventas.VentasAdapter;
+import com.example.ricardosernam.tienda.Ventas.cantidad_producto_DialogFragment;
 import com.example.ricardosernam.tienda._____interfazes.actualizado;
 
 import java.text.SimpleDateFormat;
 
 
 public class Carrito extends Fragment {
-    private Cursor fila, datosSeleccionado;
+    private Cursor datosSeleccionado;
     private SQLiteDatabase db;
     private RecyclerView recycler;
     private RecyclerView.Adapter adapter;
@@ -54,79 +58,43 @@ public class Carrito extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_carrito, container, false);
         aceptar=view.findViewById(R.id.BtnAceptarCompra);
-        eliminar=view.findViewById(R.id.BtnAceptarCompra);
+        eliminar=view.findViewById(R.id.BtnEliminarCompra);
         cerrar=view.findViewById(R.id.BtnCerrarCarrito);
         recycler = view.findViewById(R.id.RVproductosCarrito); ///declaramos el recycler
         total = view.findViewById(R.id.TVtotal); ///declaramos el recycle
+        fm=getFragmentManager();
+
 
         DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db=admin.getWritableDatabase();
 
-
-        /*aceptar.setOnClickListener(new View.OnClickListener() {
+        aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                values = new ContentValues();
-                /////obtener fecha actual
-                java.util.Calendar c = java.util.Calendar.getInstance();
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                String formattedDate = df.format(c.getTime());
-
-                carrito = db.rawQuery("select idRemota, ubicacion, vendedor from carritos", null);
-                inventario = db.rawQuery("select idRemota from inventarios", null);
-
-                if (carrito.moveToFirst()) {
-                    values.put("idcarrito", carrito.getString(0));
-                    values.put("ubicacion", carrito.getString(1));
-                    values.put("vendedor", carrito.getString(2));
+                new pagar_DialogFragment(Float.parseFloat(String.valueOf(total.getText()))).show(fm, "Producto_ventas");
                 }
-                if (inventario.moveToFirst()) {
-                    values.put("idinventario", inventario.getString(0));
-                }
-                values.put("fecha", formattedDate);
-                values.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
-                db.insertOrThrow("ventas", null, values);
-
-
-/////////////////////////////////incersion-modificación ventas-inventario_detalles
-                values2 = new ContentValues();
-                for (int i = 0; i < itemsCobrar.size(); i++) {
-                    ////////////////venta detalles/////////////////////////////77
-                    venta = db.rawQuery("select _id from ventas", null);
-                    if (venta.moveToFirst()) {
-                        venta.moveToLast();
-                        values2.put("idRemota", venta.getString(0));
-                        values2.put("cantidad", itemsCobrar.get(i).getCantidad());
-                        values2.put("idproducto", itemsCobrar.get(i).getIdRemota());
-                        values2.put("precio", itemsCobrar.get(i).getPrecio());
-                        db.insertOrThrow("venta_detalles", null, values2);
-                        Log.i("Datos", String.valueOf(values2));    ////mostramos que valores se han insertado
+        });
+        eliminar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog.Builder aceptarVenta = new AlertDialog.Builder(getContext());
+                aceptarVenta .setTitle("Cuidado");
+                aceptarVenta .setMessage("¿Seguro que quieres eliminar este producto?");
+                aceptarVenta .setCancelable(false);
+                aceptarVenta .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface aceptarVenta , int id) {
+                        aceptar_cancelar(fm);
+                        aceptarVenta.dismiss();
                     }
-                    //////////////////////////////////////////inventario detalles//////////////////////////////
-                    values3 = new ContentValues();
-                    if (itemsCobrar.get(i).getPorcion() != 0) {  //////  es Preparado
-                        ///obtenemos el guisado donde tenemos que descontar
-                        existente = db.rawQuery("select idproducto, inventario_final from inventario_detalles WHERE idproducto=(select idRemota from productos where nombre=(select guisado from productos where nombre='" + itemsCobrar.get(i).getNombre() + "'))", null);
-                        if (existente.moveToFirst()) {
-                            float porcion = existente.getFloat(1) - (itemsCobrar.get(i).getCantidad() * itemsCobrar.get(i).getPorcion());
-                            values3.put("inventario_final", porcion);
-                            db.update("inventario_detalles", values3, "idproducto='" + existente.getString(0) + "'", null);
-                        }
-                    } else {   //////  es Pieza
-                        existente = db.rawQuery("select idproducto, inventario_final from inventario_detalles WHERE idproducto='" + itemsCobrar.get(i).getIdRemota() + "'", null);
-                        if (existente.moveToFirst()) {
-                            float porcion = existente.getFloat(1) - itemsCobrar.get(i).getCantidad();
-                            values3.put("inventario_final", porcion);
-                            db.update("inventario_detalles", values3, "idproducto='" + existente.getString(0) + "'", null);
-                        }
-
+                });
+                aceptarVenta .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface aceptarVenta, int id) {
+                        aceptarVenta .dismiss();
                     }
-                }
-
-                Toast.makeText(getContext(), "Venta exitosa", Toast.LENGTH_LONG).show();
-                itemsProductos.removeAll(itemsProductos);
+                });
+                aceptarVenta .show();
             }
-        });*/
+        });
         cerrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,18 +106,23 @@ public class Carrito extends Fragment {
         return view;
 
     }
+    public static void aceptar_cancelar(FragmentManager fm){
+        ContractParaProductos.itemsProductosVenta.removeAll(ContractParaProductos.itemsProductosVenta);
+        fm.beginTransaction().remove(fm.findFragmentByTag("Carrito")).commit(); ///cambio de fragment
+        fm.beginTransaction().replace(R.id.LLprincipal, new Ventas()).commit(); ///cambio de fragment
+    }
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         fm=getFragmentManager();
-        adapter = new CarritosAdapter(ContractParaProductos.itemsProductosVenta, fm, new actualizado() {
+        adapter = new CarritosAdapter(ContractParaProductos.itemsProductosVenta, getContext(), new actualizado() {
             @Override
             public void actualizar(int cantidad, String nombre) {
-                datosSeleccionado=db.rawQuery("select precio, codigo_barras from inventario where nombre_producto='"+nombre+"'" ,null);
+                datosSeleccionado=db.rawQuery("select precio, codigo_barras, idRemota from inventario where nombre_producto='"+nombre+"'" ,null);
                 if(datosSeleccionado.moveToFirst()) {
                     if(datosSeleccionado.getString(1)==null) {  ///fruta
-                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0),0, (cantidad/1000)*datosSeleccionado.getFloat(0)));//obtenemos el cardview seleccionado y lo agregamos a items2
+                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0),0, (cantidad/1000)*datosSeleccionado.getFloat(0), datosSeleccionado.getInt(2)));//obtenemos el cardview seleccionado y lo agregamos a items2
                     }
                     else{   //pieza
-                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0),1, cantidad*datosSeleccionado.getFloat(0)));//obtenemos el cardview seleccionado y lo agregamos a items2
+                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0),1, cantidad*datosSeleccionado.getFloat(0), datosSeleccionado.getInt(2)));//obtenemos el cardview seleccionado y lo agregamos a items2
                     }
                 }
                 ///comprobamos si se repite
