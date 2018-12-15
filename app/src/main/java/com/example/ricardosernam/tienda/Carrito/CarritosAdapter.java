@@ -120,7 +120,6 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
                         itemsProductosVenta.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position,itemsProductosVenta.size());
-                        //elimnarProducto.onClick(view, String.valueOf(holder.nombreP.getText()));
                         eliminarProducto.dismiss();
                     }
                 });

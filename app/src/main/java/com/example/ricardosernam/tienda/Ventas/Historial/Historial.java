@@ -48,10 +48,12 @@ public class Historial extends Fragment {
         db=admin.getWritableDatabase();
         cerrar=view.findViewById(R.id.BtnCerrarHistorial);
         recycler = view.findViewById(R.id.RVhistorial); ///declaramos el recycler
+        fm=getActivity().getSupportFragmentManager();
         cerrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas()).commit(); ///cambio de fragment
+                //getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas(), "Ventas").commit(); ///cambio de fragment
+                fm.beginTransaction().replace(R.id.LLprincipal, fm.findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
             }
         });
         rellenado_total();

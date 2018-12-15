@@ -69,7 +69,7 @@ public class Ventas extends Fragment {
                     Toast.makeText(getContext(), "No hay productos comprados aun", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito(), "Carrito").commit(); ///cambio de fragment
+                    getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito(), "Carrito").addToBackStack("Carrito").commit(); ///cambio de fragment
                 }
             }
         });
@@ -77,7 +77,7 @@ public class Ventas extends Fragment {
         historial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Historial(), "Historial").commit(); ///cambio de fragment
+                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Historial(), "Historial").addToBackStack("Historial").commit(); ///cambio de fragment
 
             }
         });

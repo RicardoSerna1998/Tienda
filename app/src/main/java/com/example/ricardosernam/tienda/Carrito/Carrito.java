@@ -98,7 +98,9 @@ public class Carrito extends Fragment {
         cerrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas()).commit(); ///cambio de fragment
+                //getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas(), "Ventas").commit(); ///cambio de fragment
+                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, getFragmentManager().findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
+
             }
         });
         rellenado_total();
@@ -108,8 +110,7 @@ public class Carrito extends Fragment {
     }
     public static void aceptar_cancelar(FragmentManager fm){
         ContractParaProductos.itemsProductosVenta.removeAll(ContractParaProductos.itemsProductosVenta);
-        fm.beginTransaction().remove(fm.findFragmentByTag("Carrito")).commit(); ///cambio de fragment
-        fm.beginTransaction().replace(R.id.LLprincipal, new Ventas()).commit(); ///cambio de fragment
+        fm.beginTransaction().replace(R.id.LLprincipal, fm.findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
     }
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         fm=getFragmentManager();

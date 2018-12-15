@@ -81,7 +81,7 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
                                 MainActivity.empleadoActivo.setText("Cajer@: "+usuario);
                                 relleno(getContext());
                                 getDialog().dismiss();
-                                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas()).commit(); ///cambio de fragment
+                                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas(), "Ventas").addToBackStack("Ventas").commit(); ///cambio de fragment
                             }
                         }
                         else{///otro puesto que no implica caja
