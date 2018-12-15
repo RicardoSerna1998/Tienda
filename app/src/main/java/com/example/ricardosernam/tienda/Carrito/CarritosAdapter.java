@@ -121,6 +121,7 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position,itemsProductosVenta.size());
                         eliminarProducto.dismiss();
+                        Carrito.calcularTotal();
                     }
                 });
                 eliminarProducto .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

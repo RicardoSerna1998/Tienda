@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
     private TextView total,cambio, deuda, abono;
     private EditText cantidad;
     private float totalPagar;
+    private CheckBox imprimir;
 
 
      @SuppressLint("ValidFragment")
@@ -49,6 +51,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
         this.getDialog().setTitle("Cobrar");///cambiamos titulo del DialogFragment
         total=rootView.findViewById(R.id.TVtotalCompra);
         cambio=rootView.findViewById(R.id.TVcambio);
+        imprimir=rootView.findViewById(R.id.CBimprimir);
 
         abono=rootView.findViewById(R.id.TVpagoAbono);
         deuda=rootView.findViewById(R.id.TVdeuda);
@@ -59,7 +62,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
 
 
         total.setText(String.valueOf(totalPagar));
-        cantidad.setText("0");
+        cantidad.setText(String.valueOf(totalPagar));
         DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db=admin.getWritableDatabase();
 
@@ -89,6 +92,9 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             @Override
             public void onClick(View view) {
                 if(validar(totalPagar)){   /////si  ya se pago todo bien
+                    if(imprimir.isChecked()){
+                        ///imprimimos el recibo
+                    }
                     dismiss();
                     values = new ContentValues();
                     /////obtener fecha actual

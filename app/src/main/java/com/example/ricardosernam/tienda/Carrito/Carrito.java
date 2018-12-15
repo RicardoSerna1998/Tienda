@@ -42,7 +42,7 @@ public class Carrito extends Fragment {
     private RecyclerView.Adapter adapter;
     private android.support.v4.app.FragmentManager fm;
     private RecyclerView.LayoutManager lManager;
-    private TextView total;
+    public static TextView total;
     private Button aceptar, eliminar, cerrar;
 
     public Carrito() {
@@ -150,7 +150,7 @@ public class Carrito extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    public void calcularTotal(){
+    public static void calcularTotal(){
         float suma=0;
         for(int i=0; i<ContractParaProductos.itemsProductosVenta.size(); i++){
             suma=suma+ContractParaProductos.itemsProductosVenta.get(i).getSubtotal();
