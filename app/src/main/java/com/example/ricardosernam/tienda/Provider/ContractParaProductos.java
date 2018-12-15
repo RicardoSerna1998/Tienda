@@ -1,7 +1,10 @@
 package com.example.ricardosernam.tienda.Provider;
 
+import android.graphics.Color;
 import android.provider.BaseColumns;
 
+import com.example.ricardosernam.tienda.DatabaseHelper;
+import com.example.ricardosernam.tienda.Ventas.Historial.Historial_class;
 import com.example.ricardosernam.tienda.Ventas.ProductosVenta_class;
 
 import java.util.ArrayList;
@@ -132,6 +135,8 @@ static {
 public static final int ESTADO_OK = 0;
 public static final int ESTADO_SYNC = 1;
 public static final ArrayList<ProductosVenta_class> itemsProductosVenta= new ArrayList <>(); ///Arraylist que contiene los productos///
+    public static final int rojo = Color.parseColor("#FFF62D2D");
+    public static final int verde = Color.parseColor("#FF0AEA45");
 
 
 /**

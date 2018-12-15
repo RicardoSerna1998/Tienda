@@ -6,21 +6,26 @@ package com.example.ricardosernam.tienda.Empleados;
 
 public class Empleados_class {
     public String nombre;
-    public String puesto;
+    public String puesto, codigo;
     public int activo;
 
 
 
-    public Empleados_class(String nombre, String puesto, int activo) {
+    public Empleados_class(String nombre, String puesto, int activo, String codigo) {
         this.nombre=nombre;
         this.puesto=puesto;
         this.activo=activo;
+        this.codigo=codigo;
 
 
     }
     public String getNombre() {
         return nombre;
     }
+    public String getCodigo() {
+        return codigo;
+    }
+
     public String getPuesto() {
         return puesto;
     }

@@ -20,13 +20,12 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <TextView
-            android:id="@+id/TVFragabierto"
+            android:id="@+id/TVempleadoActivo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="70dp"
             android:layout_marginTop="-10dp"
             android:layout_weight="1"
-            android:text="Cajero: Juan"
             android:textColor="@android:color/background_light"
             android:textSize="18sp" />
 

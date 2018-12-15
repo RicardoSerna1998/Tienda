@@ -23,6 +23,7 @@ import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.Empleados.Empleados_ventasAdapter;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
+import com.example.ricardosernam.tienda.Ventas.Historial.Historial;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,7 @@ public class Ventas extends Fragment {
     private RecyclerView.Adapter adapter;
     private android.support.v4.app.FragmentManager fm;
     private RecyclerView.LayoutManager lManager;
-    private Button escanear, carrito;
+    private Button escanear, carrito, historial;
 
     private ArrayList<Productos_class> itemsProductos= new ArrayList <>(); ///Arraylist que contiene los productos///
 
@@ -51,7 +52,7 @@ public class Ventas extends Fragment {
         recycler = view.findViewById(R.id.RVproductosVenta); ///declaramos el recycler
         escanear= view.findViewById(R.id.BtnEscanearProducto);
         carrito= view.findViewById(R.id.BtnCarrito);
-
+        historial= view.findViewById(R.id.BtnHistorial);
 
         escanear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +71,14 @@ public class Ventas extends Fragment {
                 else{
                     getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito(), "Carrito").commit(); ///cambio de fragment
                 }
+            }
+        });
+
+        historial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Historial(), "Historial").commit(); ///cambio de fragment
+
             }
         });
 

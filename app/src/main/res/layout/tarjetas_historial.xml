@@ -2,39 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginTop="5dp">
+    android:layout_marginTop="5dp"
+    android:background="@color/viewfinder_border"
+    android:orientation="vertical">
+
     <LinearLayout
-            android:layout_width="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/TVempleadoHistorial"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-                <TextView
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:id="@+id/button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cajero: Juan" />
+            android:layout_weight="1"
+            android:gravity="left"
+            android:text="Cajero: Juan" />
 
-                <TextView
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fecha 03/12/2018 15:33" />
+        <TextView
+            android:id="@+id/TVfechaHistorial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="Fecha 03/12/2018 15:33" />
 
-        </LinearLayout>
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/RVproductos"
+        android:id="@+id/RVproductosHistorial"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
     <TextView
-        android:id="@+id/TVfechaApartadoHistorial"
-        android:layout_gravity="right"
+        android:id="@+id/TVtotalHistorial"
         android:layout_width="wrap_content"
-        android:text="Total: $20"
-        android:layout_height="wrap_content" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Total: $20" />
+</LinearLayout>

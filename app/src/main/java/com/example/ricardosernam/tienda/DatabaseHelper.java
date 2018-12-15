@@ -32,9 +32,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
         database.execSQL(cmd0);
 
-        database.execSQL("INSERT INTO empleados (idRemota, nombre_empleado, tipo_empleado, activo) values (1,'Juan', 'Cajero', 1)");
-        database.execSQL("INSERT INTO empleados (idRemota, nombre_empleado, tipo_empleado, activo) values (2,'Manuel', 'Admin.', 0)");
-        database.execSQL("INSERT INTO empleados (idRemota, nombre_empleado, tipo_empleado, activo) values (3,'María', 'Cerrillo',0)");
+        database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (1,'juan', 'Juan', 'Cajero', 0)");
+        database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (2,'manuel', 'Manuel', 'Admin.', 0)");
+        database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (3,'maria', 'María', 'Cerrillo',0)");
 
         String cmd4 = "CREATE TABLE " + ContractParaProductos.VENTAS + " (" +
                 ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

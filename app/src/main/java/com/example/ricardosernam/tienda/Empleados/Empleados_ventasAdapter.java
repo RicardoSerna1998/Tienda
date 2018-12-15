@@ -25,6 +25,9 @@ import com.example.ricardosernam.tienda.R;
 
 import java.util.ArrayList;
 
+import static com.example.ricardosernam.tienda.Provider.ContractParaProductos.rojo;
+import static com.example.ricardosernam.tienda.Provider.ContractParaProductos.verde;
+
 public class Empleados_ventasAdapter extends RecyclerView.Adapter <Empleados_ventasAdapter.Productos_ventasViewHolder>{  ///adaptador para el Fragmet Ventas
     private ArrayList<Empleados_class> itemsEmpleados;
     private FragmentManager fm;
@@ -35,9 +38,9 @@ public class Empleados_ventasAdapter extends RecyclerView.Adapter <Empleados_ven
         this.fm=fm;
         this.context=context;
     }
-    public  class Productos_ventasViewHolder extends RecyclerView.ViewHolder{    ////clase donde van los elementos del cardview
+    public static class Productos_ventasViewHolder extends RecyclerView.ViewHolder{    ////clase donde van los elementos del cardview
         // Campos respectivos de un item
-        public AppCompatRadioButton activo;
+        public AppCompatRadioButton activo ;
         public TextView nombre, puesto;
         public Productos_ventasViewHolder(final View v) {   ////lo que se programe aqui es para cuando se le de clic a un item del recycler
             super(v);
@@ -64,8 +67,6 @@ public class Empleados_ventasAdapter extends RecyclerView.Adapter <Empleados_ven
     public void onBindViewHolder(final Productos_ventasViewHolder holder, final int position) {
         holder.nombre.setText(itemsEmpleados.get(position).getNombre());
         holder.puesto.setText(String.valueOf(itemsEmpleados.get(position).getPuesto()));
-        int rojo = Color.parseColor("#FFF62D2D");
-        int verde = Color.parseColor("#FF0AEA45");
 
         if(itemsEmpleados.get(position).getActivo()==1){
             holder.activo.setButtonTintList(ColorStateList.valueOf(verde));
@@ -76,12 +77,11 @@ public class Empleados_ventasAdapter extends RecyclerView.Adapter <Empleados_ven
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //if(itemsEmpleados.get(position).getPuesto().equals("Admin.") || itemsEmpleados.get(position).getPuesto().equals("Cajero")){
                 if(itemsEmpleados.get(position).getActivo()==1){
-                    new usuariosDialogFragment(itemsEmpleados.get(position).getNombre(), "Cerrar Sesión").show(fm, "Empleados");
+                    new usuariosDialogFragment(itemsEmpleados.get(position).getNombre(), "Cerrar Sesión", itemsEmpleados.get(position).getCodigo(), itemsEmpleados.get(position).getPuesto()).show(fm, "Empleados");
                 }
                 else{
-                    new usuariosDialogFragment(itemsEmpleados.get(position).getNombre(), "Iniciar Sesión").show(fm, "Empleados");
+                    new usuariosDialogFragment(itemsEmpleados.get(position).getNombre(), "Iniciar Sesión", itemsEmpleados.get(position).getCodigo(), itemsEmpleados.get(position).getPuesto()).show(fm, "Empleados");
                 }
             }
         });
