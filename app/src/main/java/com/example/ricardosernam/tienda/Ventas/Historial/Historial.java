@@ -62,22 +62,24 @@ public class Historial extends Fragment {
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         itemsHistorial.clear();
         fm=getFragmentManager();
-        fila=db.rawQuery("select id_empleado, fecha from ventas order by fecha" ,null);
+        fila=db.rawQuery("select id_empleado, fecha from ventas order by fecha desc" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
-            filaEmpleado=db.rawQuery("select nombre_empleado from empleados" ,null);
+            filaEmpleado=db.rawQuery("select nombre_empleado from empleados where idRemota='"+fila.getInt(0)+"'" ,null);
+
             if(filaEmpleado.moveToFirst()) {///si hay un elemento
-                itemsHistorial.add(new Historial_class(filaEmpleado.getString(0), fila.getString(1)));
+                itemsHistorial.add(new Historial_class(fila.getString(0), fila.getString(1)));
             }
+
             while (fila.moveToNext()) {
+                filaEmpleado=db.rawQuery("select nombre_empleado from empleados where idRemota='"+fila.getInt(0)+"'" ,null);
                 while (filaEmpleado.moveToNext()) {
-                    itemsHistorial.add(new Historial_class(filaEmpleado.getString(0), fila.getString(1)));
-                    }
+                    itemsHistorial.add(new Historial_class(fila.getString(0), fila.getString(1)));
+                }
             }
         }
         adapter = new HistorialAdapter(getContext(), itemsHistorial);///llamamos al adaptador y le enviamos el array como parametro
         lManager = new LinearLayoutManager(this.getActivity());  //declaramos el layoutmanager
-        //lManager = new GridLayoutManager(this.getActivity(), 2);  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
