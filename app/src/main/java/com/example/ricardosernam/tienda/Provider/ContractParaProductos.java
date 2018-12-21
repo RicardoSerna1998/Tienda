@@ -134,7 +134,7 @@ static {
 // Valores para la columna ESTADO
 public static final int ESTADO_OK = 0;
 public static final int ESTADO_SYNC = 1;
-public static final ArrayList<ProductosVenta_class> itemsProductosVenta= new ArrayList <>(); ///Arraylist que contiene los productos///
+public static ArrayList<ProductosVenta_class> itemsProductosVenta= new ArrayList <>(); ///Arraylist que contiene los productos///
     public static final int rojo = Color.parseColor("#FFF62D2D");
     public static final int verde = Color.parseColor("#FF0AEA45");
 

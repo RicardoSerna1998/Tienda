@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ricardosernam.tienda.Carrito.Carrito;
 import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
@@ -56,6 +57,7 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
         sumar=rootView.findViewById(R.id.BtnSumar);
         restar=rootView.findViewById(R.id.BtnRestar);
 
+        cantidad.setText("0");
         cantidad.setSelection(cantidad.getText().length());
         DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db=admin.getWritableDatabase();
@@ -85,7 +87,6 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
 
         productoSelecionado.setText(producto);
         precioProducto.setText("$"+String.valueOf(precio));
-        cantidad.setText("0");
 
         cantidad.addTextChangedListener(new TextWatcher() {
             @Override
@@ -122,7 +123,8 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
                 if(validar()){   /////si  ya se pago todo bien
                     productoElegido= db.rawQuery("select idRemota from inventario where nombre_producto='"+producto+"'", null);
                     if(productoElegido.moveToFirst()){
-                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Integer.parseInt(cantidad.getText().toString()),precio, tipo, cantidadSubtotal, productoElegido.getInt(0)));
+                        repetido(producto);
+                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Float.parseFloat(cantidad.getText().toString()),precio, tipo, cantidadSubtotal, productoElegido.getInt(0)));
                         dismiss();
                         Toast.makeText(getContext(), "Agregado a Carrito", Toast.LENGTH_LONG).show();
                     }
@@ -151,6 +153,13 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
             }
         }
         return validado;
+    }
+    public static void repetido(String nombre){
+        for(int i=0; i<ContractParaProductos.itemsProductosVenta.size(); i++) {
+            if(nombre.equals(ContractParaProductos.itemsProductosVenta.get(i).getNombre())){  ///si se repite
+                ContractParaProductos.itemsProductosVenta.remove(i);   ////eliminamos el previamente agregado
+            }
+        }
     }
 
 }

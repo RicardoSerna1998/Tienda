@@ -26,12 +26,16 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
     }
 
     public class HistorialVentasViewHolder extends RecyclerView.ViewHolder {
-        public TextView empleado, fecha;
+        public TextView empleado, fecha, total;
+        public RecyclerView recycler;
 
         public HistorialVentasViewHolder(View itemView) {
             super(itemView);
             empleado=itemView.findViewById(R.id.TVempleadoHistorial);
             fecha=itemView.findViewById(R.id.TVfechaHistorial);
+            total=itemView.findViewById(R.id.TVtotalHistorial);
+
+            recycler = itemView.findViewById(R.id.RVproductosHistorial); ///declaramos el recycler
         }
 
     }
@@ -47,7 +51,9 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
     }
     @Override
     public void onBindViewHolder(HistorialVentasViewHolder holder, final int position) {
-        holder.empleado.setText(itemsHistorial.get(position).getEmpleado());
-        holder.fecha.setText(itemsHistorial.get(position).getFecha());
+        holder.empleado.setText("Cajero: "+itemsHistorial.get(position).getEmpleado());
+        holder.fecha.setText("Fecha: "+itemsHistorial.get(position).getFecha());
+        Historial.rellenado_items(itemsHistorial.get(position).getIdVenta(), holder.recycler, context);
+        Historial.calcularTotal(holder.total);
     }
 }

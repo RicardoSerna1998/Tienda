@@ -1,5 +1,6 @@
 package com.example.ricardosernam.tienda.Ventas.Historial;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.Carrito.Carrito;
@@ -20,6 +22,8 @@ import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
 import com.example.ricardosernam.tienda.Ventas.Escanner;
+import com.example.ricardosernam.tienda.Ventas.Historial.Productos_historial.Productos_historialAdapter;
+import com.example.ricardosernam.tienda.Ventas.Historial.Productos_historial.Productos_historial_class;
 import com.example.ricardosernam.tienda.Ventas.Productos_class;
 import com.example.ricardosernam.tienda.Ventas.Ventas;
 import com.example.ricardosernam.tienda.Ventas.VentasAdapter;
@@ -28,13 +32,15 @@ import com.example.ricardosernam.tienda.Ventas.cantidad_producto_DialogFragment;
 import java.util.ArrayList;
 
 public class Historial extends Fragment {
-    private Cursor fila, filaEmpleado;
-    private SQLiteDatabase db;
-    private RecyclerView recycler;
-    private RecyclerView.Adapter adapter;
-    private android.support.v4.app.FragmentManager fm;
-    private RecyclerView.LayoutManager lManager;
+    private static Cursor fila, filaEmpleado, fila2, filaProducto;
+    private static SQLiteDatabase db;
+    private static RecyclerView recycler;
+    private static RecyclerView.Adapter adapter;
+    private static android.support.v4.app.FragmentManager fm;
+    private static RecyclerView.LayoutManager lManager;
     public static ArrayList<Historial_class> itemsHistorial= new ArrayList <>(); ///Arraylist que contiene los productos///
+    public static ArrayList<Productos_historial_class> itemsProductosHistorial= new ArrayList <>(); ///Arraylist que contiene los productos///
+
     public Button cerrar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,7 @@ public class Historial extends Fragment {
         db=admin.getWritableDatabase();
         cerrar=view.findViewById(R.id.BtnCerrarHistorial);
         recycler = view.findViewById(R.id.RVhistorial); ///declaramos el recycler
+
         fm=getActivity().getSupportFragmentManager();
         cerrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,20 +69,22 @@ public class Historial extends Fragment {
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         itemsHistorial.clear();
         fm=getFragmentManager();
-        fila=db.rawQuery("select id_empleado, fecha from ventas order by fecha desc" ,null);
+        fila=db.rawQuery("select id_empleado, fecha, _id from ventas order by fecha desc" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
             filaEmpleado=db.rawQuery("select nombre_empleado from empleados where idRemota='"+fila.getInt(0)+"'" ,null);
 
             if(filaEmpleado.moveToFirst()) {///si hay un elemento
-                itemsHistorial.add(new Historial_class(fila.getString(0), fila.getString(1)));
+                itemsHistorial.add(new Historial_class(filaEmpleado.getString(0), fila.getString(1), fila.getInt(2)));
+                //rellenado_items(fila.getInt(2));
             }
 
             while (fila.moveToNext()) {
                 filaEmpleado=db.rawQuery("select nombre_empleado from empleados where idRemota='"+fila.getInt(0)+"'" ,null);
                 while (filaEmpleado.moveToNext()) {
-                    itemsHistorial.add(new Historial_class(fila.getString(0), fila.getString(1)));
-                }
+                    itemsHistorial.add(new Historial_class(filaEmpleado.getString(0), fila.getString(1), fila.getInt(2)));
+                    //rellenado_items(fila.getInt(2));
+                    }
             }
         }
         adapter = new HistorialAdapter(getContext(), itemsHistorial);///llamamos al adaptador y le enviamos el array como parametro
@@ -83,6 +92,47 @@ public class Historial extends Fragment {
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    public static void rellenado_items(int idVenta, RecyclerView recycler, Context context){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
+        itemsProductosHistorial.clear();
+        fila2=db.rawQuery("select id_producto, cantidad, precio from venta_detalles where idRemota='"+idVenta+"'" ,null);
+
+        if(fila2.moveToFirst()) {///si hay un elemento
+            filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
+            if(filaProducto.moveToFirst()) {///si hay un elemento
+                if(filaProducto.isNull(1)){   ///gramos
+                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getInt(1), fila2.getFloat(2), (fila2.getInt(1)/1000)* fila2.getFloat(2)));
+                }
+                else{  ///pieza
+                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getInt(1), fila2.getFloat(2), fila2.getInt(1)* fila2.getFloat(2)));
+                }
+        }
+            while (fila2.moveToNext()) {
+                filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
+                while (filaProducto.moveToNext()) {
+                    if(filaProducto.isNull(1)){   ///gramos
+                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getInt(1), fila2.getFloat(2), (fila2.getInt(1)/1000)* fila2.getFloat(2)));
+                    }
+                    else{  ///pieza
+                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getInt(1), fila2.getFloat(2), fila2.getInt(1)* fila2.getFloat(2)));
+                    }
+                }
+            }
+        }
+        adapter = new Productos_historialAdapter(itemsProductosHistorial);///llamamos al adaptador y le enviamos el array como parametro
+        lManager = new LinearLayoutManager(context);  //declaramos el layoutmanager
+        recycler.setLayoutManager(lManager);
+        recycler.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    public static void calcularTotal(TextView total){
+        float suma=0;
+        for(int i=0; i<itemsProductosHistorial.size(); i++){
+            suma=suma+itemsProductosHistorial.get(i).getSubTotal();
+            total.setText("Total: $"+String.valueOf(suma));
+        }
     }
 
 }

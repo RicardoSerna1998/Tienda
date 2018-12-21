@@ -3,12 +3,12 @@ package com.example.ricardosernam.tienda.Ventas;
 public class ProductosVenta_class {  ///clase para obtener productos para cobrar
     public String nombre;
     public Float precio;
-    public int cantidad;
+    public Float cantidad;
     public Float subtotal;
     public int tipo, idRemota;
 
 
-    public ProductosVenta_class(String nombre, int cantidad, Float precio, int tipo, Float subtotal, int idRemota) {   ///se manda desde el arrayProductos
+    public ProductosVenta_class(String nombre, Float cantidad, Float precio, int tipo, Float subtotal, int idRemota) {   ///se manda desde el arrayProductos
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.precio = precio;
@@ -21,7 +21,7 @@ public class ProductosVenta_class {  ///clase para obtener productos para cobrar
         return nombre;
     }
 
-    public int getCantidad() {
+    public Float getCantidad() {
         return cantidad;
     }
 

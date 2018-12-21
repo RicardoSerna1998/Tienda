@@ -33,17 +33,20 @@ import com.example.ricardosernam.tienda.Ventas.cantidad_producto_DialogFragment;
 import com.example.ricardosernam.tienda._____interfazes.actualizado;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 
 public class Carrito extends Fragment {
-    private Cursor datosSeleccionado;
-    private SQLiteDatabase db;
-    private RecyclerView recycler;
-    private RecyclerView.Adapter adapter;
-    private android.support.v4.app.FragmentManager fm;
-    private RecyclerView.LayoutManager lManager;
+    private static Cursor datosSeleccionado;
+    private static SQLiteDatabase db;
+    private static RecyclerView recycler;
+    private static RecyclerView.Adapter adapter;
+    private static android.support.v4.app.FragmentManager fm;
+    private static RecyclerView.LayoutManager lManager;
     public static TextView total;
-    private Button aceptar, eliminar, cerrar;
+    private static Button aceptar, eliminar, cerrar;
+    private static ArrayList<ProductosVenta_class> itemsProductosVenta2;
+
 
     public Carrito() {
         // Required empty public constructor
@@ -103,7 +106,7 @@ public class Carrito extends Fragment {
 
             }
         });
-        rellenado_total();
+        rellenado_total(getContext());
         calcularTotal();
         return view;
 
@@ -112,48 +115,35 @@ public class Carrito extends Fragment {
         ContractParaProductos.itemsProductosVenta.removeAll(ContractParaProductos.itemsProductosVenta);
         fm.beginTransaction().replace(R.id.LLprincipal, fm.findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
     }
-    public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
-        fm=getFragmentManager();
-        adapter = new CarritosAdapter(ContractParaProductos.itemsProductosVenta, getContext(), new actualizado() {
-            @Override
-            public void actualizar(int cantidad, String nombre) {
-                datosSeleccionado=db.rawQuery("select precio, codigo_barras, idRemota from inventario where nombre_producto='"+nombre+"'" ,null);
-                if(datosSeleccionado.moveToFirst()) {
-                    if(datosSeleccionado.getString(1)==null) {  ///fruta
-                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0),0, (cantidad/1000)*datosSeleccionado.getFloat(0), datosSeleccionado.getInt(2)));//obtenemos el cardview seleccionado y lo agregamos a items2
-                    }
-                    else{   //pieza
-                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0),1, cantidad*datosSeleccionado.getFloat(0), datosSeleccionado.getInt(2)));//obtenemos el cardview seleccionado y lo agregamos a items2
-                    }
-                }
-                ///comprobamos si se repite
-                for(int i=0; i<ContractParaProductos.itemsProductosVenta.size(); i++) {
-                    String dato=ContractParaProductos.itemsProductosVenta.get(i).getNombre();
-                    for(int j=i+1; j<ContractParaProductos.itemsProductosVenta.size(); j++) {
-                        if(dato.equals(ContractParaProductos.itemsProductosVenta.get(j).getNombre())){  ///si se repite
-                            if(ContractParaProductos.itemsProductosVenta.get(j).getCantidad()==0){  ///si es cero, lo eliminamos de la lista
-                                ContractParaProductos.itemsProductosVenta.remove(j);   ////eliminamos el previamente gregado
-                                ContractParaProductos.itemsProductosVenta.remove(i);   ////eliminamos el previamente agregado
-                            }
-                            else {
-                                ContractParaProductos.itemsProductosVenta.remove(i);   ////eliminamos el previamente agregado
-                            }
-                        }
-                    }
-                }
-                calcularTotal();
-            }
-        });///llamamos al adaptador y le enviamos el array como parametro
-        lManager = new LinearLayoutManager(this.getActivity());  //declaramos el layoutmanager
+    public static void rellenado_total(Context context){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
+        itemsProductosVenta2=new ArrayList<>(ContractParaProductos.itemsProductosVenta);
+        ContractParaProductos.itemsProductosVenta.clear();
+        ContractParaProductos.itemsProductosVenta=new ArrayList<>(itemsProductosVenta2);
+        adapter = new CarritosAdapter(ContractParaProductos.itemsProductosVenta, context);
+        lManager = new LinearLayoutManager(context);  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+    public static void actualizar(Float cantidad, String nombre, final int position) {
+        datosSeleccionado=db.rawQuery("select precio, codigo_barras, idRemota from inventario where nombre_producto='"+nombre+"'" ,null);
+        if(datosSeleccionado.moveToFirst()) {
+            if (datosSeleccionado.getString(1) == null) {  ///fruta
+                ContractParaProductos.itemsProductosVenta.set(position, new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0), 0, (cantidad / 1000) * datosSeleccionado.getFloat(0), datosSeleccionado.getInt(2)));//obtenemos el cardview seleccionado y lo agregamos a items2
+            } else {   //pieza
+                ContractParaProductos.itemsProductosVenta.set(position, new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0), 1, cantidad * datosSeleccionado.getFloat(0), datosSeleccionado.getInt(2)));//obtenemos el cardview seleccionado y lo agregamos a items2
+            }
+        }
+        calcularTotal();
+    }
 
-    public static void calcularTotal(){
-        float suma=0;
-        for(int i=0; i<ContractParaProductos.itemsProductosVenta.size(); i++){
-            suma=suma+ContractParaProductos.itemsProductosVenta.get(i).getSubtotal();
+    public static void calcularTotal() {
+        float suma = 0;
+        if (ContractParaProductos.itemsProductosVenta.isEmpty()) {
+            fm.beginTransaction().replace(R.id.LLprincipal, fm.findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
+        }
+        for (int i = 0; i < ContractParaProductos.itemsProductosVenta.size(); i++) {
+            suma = suma + ContractParaProductos.itemsProductosVenta.get(i).getSubtotal();
             total.setText(String.valueOf(suma));
         }
     }

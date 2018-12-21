@@ -3,12 +3,13 @@ package com.example.ricardosernam.tienda.Ventas.Historial;
 
 
 public class Historial_class {
-    private String empleado, fecha, fecha_entrega, descripcion, tipo_cobro;
+    private String empleado, fecha;
+    private int idVenta;
 
-    public Historial_class(String empleado, String fecha) {   ///se manda desde el arrayProductos
-
+    public Historial_class(String empleado, String fecha, int idVenta) {   ///se manda desde el arrayProductos
         this.empleado= empleado;
         this.fecha= fecha;
+        this.idVenta=idVenta;
 
     }
 
@@ -18,4 +19,8 @@ public class Historial_class {
     public String getFecha() {
         return fecha;
     }
+    public int getIdVenta() {
+        return idVenta;
+    }
+
 }
