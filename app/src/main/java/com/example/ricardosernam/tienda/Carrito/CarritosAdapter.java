@@ -40,7 +40,8 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
         // Campos respectivos de un item
         public TextView producto, precio, unidad, subtotal;
         public EditText cantidad;
-        public Button eliminar;
+        public Button eliminar, sumar, restar;
+        public int porcion;
         public Productos_ventasViewHolder(final View v) {   ////lo que se programe aqui es para cuando se le de clic a un item del recycler
             super(v);
             producto = v.findViewById(R.id.TVproductoCarrito);  ////Textview donde se coloca el nombre del producto
@@ -49,6 +50,9 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
             subtotal=v.findViewById(R.id.TVsubTotalCarrito);
             cantidad=v.findViewById(R.id.ETcantidadCarrito);
             eliminar=v.findViewById(R.id.BtnEliminarProducto);
+            sumar=v.findViewById(R.id.BtnSumarCarrito);
+            restar=v.findViewById(R.id.BtnRestarCarrito);
+
 
         }
 
@@ -70,7 +74,6 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
             this.tipo=tipo;
             this.position=position;
         }
-
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -113,10 +116,26 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
 
         if(itemsProductosVenta.get(position).getTipo()==0) { ////0 son gramos
             holder.unidad.setText("Gramos");
+            holder.porcion = 500;
         }
         else{ //1 es piezas
             holder.unidad.setText("Pieza(s)");
+            holder.porcion = 1;
         }
+        holder.sumar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.cantidad.setText(String.valueOf(Float.parseFloat(String.valueOf(holder.cantidad.getText())) + holder.porcion));
+            }
+        });
+        holder.restar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    if (Float.parseFloat(String.valueOf(holder.cantidad.getText())) >= holder.porcion) {
+                        holder.cantidad.setText(String.valueOf(Float.parseFloat(String.valueOf(holder.cantidad.getText())) - holder.porcion));
+                    }
+                }
+        });
         holder.cantidad.addTextChangedListener(new watcherCalculo1(String.valueOf(holder.producto.getText()), holder.cantidad, holder.subtotal, itemsProductosVenta.get(position).getPrecio(), itemsProductosVenta.get(position).getTipo(), position));
 
         holder.eliminar.setOnClickListener(new View.OnClickListener() {

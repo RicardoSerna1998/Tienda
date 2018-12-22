@@ -22,7 +22,11 @@
         android:layout_gravity="right|center"
         android:layout_weight="1"
         android:text="$15" />
-
+    <Button
+        android:id="@+id/BtnSumarCarrito"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:gravity="center"
@@ -46,6 +50,11 @@
             android:layout_weight="1"
             android:text="Pieza(s)"/>
     </LinearLayout>
+    <Button
+        android:id="@+id/BtnRestarCarrito"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"/>
     <TextView
         android:id="@+id/TVsubTotalCarrito"
         android:layout_width="wrap_content"

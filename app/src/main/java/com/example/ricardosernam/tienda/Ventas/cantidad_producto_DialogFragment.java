@@ -26,97 +26,138 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
     private LinearLayout botones;
     private Cursor productoElegido;
     private SQLiteDatabase db;
-    private Button aceptar,cancelar, sumar, restar;
-    private TextView precioProducto,subtotal, unidad, productoSelecionado;
-    private EditText cantidad;
-    private float precio, cantidadSubtotal;
+    private Button aceptar, cancelar, sumar, restar;
+    private TextView precioProducto, unidad, productoSelecionado;
+    private EditText cantidad, subtotal;
+    private float precio, cantidadSubtotal, cantidadProducto;
     private String producto;
     int tipo, porcion;
 
     @SuppressLint("ValidFragment")
-     public cantidad_producto_DialogFragment(String producto, float precio, int tipo){
-         this.producto=producto;
-         this.precio=precio;
-         this.tipo=tipo;
-     }
+    public cantidad_producto_DialogFragment(String producto, float precio, int tipo) {
+        this.producto = producto;
+        this.precio = precio;
+        this.tipo = tipo;
+    }
 
     @Override
-    public View onCreateView (final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View rootView=inflater.inflate(R.layout.dialog_fragment_cantidad_producto,container);
+        View rootView = inflater.inflate(R.layout.dialog_fragment_cantidad_producto, container);
         this.getDialog().setTitle("Cobrar");///cambiamos titulo del DialogFragment
-        precioProducto=rootView.findViewById(R.id.TVprecio);
-        subtotal=rootView.findViewById(R.id.TVcambio);
-        unidad=rootView.findViewById(R.id.TVunidad);
-        productoSelecionado=rootView.findViewById(R.id.TVproducto);
-        cantidad=rootView.findViewById(R.id.ETcantidadPago);
-        botones=rootView.findViewById(R.id.LLBotones);
-        aceptar=rootView.findViewById(R.id.BtnAceptarPago);
-        cancelar=rootView.findViewById(R.id.BtnCancelarPago);
+        precioProducto = rootView.findViewById(R.id.TVprecio);
+        unidad = rootView.findViewById(R.id.TVunidad);
+        productoSelecionado = rootView.findViewById(R.id.TVproducto);
+        cantidad = rootView.findViewById(R.id.ETcantidadPago);
+        subtotal = rootView.findViewById(R.id.ETsubtotalCantidad);
+        botones = rootView.findViewById(R.id.LLBotones);
+        aceptar = rootView.findViewById(R.id.BtnAceptarPago);
+        cancelar = rootView.findViewById(R.id.BtnCancelarPago);
 
-        sumar=rootView.findViewById(R.id.BtnSumar);
-        restar=rootView.findViewById(R.id.BtnRestar);
+        sumar = rootView.findViewById(R.id.BtnSumar);
+        restar = rootView.findViewById(R.id.BtnRestar);
 
         cantidad.setText("0");
         cantidad.setSelection(cantidad.getText().length());
-        DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
-        db=admin.getWritableDatabase();
+        DatabaseHelper admin = new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
+        db = admin.getWritableDatabase();
 
-        if(tipo==1){   ///pieza
+        if (tipo == 1) {   ///pieza
             unidad.setText("Pieza(s)");
-            porcion=1;
-            }
-        else{  ///gramos
+            porcion = 1;
+        } else {  ///gramos
             unidad.setText("Gramos");
-            porcion=500;
+            porcion = 500;
         }
         sumar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cantidad.setText(String.valueOf(Integer.parseInt(String.valueOf(cantidad.getText()))+porcion));
+                if (cantidad.isFocused()) {
+                    cantidad.setText(String.valueOf(Float.parseFloat(String.valueOf(cantidad.getText())) + porcion));
+                } else if (subtotal.isFocused()) {
+                    subtotal.setText(String.valueOf(Float.parseFloat(String.valueOf(subtotal.getText())) + 5));
                 }
+            }
         });
         restar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Integer.parseInt(String.valueOf(cantidad.getText()))>=porcion) {
-                    cantidad.setText(String.valueOf(Integer.parseInt(String.valueOf(cantidad.getText())) - porcion));
+                if (cantidad.isFocused()) {
+                    if (Float.parseFloat(String.valueOf(cantidad.getText())) >= porcion) {
+                        cantidad.setText(String.valueOf(Float.parseFloat(String.valueOf(cantidad.getText())) - porcion));
+                    }
+                } else if (subtotal.isFocused()) {
+                    subtotal.setText(String.valueOf(Float.parseFloat(String.valueOf(subtotal.getText())) - 5));
                 }
+
             }
         });
 
         productoSelecionado.setText(producto);
-        precioProducto.setText("$"+String.valueOf(precio));
+        precioProducto.setText("$" + String.valueOf(precio));
 
         cantidad.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!(TextUtils.isEmpty(cantidad.getText()))) {
-                    if(tipo==1){   ///pieza
-                        cantidadSubtotal= Float.parseFloat(String.valueOf(cantidad.getText()))*precio;
-                    }
-                    else{  ///gramos
-                        cantidadSubtotal= ((Float.parseFloat(String.valueOf(cantidad.getText())))/1000)*precio;
-                    }
-                    if(cantidadSubtotal>=0) {
-                        subtotal.setText(String.valueOf(cantidadSubtotal));
-                    }
-                    else{
-                        subtotal.setText("0");
+                if (cantidad.isFocused()) {
+                    if (!(TextUtils.isEmpty(cantidad.getText()))) {
+                        if (tipo == 1) {   ///pieza
+                            cantidadSubtotal = Float.parseFloat(String.valueOf(cantidad.getText())) * precio;
+                        } else {  ///gramos
+                            cantidadSubtotal = ((Float.parseFloat(String.valueOf(cantidad.getText()))) / 1000) * precio;
+                        }
+                        if (cantidadSubtotal >= 0) {
+                            subtotal.setText(String.valueOf(cantidadSubtotal));
+                        } else {
+                            subtotal.setText("0");
+                        }
+                    } else {
+                        cantidad.setText("0");
                     }
                 }
-                else{
-                    cantidad.setText("0");
-                }
+                cantidad.setSelection(cantidad.getText().length());
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
 
             }
         });
+            subtotal.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if (subtotal.isFocused()) {
+                        if (!(TextUtils.isEmpty(subtotal.getText()))) {
+                            if (tipo == 1) {   ///pieza
+                                cantidadProducto = Float.parseFloat(String.valueOf(subtotal.getText())) / precio;
+                            } else {  ///gramos
+                                cantidadProducto = ((Float.parseFloat(String.valueOf(subtotal.getText()))) * 1000) / precio;
+                            }
+                            if (cantidadProducto >= 0) {
+                                cantidad.setText(String.valueOf(cantidadProducto));
+                            } else {
+                                cantidad.setText("0");
+                            }
+                        } else {
+                            subtotal.setText("0");
+                        }
+                    }
+                    subtotal.setSelection(subtotal.getText().length());
+                }
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
         aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +165,7 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
                     productoElegido= db.rawQuery("select idRemota from inventario where nombre_producto='"+producto+"'", null);
                     if(productoElegido.moveToFirst()){
                         repetido(producto);
-                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Float.parseFloat(cantidad.getText().toString()),precio, tipo, cantidadSubtotal, productoElegido.getInt(0)));
+                        ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Float.parseFloat(cantidad.getText().toString()),precio, tipo, Float.parseFloat(subtotal.getText().toString()) , productoElegido.getInt(0)));
                         dismiss();
                         Toast.makeText(getContext(), "Agregado a Carrito", Toast.LENGTH_LONG).show();
                     }
