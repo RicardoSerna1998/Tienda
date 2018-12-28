@@ -5,13 +5,6 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".Carrito.Carrito">
-    <Button
-        android:id="@+id/BtnCerrarCarrito"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/background_light"
-        android:text="X"/>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

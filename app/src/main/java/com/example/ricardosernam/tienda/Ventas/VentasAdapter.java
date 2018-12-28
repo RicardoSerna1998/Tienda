@@ -18,6 +18,7 @@ import com.example.ricardosernam.tienda.Empleados.Empleados_class;
 import com.example.ricardosernam.tienda.Empleados.usuariosDialogFragment;
 import com.example.ricardosernam.tienda.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos_ventasViewHolder>{  ///adaptador para el Fragmet Ventas
@@ -56,11 +57,13 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
     public void onBindViewHolder(final Productos_ventasViewHolder holder, final int position) {
         holder.producto.setText(itemsProductos.get(position).getNombre());
         holder.precio.setText("$"+String.valueOf(itemsProductos.get(position).getPrecio()));
+        DecimalFormat df = new DecimalFormat("#.00");
+
         if(itemsProductos.get(position).getCodigo_barras()==null) { ////0 son gramos
-            holder.existentes.setText(String.valueOf(itemsProductos.get(position).getExistentes()) +" Gramos aún");
+            holder.existentes.setText(String.valueOf(df.format(itemsProductos.get(position).getExistentes())) +" Gramos aún");
         }
         else{ //1 es piezas
-            holder.existentes.setText(String.valueOf(itemsProductos.get(position).getExistentes()) +" Pieza(s) aún");
+            holder.existentes.setText(String.valueOf(df.format(itemsProductos.get(position).getExistentes()) +" Pieza(s) aún"));
             }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

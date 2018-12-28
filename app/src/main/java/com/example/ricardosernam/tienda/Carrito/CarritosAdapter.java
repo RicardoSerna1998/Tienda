@@ -22,6 +22,7 @@ import com.example.ricardosernam.tienda.Ventas.Productos_class;
 import com.example.ricardosernam.tienda.Ventas.cantidad_producto_DialogFragment;
 import com.example.ricardosernam.tienda._____interfazes.actualizado;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.function.UnaryOperator;
 
@@ -64,8 +65,9 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
         private TextView subtotal;
         private Float precio;
         private int tipo, position;
+        private DecimalFormat df;
 
-        watcherCalculo1(String nombre, EditText cantidad, TextView subtotal, Float precio, int tipo,  int position) {
+        watcherCalculo1(String nombre, EditText cantidad, TextView subtotal, Float precio, int tipo,  int position, DecimalFormat df) {
             this.nombre=nombre;
             this.cantidad = cantidad;
             this.Interfaz=Interfaz;
@@ -73,6 +75,7 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
             this.precio=precio;
             this.tipo=tipo;
             this.position=position;
+            this.df=df;
         }
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -80,14 +83,18 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
         }
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            if(!(TextUtils.isEmpty(cantidad.getText()))){
+            if(!(TextUtils.isEmpty(cantidad.getText())) & !cantidad.getText().toString().equals(".")){
                 if(tipo==0) { ////0 son gramos
-                    subtotal.setText("$"+String.valueOf(((Float.parseFloat(cantidad.getText().toString()))/1000)*precio));
+                    subtotal.setText("$"+String.valueOf(df.format(((Float.parseFloat(cantidad.getText().toString()))/1000)*precio)));
                 }
                 else{ //1 es piezas
-                    subtotal.setText("$"+String.valueOf((Float.parseFloat(cantidad.getText().toString()))*precio));
+                    subtotal.setText("$"+String.valueOf(df.format((Float.parseFloat(cantidad.getText().toString()))*precio)));
                 }
                 Carrito.actualizar(Float.parseFloat(String.valueOf((cantidad.getText()))), nombre, position);
+            }
+            else{  ///está vacio
+                subtotal.setText("$"+String.valueOf("0.00"));
+                Carrito.actualizar(Float.parseFloat("0.00"), nombre, position);
             }
         }
         @Override
@@ -108,10 +115,12 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
 
     @Override
     public void onBindViewHolder(final Productos_ventasViewHolder holder, final int position) {
+        final DecimalFormat df = new DecimalFormat("#.00");
+
         holder.producto.setText(itemsProductosVenta.get(position).getNombre());
         holder.precio.setText("$"+String.valueOf(itemsProductosVenta.get(position).getPrecio()));
-        holder.cantidad.setText(((String.valueOf(itemsProductosVenta.get(position).getCantidad()))));
-        holder.subtotal.setText("$"+String.valueOf(itemsProductosVenta.get(position).getSubtotal()));
+        holder.cantidad.setText(((String.valueOf((df.format(itemsProductosVenta.get(position).getCantidad()))))));
+        holder.subtotal.setText("$"+String.valueOf((df.format(itemsProductosVenta.get(position).getSubtotal()))));
 
 
         if(itemsProductosVenta.get(position).getTipo()==0) { ////0 son gramos
@@ -125,18 +134,25 @@ public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Produ
         holder.sumar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.cantidad.setText(String.valueOf(Float.parseFloat(String.valueOf(holder.cantidad.getText())) + holder.porcion));
+                if (((TextUtils.isEmpty(holder.cantidad.getText())))) {
+                holder.cantidad.setText(String.valueOf(df.format( holder.porcion)));
+                }
+                else{
+                    holder.cantidad.setText(String.valueOf(df.format(Float.parseFloat(String.valueOf(holder.cantidad.getText())) + holder.porcion)));
+                }
             }
         });
         holder.restar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!((TextUtils.isEmpty(holder.cantidad.getText())))) {
                     if (Float.parseFloat(String.valueOf(holder.cantidad.getText())) >= holder.porcion) {
-                        holder.cantidad.setText(String.valueOf(Float.parseFloat(String.valueOf(holder.cantidad.getText())) - holder.porcion));
+                        holder.cantidad.setText(String.valueOf(df.format(Float.parseFloat(String.valueOf(holder.cantidad.getText())) - holder.porcion)));
                     }
                 }
+                }
         });
-        holder.cantidad.addTextChangedListener(new watcherCalculo1(String.valueOf(holder.producto.getText()), holder.cantidad, holder.subtotal, itemsProductosVenta.get(position).getPrecio(), itemsProductosVenta.get(position).getTipo(), position));
+        holder.cantidad.addTextChangedListener(new watcherCalculo1(String.valueOf(holder.producto.getText()), holder.cantidad, holder.subtotal, itemsProductosVenta.get(position).getPrecio(), itemsProductosVenta.get(position).getTipo(), position, df));
 
         holder.eliminar.setOnClickListener(new View.OnClickListener() {
             @Override

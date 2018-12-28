@@ -1,6 +1,8 @@
 package com.example.ricardosernam.tienda.Provider;
 
+import android.content.UriMatcher;
 import android.graphics.Color;
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.example.ricardosernam.tienda.DatabaseHelper;
@@ -22,6 +24,7 @@ public class ContractParaProductos {
 
     public final static String AUTHORITY = "com.example.ricardosernam.puntodeventa";
 
+
     public static final String EMPLEADOS = "empleados";
 
     public static final String VENTAS = "ventas";
@@ -30,69 +33,65 @@ public class ContractParaProductos {
 
     public static final String INVENTARIO = "inventario";
 
-public static final String INFORMACION = "informacion";
+    public static final String INFORMACION = "informacion";
+
+    public static final String TURNOS = "turnos";
+
+    public static final String ESTADOS= "estados";
 
 
-public static final String ESTADOS= "estados";
+public final static String SINGLE_MIME_CARRITO = "vnd.android.cursor.item/vnd." + AUTHORITY + EMPLEADOS;
 
-
-
-/**
- * Tipo MIME que retorna la consulta de una sola fila
-
-public final static String SINGLE_MIME_CARRITO = "vnd.android.cursor.item/vnd." + AUTHORITY + CARRITO;
-
-public final static String MULTIPLE_MIME_CARRITO = "vnd.android.cursor.dir/vnd." + AUTHORITY + CARRITO;
+public final static String MULTIPLE_MIME_CARRITO = "vnd.android.cursor.dir/vnd." + AUTHORITY + EMPLEADOS;
 
 public final static String SINGLE_MIME_INVENTARIO = "vnd.android.cursor.item/vnd." + AUTHORITY + INVENTARIO;
 
 public final static String MULTIPLE_MIME_INVENTARIO = "vnd.android.cursor.dir/vnd." + AUTHORITY + INVENTARIO;
 
-public final static String SINGLE_MIME_INVENTARIO_DETALLE = "vnd.android.cursor.item/vnd." + AUTHORITY + INVENTARIO_DETALLE;
+public final static String SINGLE_MIME_INVENTARIO_DETALLE = "vnd.android.cursor.item/vnd." + AUTHORITY + VENTAS;
 
-public final static String MULTIPLE_MIME_INVENTARIO_DETALLE = "vnd.android.cursor.dir/vnd." + AUTHORITY + INVENTARIO_DETALLE;
+public final static String MULTIPLE_MIME_INVENTARIO_DETALLE = "vnd.android.cursor.dir/vnd." + AUTHORITY + VENTAS;
 
-public final static String SINGLE_MIME_PRODUCTO = "vnd.android.cursor.item/vnd." + AUTHORITY + PRODUCTO;
+public final static String SINGLE_MIME_PRODUCTO = "vnd.android.cursor.item/vnd." + AUTHORITY + VENTA_DETALLES;
 
-public final static String MULTIPLE_MIME_PRODUCTO = "vnd.android.cursor.dir/vnd." + AUTHORITY + PRODUCTO;
+public final static String MULTIPLE_MIME_PRODUCTO = "vnd.android.cursor.dir/vnd." + AUTHORITY + VENTA_DETALLES;
 
-    public final static String SINGLE_MIME_VENTA = "vnd.android.cursor.item/vnd." + AUTHORITY + VENTA;
+    public final static String SINGLE_MIME_VENTA = "vnd.android.cursor.item/vnd." + AUTHORITY + INFORMACION;
 
-    public final static String MULTIPLE_MIME_VENTA = "vnd.android.cursor.dir/vnd." + AUTHORITY + VENTA;
+    public final static String MULTIPLE_MIME_VENTA = "vnd.android.cursor.dir/vnd." + AUTHORITY + INFORMACION;
 
-public final static String SINGLE_MIME_VENTA_DETALLE = "vnd.android.cursor.item/vnd." + AUTHORITY + VENTA_DETALLE;
+public final static String SINGLE_MIME_VENTA_DETALLE = "vnd.android.cursor.item/vnd." + AUTHORITY + TURNOS;
 
-public final static String MULTIPLE_MIME_VENTA_DETALLE = "vnd.android.cursor.dir/vnd." + AUTHORITY + VENTA_DETALLE;
+public final static String MULTIPLE_MIME_VENTA_DETALLE = "vnd.android.cursor.dir/vnd." + AUTHORITY + TURNOS;
 
 
-/**
- * URI de contenido principal
 
-public final static Uri CONTENT_URI_CARRITO = Uri.parse("content://" + AUTHORITY + "/" + CARRITO);
+
+
+public final static Uri CONTENT_URI_EMPLEADOS = Uri.parse("content://" + AUTHORITY + "/" + EMPLEADOS);
 
 public final static Uri CONTENT_URI_INVENTARIO = Uri.parse("content://" + AUTHORITY + "/" + INVENTARIO);
 
-public final static Uri CONTENT_URI_PRODUCTO = Uri.parse("content://" + AUTHORITY + "/" + PRODUCTO);
+public final static Uri CONTENT_URI_VENTA = Uri.parse("content://" + AUTHORITY + "/" + VENTAS);
 
-public final static Uri CONTENT_URI_INVENTARIO_DETALLE = Uri.parse("content://" + AUTHORITY + "/" + INVENTARIO_DETALLE);
+public final static Uri CONTENT_URI_VENTA_DETALLE = Uri.parse("content://" + AUTHORITY + "/" + VENTA_DETALLES);
 
-public final static Uri CONTENT_URI_VENTA= Uri.parse("content://" + AUTHORITY + "/" + VENTA);
+public final static Uri CONTENT_URI_INFORMACION= Uri.parse("content://" + AUTHORITY + "/" + INFORMACION);
 
-public final static Uri CONTENT_URI_VENTA_DETALLE = Uri.parse("content://" + AUTHORITY + "/" + VENTA_DETALLE);
-
-
+public final static Uri CONTENT_URI_TURNOS = Uri.parse("content://" + AUTHORITY + "/" + TURNOS);
 
 
 
- * Comparador de URIs de contenido
- */
 
-/*public static final UriMatcher uriMatcherCarrito;
-public static final UriMatcher uriMatcherProducto;
+
+
+
+public static final UriMatcher uriMatcherEmpleado;
 public static final UriMatcher uriMatcherInventario;
-public static final UriMatcher uriMatcherInventarioDetalles;
+public static final UriMatcher uriMatcherInformacion;
+public static final UriMatcher uriMatcherTurnos;
 public static final UriMatcher uriMatcherVenta;
-public static final UriMatcher uriMatcherVentaDetalles;*/
+public static final UriMatcher uriMatcherVentaDetalles;
 
 
 
@@ -109,25 +108,29 @@ public static final int SINGLE_ROW = 2;
 // Asignación de URIs
 static {
 
-        /*uriMatcherCarrito = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcherCarrito.addURI(AUTHORITY, CARRITO, ALLROWS);
-        uriMatcherCarrito.addURI(AUTHORITY, CARRITO + "/#", SINGLE_ROW);
+        uriMatcherEmpleado = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcherEmpleado.addURI(AUTHORITY, EMPLEADOS, ALLROWS);
+        uriMatcherEmpleado.addURI(AUTHORITY, EMPLEADOS + "/#", SINGLE_ROW);
 
-        uriMatcherProducto = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcherProducto.addURI(AUTHORITY, PRODUCTO, ALLROWS);
-        uriMatcherProducto.addURI(AUTHORITY, PRODUCTO + "/#", SINGLE_ROW);
+        uriMatcherInformacion = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcherInformacion.addURI(AUTHORITY, INFORMACION, ALLROWS);
+        uriMatcherInformacion.addURI(AUTHORITY, INFORMACION + "/#", SINGLE_ROW);
 
         uriMatcherInventario = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcherInventario.addURI(AUTHORITY, INVENTARIO, ALLROWS);
         uriMatcherInventario.addURI(AUTHORITY, INVENTARIO + "/#", SINGLE_ROW);
 
-        uriMatcherInventarioDetalles = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcherInventarioDetalles.addURI(AUTHORITY, INVENTARIO_DETALLE, ALLROWS);
-        uriMatcherInventarioDetalles.addURI(AUTHORITY, INVENTARIO_DETALLE + "/#", SINGLE_ROW);
+        uriMatcherTurnos = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcherTurnos.addURI(AUTHORITY, TURNOS, ALLROWS);
+        uriMatcherTurnos.addURI(AUTHORITY, TURNOS + "/#", SINGLE_ROW);
 
         uriMatcherVenta = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcherVenta.addURI(AUTHORITY, VENTA, ALLROWS);
-        uriMatcherVenta.addURI(AUTHORITY, VENTA + "/#", SINGLE_ROW);*/
+        uriMatcherVenta.addURI(AUTHORITY, VENTAS, ALLROWS);
+        uriMatcherVenta.addURI(AUTHORITY, VENTAS + "/#", SINGLE_ROW);
+
+    uriMatcherVentaDetalles = new UriMatcher(UriMatcher.NO_MATCH);
+    uriMatcherVentaDetalles.addURI(AUTHORITY, VENTA_DETALLES, ALLROWS);
+    uriMatcherVentaDetalles.addURI(AUTHORITY, VENTA_DETALLES + "/#", SINGLE_ROW);
         ;
         }
 
@@ -177,6 +180,9 @@ public static class Columnas implements BaseColumns {
     public final static String DIRECCION = "direccion";
     public final static String TELEFONO = "telefono";
 
+    ////////////turnos///////////////////77
+    public final static String HORA_INICIO = "nombre_producto";
+    public final static String HORA_FIN = "precio";
 
 
     public static final String ESTADO = "estado";

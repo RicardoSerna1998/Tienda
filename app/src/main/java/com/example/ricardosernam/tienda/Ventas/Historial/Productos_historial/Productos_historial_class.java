@@ -5,9 +5,9 @@ package com.example.ricardosernam.tienda.Ventas.Historial.Productos_historial;
 public class Productos_historial_class {
     private String producto;
     private Float precio, subTotal;
-    private int cantidad;
+    private Float cantidad;
 
-    public Productos_historial_class(String producto, int cantidad, Float precio, Float subTotal) {   ///se manda desde el arrayProductos
+    public Productos_historial_class(String producto, Float cantidad, Float precio, Float subTotal) {   ///se manda desde el arrayProductos
         this.producto= producto;
         this.cantidad= cantidad;
         this.precio= precio;
@@ -23,7 +23,7 @@ public class Productos_historial_class {
     public Float getSubTotal() {
         return subTotal;
     }
-    public int getCantidad() {
+    public Float getCantidad() {
         return cantidad;
     }
 }

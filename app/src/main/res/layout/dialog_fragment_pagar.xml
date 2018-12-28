@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/LLtotalApagar"
         android:background="?attr/colorButtonNormal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,6 +45,7 @@
         android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,6 +63,7 @@
         android:inputType="numberDecimal"
         android:textSize="35dp"
         tools:text="0" />
+
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"

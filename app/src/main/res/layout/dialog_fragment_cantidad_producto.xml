@@ -45,10 +45,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="horizontal">
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         <EditText
             android:id="@+id/ETcantidadPago"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_gravity="center"
@@ -57,8 +60,7 @@
             android:gravity="center"
             android:hint="Cantidad..."
             android:inputType="numberDecimal"
-            android:textSize="35dp"
-            tools:text="0" />
+            android:textSize="35dp" />
         <TextView
             android:id="@+id/TVunidad"
             android:layout_gravity="center"
@@ -66,6 +68,8 @@
             android:layout_height="wrap_content"
             android:text="gramos"
             android:textSize="20dp" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/LLBotones"
             android:layout_width="wrap_content"
@@ -110,8 +114,8 @@
             android:layout_gravity="center"
             android:background="@drawable/edittexts"
             android:gravity="center"
+            android:hint="Subtotal..."
             android:inputType="numberDecimal"
-            android:text="0"
             android:textSize="35dp" />
     </LinearLayout>
 

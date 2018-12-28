@@ -32,6 +32,7 @@ import com.example.ricardosernam.tienda.Ventas.VentasAdapter;
 import com.example.ricardosernam.tienda.Ventas.cantidad_producto_DialogFragment;
 import com.example.ricardosernam.tienda._____interfazes.actualizado;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -45,6 +46,7 @@ public class Carrito extends Fragment {
     private static RecyclerView.LayoutManager lManager;
     public static TextView total;
     private static Button aceptar, eliminar, cerrar;
+    private static DecimalFormat df;
     private static ArrayList<ProductosVenta_class> itemsProductosVenta2;
 
 
@@ -62,9 +64,10 @@ public class Carrito extends Fragment {
         View view= inflater.inflate(R.layout.fragment_carrito, container, false);
         aceptar=view.findViewById(R.id.BtnAceptarCompra);
         eliminar=view.findViewById(R.id.BtnEliminarCompra);
-        cerrar=view.findViewById(R.id.BtnCerrarCarrito);
         recycler = view.findViewById(R.id.RVproductosCarrito); ///declaramos el recycler
         total = view.findViewById(R.id.TVtotal); ///declaramos el recycle
+        df = new DecimalFormat("#.00");
+
         fm=getFragmentManager();
 
 
@@ -74,7 +77,12 @@ public class Carrito extends Fragment {
         aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new pagar_DialogFragment(Float.parseFloat(String.valueOf(total.getText()))).show(fm, "Producto_ventas");
+                if(validarItems()){
+                    new pagar_DialogFragment(Float.parseFloat(String.valueOf(total.getText()))).show(fm, "Producto_ventas");
+                }
+                else{
+                    Toast.makeText(getContext(), "Checa las cantidades", Toast.LENGTH_LONG).show();
+                }
                 }
         });
         eliminar.setOnClickListener(new View.OnClickListener() {
@@ -82,13 +90,14 @@ public class Carrito extends Fragment {
             public void onClick(View view) {
                 final AlertDialog.Builder aceptarVenta = new AlertDialog.Builder(getContext());
                 aceptarVenta .setTitle("Cuidado");
-                aceptarVenta .setMessage("¿Seguro que quieres eliminar este producto?");
+                aceptarVenta .setMessage("¿Seguro que quieres eliminar esta venta?");
                 aceptarVenta .setCancelable(false);
                 aceptarVenta .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface aceptarVenta , int id) {
-                        aceptar_cancelar(fm);
-                        aceptarVenta.dismiss();
-                    }
+                                aceptar_cancelar(fm);
+                                aceptarVenta.dismiss();
+                        }
+
                 });
                 aceptarVenta .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface aceptarVenta, int id) {
@@ -98,14 +107,7 @@ public class Carrito extends Fragment {
                 aceptarVenta .show();
             }
         });
-        cerrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas(), "Ventas").commit(); ///cambio de fragment
-                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, getFragmentManager().findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
 
-            }
-        });
         rellenado_total(getContext());
         calcularTotal();
         return view;
@@ -144,7 +146,16 @@ public class Carrito extends Fragment {
         }
         for (int i = 0; i < ContractParaProductos.itemsProductosVenta.size(); i++) {
             suma = suma + ContractParaProductos.itemsProductosVenta.get(i).getSubtotal();
-            total.setText(String.valueOf(suma));
+            total.setText(String.valueOf(df.format(suma)));
         }
+    }
+    public static boolean  validarItems() {
+        boolean resultado=true;
+        for (int i = 0; i < ContractParaProductos.itemsProductosVenta.size(); i++) {
+            if(ContractParaProductos.itemsProductosVenta.get(i).getCantidad()==0){
+                resultado=false;
+            }
+        }
+        return resultado;
     }
 }

@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.example.ricardosernam.tienda.R;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Set;
 import java.util.UUID;
@@ -38,7 +40,7 @@ import static com.example.ricardosernam.tienda.Carrito.Carrito.aceptar_cancelar;
 
 @SuppressLint("ValidFragment")
 public class pagar_DialogFragment extends android.support.v4.app.DialogFragment {
-    private Button aceptar,cancelar;
+    private Button aceptar,cancelar, sumar, restar;
     private SQLiteDatabase db;
     private android.support.v4.app.FragmentManager fm;
     private Cursor empleado, venta, existente;
@@ -46,7 +48,11 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
     private TextView total,cambio, deuda, abono;
     private EditText cantidad;
     private float totalPagar;
-    private CheckBox imprimir;
+    private static DecimalFormat df;
+    private CheckBox imprimir;   ///10
+    private LinearLayout totalAPagar;
+
+    private static int[]  pagos = {0,5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80,90, 100, 150, 200, 250,300,350,400,450, 500, 600, 700,800, 900, 1000,1500, 2000};
 
     ///////////////////////////////////////////////////////////BLUETOOTH //////////////////////////////////////////////7
     TextView myLabel;
@@ -85,17 +91,30 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
         cantidad=rootView.findViewById(R.id.ETcantidadPago);
         aceptar=rootView.findViewById(R.id.BtnAceptarPago);
         cancelar=rootView.findViewById(R.id.BtnCancelarPago);
+        totalAPagar=rootView.findViewById(R.id.LLtotalApagar);
+
+
+        //sumar = rootView.findViewById(R.id.BtnSumarRecibido);
+        //restar = rootView.findViewById(R.id.BtnRestarRecibido);
+        df = new DecimalFormat("#.00");
+
 
         ////////Bluetooth
         myLabel =  rootView.findViewById(R.id.label);
 
         fm=getFragmentManager();
 
-
         total.setText(String.valueOf(totalPagar));
-        cantidad.setText(String.valueOf(totalPagar));
         DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db=admin.getWritableDatabase();
+
+        totalAPagar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cantidad.setText(String.valueOf(totalPagar));
+                }
+        });
+
 
         cantidad.addTextChangedListener(new TextWatcher() {
             @Override
@@ -103,14 +122,17 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!(TextUtils.isEmpty(cantidad.getText()))) {
+                if (!(TextUtils.isEmpty(cantidad.getText())) & !cantidad.getText().toString().equals(".")) {
                     float cantidadCambio= Float.parseFloat(String.valueOf(cantidad.getText()))-totalPagar;///feria
                     if(cantidadCambio>=0) {
                         cambio.setText(String.valueOf(cantidadCambio));
                     }
                     else{
-                        cambio.setText("0");
+                        cambio.setText("");
                     }
+                }
+                else{
+                    cambio.setText("");
                 }
             }
             @Override
@@ -205,6 +227,22 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             }
         }
         return validado;
+    }
+    public void cantidadApagar(Float recibido, int tipo){
+        if(tipo==1) {
+            for (int i = 0; i < pagos.length; i++) {
+                if (recibido >= pagos[i] & recibido < pagos[i + 1]) {
+                    cantidad.setText(String.valueOf(df.format( pagos[i + 1])));
+                }
+            }
+        }{
+            for (int i = pagos.length; i >0 ; i--) {
+                if(recibido>pagos[i-1] & recibido<=pagos[i]){
+                     cantidad.setText(String.valueOf(df.format(pagos[i-1])));
+                 }
+             }
+
+         }
     }
     /////////////////////////////////////////////////////////////////////BLUETOOTH ///////////////////////
     /////////////////////////////////////////////////////////////////// ABRIR

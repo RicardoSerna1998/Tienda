@@ -21,6 +21,8 @@ import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
 
+import java.text.DecimalFormat;
+
 @SuppressLint("ValidFragment")
 public class cantidad_producto_DialogFragment extends android.support.v4.app.DialogFragment {
     private LinearLayout botones;
@@ -31,7 +33,8 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
     private EditText cantidad, subtotal;
     private float precio, cantidadSubtotal, cantidadProducto;
     private String producto;
-    int tipo, porcion;
+    int tipo;
+    double porcion;
 
     @SuppressLint("ValidFragment")
     public cantidad_producto_DialogFragment(String producto, float precio, int tipo) {
@@ -53,29 +56,42 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
         botones = rootView.findViewById(R.id.LLBotones);
         aceptar = rootView.findViewById(R.id.BtnAceptarPago);
         cancelar = rootView.findViewById(R.id.BtnCancelarPago);
+        final DecimalFormat df = new DecimalFormat("#.00");
+
 
         sumar = rootView.findViewById(R.id.BtnSumar);
         restar = rootView.findViewById(R.id.BtnRestar);
 
-        cantidad.setText("0");
+        //cantidad.setText("0");
+
         cantidad.setSelection(cantidad.getText().length());
         DatabaseHelper admin = new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db = admin.getWritableDatabase();
 
         if (tipo == 1) {   ///pieza
             unidad.setText("Pieza(s)");
-            porcion = 1;
+            porcion = 1.00;
         } else {  ///gramos
             unidad.setText("Gramos");
-            porcion = 500;
+            porcion = 500.00;
         }
         sumar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (cantidad.isFocused()) {
-                    cantidad.setText(String.valueOf(Float.parseFloat(String.valueOf(cantidad.getText())) + porcion));
+                    if (((TextUtils.isEmpty(cantidad.getText())))) {
+                        cantidad.setText(String.valueOf(df.format(porcion)));
+                        }
+                    else{
+                        cantidad.setText(String.valueOf(df.format(Float.parseFloat(String.valueOf(cantidad.getText())) + porcion)));
+                    }
                 } else if (subtotal.isFocused()) {
-                    subtotal.setText(String.valueOf(Float.parseFloat(String.valueOf(subtotal.getText())) + 5));
+                    if (((TextUtils.isEmpty(subtotal.getText())))) {
+                        subtotal.setText(String.valueOf(df.format(5.00)));
+                    }
+                    else{
+                        subtotal.setText(String.valueOf(df.format(Float.parseFloat(String.valueOf(subtotal.getText())) + 5.00)));
+                    }
                 }
             }
         });
@@ -83,12 +99,18 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
             @Override
             public void onClick(View view) {
                 if (cantidad.isFocused()) {
-                    if (Float.parseFloat(String.valueOf(cantidad.getText())) >= porcion) {
-                        cantidad.setText(String.valueOf(Float.parseFloat(String.valueOf(cantidad.getText())) - porcion));
+                    if (!((TextUtils.isEmpty(cantidad.getText())))) {
+                        if (Float.parseFloat(String.valueOf(cantidad.getText())) >= porcion) {
+                            cantidad.setText(String.valueOf(df.format((Float.parseFloat(String.valueOf(cantidad.getText()))) - porcion)));
+                        }
                     }
                 } else if (subtotal.isFocused()) {
-                    subtotal.setText(String.valueOf(Float.parseFloat(String.valueOf(subtotal.getText())) - 5));
-                }
+                    if (!((TextUtils.isEmpty(subtotal.getText())))) {
+                        if (Float.parseFloat(String.valueOf(subtotal.getText())) >= 5) {
+                            subtotal.setText(String.valueOf(df.format((Float.parseFloat(String.valueOf(subtotal.getText()))) - 5.00)));
+                        }
+                    }
+                    }
 
             }
         });
@@ -104,19 +126,19 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (cantidad.isFocused()) {
-                    if (!(TextUtils.isEmpty(cantidad.getText()))) {
+                    if (!(TextUtils.isEmpty(cantidad.getText())) & !cantidad.getText().toString().equals(".")) {
                         if (tipo == 1) {   ///pieza
                             cantidadSubtotal = Float.parseFloat(String.valueOf(cantidad.getText())) * precio;
                         } else {  ///gramos
-                            cantidadSubtotal = ((Float.parseFloat(String.valueOf(cantidad.getText()))) / 1000) * precio;
+                            cantidadSubtotal = ((Float.parseFloat(String.valueOf(cantidad.getText()))) / 1000) * precio;   //
                         }
                         if (cantidadSubtotal >= 0) {
-                            subtotal.setText(String.valueOf(cantidadSubtotal));
+                            subtotal.setText(String.valueOf(df.format(cantidadSubtotal)));
                         } else {
-                            subtotal.setText("0");
+                            subtotal.setText("");
                         }
                     } else {
-                        cantidad.setText("0");
+                        subtotal.setText("");
                     }
                 }
                 cantidad.setSelection(cantidad.getText().length());
@@ -135,24 +157,23 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     if (subtotal.isFocused()) {
-                        if (!(TextUtils.isEmpty(subtotal.getText()))) {
+                        if (!(TextUtils.isEmpty(subtotal.getText())) & !subtotal.getText().toString().equals(".")) {
                             if (tipo == 1) {   ///pieza
                                 cantidadProducto = Float.parseFloat(String.valueOf(subtotal.getText())) / precio;
                             } else {  ///gramos
                                 cantidadProducto = ((Float.parseFloat(String.valueOf(subtotal.getText()))) * 1000) / precio;
                             }
                             if (cantidadProducto >= 0) {
-                                cantidad.setText(String.valueOf(cantidadProducto));
+                                cantidad.setText(String.valueOf(df.format(cantidadProducto)));  ///---
                             } else {
-                                cantidad.setText("0");
+                                cantidad.setText("");
                             }
                         } else {
-                            subtotal.setText("0");
+                            cantidad.setText("");
                         }
                     }
                     subtotal.setSelection(subtotal.getText().length());
-                }
-                @Override
+                }                @Override
                 public void afterTextChanged(Editable editable) {
 
                 }
@@ -167,7 +188,7 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
                         repetido(producto);
                         ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Float.parseFloat(cantidad.getText().toString()),precio, tipo, Float.parseFloat(subtotal.getText().toString()) , productoElegido.getInt(0)));
                         dismiss();
-                        Toast.makeText(getContext(), "Agregado a Carrito", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Agregado a Empleados", Toast.LENGTH_LONG).show();
                     }
                     //aceptarCompra.actualizar(0, null);
                 }

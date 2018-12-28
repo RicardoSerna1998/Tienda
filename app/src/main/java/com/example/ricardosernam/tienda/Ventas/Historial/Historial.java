@@ -40,8 +40,6 @@ public class Historial extends Fragment {
     private static RecyclerView.LayoutManager lManager;
     public static ArrayList<Historial_class> itemsHistorial= new ArrayList <>(); ///Arraylist que contiene los productos///
     public static ArrayList<Productos_historial_class> itemsProductosHistorial= new ArrayList <>(); ///Arraylist que contiene los productos///
-
-    public Button cerrar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,17 +50,9 @@ public class Historial extends Fragment {
         View view= inflater.inflate(R.layout.fragment_historial, container, false);
         DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db=admin.getWritableDatabase();
-        cerrar=view.findViewById(R.id.BtnCerrarHistorial);
         recycler = view.findViewById(R.id.RVhistorial); ///declaramos el recycler
-
         fm=getActivity().getSupportFragmentManager();
-        cerrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas(), "Ventas").commit(); ///cambio de fragment
-                fm.beginTransaction().replace(R.id.LLprincipal, fm.findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
-            }
-        });
+
         rellenado_total();
         return view;
     }
@@ -102,20 +92,20 @@ public class Historial extends Fragment {
             filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
             if(filaProducto.moveToFirst()) {///si hay un elemento
                 if(filaProducto.isNull(1)){   ///gramos
-                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getInt(1), fila2.getFloat(2), (fila2.getInt(1)/1000)* fila2.getFloat(2)));
+                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), (fila2.getFloat(1)/1000)* fila2.getFloat(2)));
                 }
                 else{  ///pieza
-                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getInt(1), fila2.getFloat(2), fila2.getInt(1)* fila2.getFloat(2)));
+                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), fila2.getFloat(1)* fila2.getFloat(2)));
                 }
         }
             while (fila2.moveToNext()) {
                 filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
                 while (filaProducto.moveToNext()) {
                     if(filaProducto.isNull(1)){   ///gramos
-                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getInt(1), fila2.getFloat(2), (fila2.getInt(1)/1000)* fila2.getFloat(2)));
+                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), (fila2.getFloat(1)/1000)* fila2.getFloat(2)));
                     }
                     else{  ///pieza
-                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getInt(1), fila2.getFloat(2), fila2.getInt(1)* fila2.getFloat(2)));
+                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), fila2.getFloat(1)* fila2.getFloat(2)));
                     }
                 }
             }

@@ -9,15 +9,22 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 ;import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
+import com.example.ricardosernam.tienda.utils.Constantes;
 
 import java.util.ArrayList;
+
+import static android.widget.Toast.LENGTH_LONG;
 
 @SuppressLint("ValidFragment")
 public class Empleados extends Fragment {     /////Fragment de categoria ventas
@@ -27,6 +34,8 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
     private static RecyclerView.LayoutManager lManager;
     private static android.support.v4.app.FragmentManager fm;
     private static SQLiteDatabase db;
+    public static Button establecer;
+    public static EditText ip;
     private static ArrayList<Empleados_class> itemsEmpleados = new ArrayList<>();  ///Arraylist que contiene los cardviews seleccionados de productos
 
     @Override
@@ -37,8 +46,32 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         db=admin.getWritableDatabase();
         recycler = view.findViewById(R.id.RVempleados); ///declaramos el recycler
         fm=getFragmentManager();
+        ip=view.findViewById(R.id.ETip);
+        establecer=view.findViewById(R.id.BtnEstablecer);
 
         relleno(getContext());
+        establecer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(establecer.getText().equals(" Establecer IP ")){  //validamos que no este vacio
+                    if(TextUtils.isEmpty(ip.getText().toString().trim())){
+                        Toast.makeText(getContext(), "Ingresa un valor", LENGTH_LONG).show();
+                    }
+                    else{
+                        establecer.setText(" Modificar IP ");
+                        ip.setEnabled(false);
+                        ///guardamo el estado de la pantalla
+                        //values.put(ContractParaProductos.Columnas.IP,  String.valueOf(ip.getText()));
+                        //db.update("estados", values, null, null);
+                        new Constantes("http://"+String.valueOf(ip.getText()));
+                    }
+                }
+                else{
+                    establecer.setText(" Establecer IP ");
+                    ip.setEnabled(true);
+                }
+            }
+        });
         return view;
     }
    public static void relleno(Context context){    ///llamamos el adapter del recycler

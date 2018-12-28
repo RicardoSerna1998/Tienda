@@ -1,12 +1,15 @@
 package com.example.ricardosernam.tienda.Ventas;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,12 +23,14 @@ import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.Carrito.Carrito;
 import com.example.ricardosernam.tienda.DatabaseHelper;
-import com.example.ricardosernam.tienda.Empleados.Empleados_ventasAdapter;
 import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
 import com.example.ricardosernam.tienda.Ventas.Historial.Historial;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
+import static com.example.ricardosernam.tienda.MainActivity.bar;
 
 public class Ventas extends Fragment {
     private SearchView nombreCodigo;
@@ -36,6 +41,7 @@ public class Ventas extends Fragment {
     private android.support.v4.app.FragmentManager fm;
     private RecyclerView.LayoutManager lManager;
     private Button escanear, carrito, historial;
+    private android.support.v7.app.ActionBar actionBar;
 
     private ArrayList<Productos_class> itemsProductos= new ArrayList <>(); ///Arraylist que contiene los productos///
 
@@ -53,6 +59,7 @@ public class Ventas extends Fragment {
         escanear= view.findViewById(R.id.BtnEscanearProducto);
         carrito= view.findViewById(R.id.BtnCarrito);
         historial= view.findViewById(R.id.BtnHistorial);
+        actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
 
         escanear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,13 +70,16 @@ public class Ventas extends Fragment {
         });
 
         carrito.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 if(ContractParaProductos.itemsProductosVenta.isEmpty()){
                     Toast.makeText(getContext(), "No hay productos comprados aun", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito(), "Carrito").addToBackStack("Carrito").commit(); ///cambio de fragment
+                    actionBar.setDisplayHomeAsUpEnabled(true);
+                    getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Carrito(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
                 }
             }
         });
@@ -77,6 +87,7 @@ public class Ventas extends Fragment {
         historial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
                 getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Historial(), "Historial").addToBackStack("Historial").commit(); ///cambio de fragment
 
             }
@@ -130,7 +141,7 @@ public class Ventas extends Fragment {
         }
         adapter = new VentasAdapter(itemsProductos, fm, getContext());///llamamos al adaptador y le enviamos el array como parametro
         lManager = new LinearLayoutManager(this.getActivity());  //declaramos el layoutmanager
-        //lManager = new GridLayoutManager(this.getActivity(), 2);  //declaramos el layoutmanager
+        //lManager = new GridLayoutManager(this.getActivity(), 3);  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
