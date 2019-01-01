@@ -1,13 +1,11 @@
-package com.example.ricardosernam.tienda.Provider;
+package com.example.ricardosernam.tienda.provider;
 
 import android.content.UriMatcher;
 import android.graphics.Color;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.example.ricardosernam.tienda.DatabaseHelper;
-import com.example.ricardosernam.tienda.Ventas.Historial.Historial_class;
-import com.example.ricardosernam.tienda.Ventas.ProductosVenta_class;
+import com.example.ricardosernam.tienda.ventas.ProductosVenta_class;
 
 import java.util.ArrayList;
 
@@ -18,11 +16,11 @@ public class ContractParaProductos {
     /**
      * Autoridad del Content Provider
      */
-    public static final String DATABASE_NAME = "db_tacos.db";
+    public static final String DATABASE_NAME = "administrador_tienda.db";
 
     public static final int DATABASE_VERSION = 1;
 
-    public final static String AUTHORITY = "com.example.ricardosernam.puntodeventa";
+    public final static String AUTHORITY = "com.example.ricardosernam.tienda";
 
 
     public static final String EMPLEADOS = "empleados";

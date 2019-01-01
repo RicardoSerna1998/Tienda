@@ -1,4 +1,4 @@
-package com.example.ricardosernam.tienda.Ventas;
+package com.example.ricardosernam.tienda.ventas;
 
 public class ProductosVenta_class {  ///clase para obtener productos para cobrar
     public String nombre;

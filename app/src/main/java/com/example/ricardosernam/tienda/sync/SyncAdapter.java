@@ -2,8 +2,6 @@ package com.example.ricardosernam.tienda.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
@@ -14,8 +12,6 @@ import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,7 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.ricardosernam.tienda.DatabaseHelper;
-import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
 import com.example.ricardosernam.tienda.utils.Constantes;
 import com.example.ricardosernam.tienda.web.Empleados;
@@ -44,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -170,29 +166,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static void inicializarSyncAdapter(Context context, String ur, String select) {    ////PRIMER METODO LLAMADO
         url = ur;
         seleccionado = select;
-        obtenerCuentaASincronizar(context);
+        //obtenerCuentaASincronizar(context);
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override    ////metodo de la clase
-    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, final SyncResult syncResult) {
 
-        Log.i(TAG, "onPerformSync()...");
-
-        boolean soloSubida = extras.getBoolean(ContentResolver.SYNC_EXTRAS_UPLOAD, false);
-        String url3 = extras.getString("url", url2);
-
-        if (!soloSubida) {
-            realizarSincronizacionLocal(syncResult, url, seleccionado);   ////descargar
-        } else {
-            //realizarSincronizacionRemota(url3);  //subir
-        }
-    }
     /////////////////////////////////////////////////////metodos de sincronizacion ///////////////////////////////////////////////////////
-
-
-    private static Account obtenerCuentaASincronizar(Context context) {
+    private static Account obtenerCucentaASincronizar(Context context) {
         // Obtener instancia del administrador de cuentas
         AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
 
@@ -200,7 +179,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Account newAccount = new Account(context.getString(R.string.app_name), Constantes.ACCOUNT_TYPE);
 
         // Comprobar existencia de la cuenta
-        if (null == accountManager.getPassword(newAccount)) {
+        assert accountManager != null;
+        if (null == Objects.requireNonNull(accountManager).getPassword(newAccount)) {
 
             // Añadir la cuenta al account manager sin password y sin datos de usuario
             if (!accountManager.addAccountExplicitly(newAccount, "", null))
@@ -210,17 +190,33 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         return newAccount;
     }
 
-
     ///de aqui pasa a onSyncPerform
     public static void sincronizarAhora(Context context, boolean onlyUpload, String url2) {
         Log.i(TAG, "Realizando petición de sincronización manual.");
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        if (onlyUpload)
+        if (onlyUpload) {
             bundle.putBoolean(ContentResolver.SYNC_EXTRAS_UPLOAD, true);
+        }
+        else{
+            bundle.putBoolean(ContentResolver.SYNC_EXTRAS_UPLOAD, false);
+        }
         bundle.putString("url", url2);
-        ContentResolver.requestSync(obtenerCuentaASincronizar(context), context.getString(R.string.provider_authority), bundle);
+        ContentResolver.requestSync(obtenerCucentaASincronizar(context), context.getString(R.string.provider_authority), bundle);
+    }
+
+    @Override
+    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        Log.i(TAG, "onPerformSync()...");
+        boolean soloSubida = extras.getBoolean(ContentResolver.SYNC_EXTRAS_UPLOAD, false);
+        String url3 = extras.getString("url", url2);
+
+        if (!soloSubida) {
+            realizarSincronizacionLocal(syncResult, url3, seleccionado);   ////descargar
+        } else {
+            //realizarSincronizacionRemota(url3);  //subir
+        }
     }
 
 
@@ -232,18 +228,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
         ///los que no ocupan saber el carrito ni inventario
         else{*/
-        uri = url;
+        //uri = url;
+
         //}
         Log.i(TAG, "Actualizando el cliente.");   ////hasta aqui bien
         VolleySingleton.getInstance(getContext()).addToRequestQueue(
-                new JsonObjectRequest(Request.Method.GET, uri,  ////POSIBLE ERROR
+                new JsonObjectRequest(Request.Method.GET, url,  ////POSIBLE ERROR
                         new Response.Listener<JSONObject>() {
-                            @TargetApi(Build.VERSION_CODES.KITKAT)
-                            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-                            @Override
+                    @Override
                             public void onResponse(JSONObject response) {
-                                procesarRespuestaGet(response, syncResult, url);
-                            }
+                        procesarRespuestaGet(response, syncResult, url);
+                    }
                         },
                         new Response.ErrorListener() {  //// Si el ip es incorrecto
                             @Override
@@ -277,8 +272,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * @param response   Respuesta en formato Json
      * @param syncResult Registro de resultados de sincronización
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void procesarRespuestaGet(JSONObject response, SyncResult syncResult, String url) {
         try {
             // Obtener atributo "estado"
@@ -287,6 +280,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             switch (estado) {
 
                 case Constantes.SUCCESS: // EXITO En caso de 1
+                    Toast.makeText(getContext(), "actualizarDatosLocales", Toast.LENGTH_LONG).show();  ////error con los carritos
                     actualizarDatosLocales(response, syncResult, url);
                     break;
                 case Constantes.FAILED: // FALLIDO En caso de 2
@@ -318,15 +312,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void actualizarDatosLocales(JSONObject response, SyncResult syncResult, String url) {   ///aqui esta el error
 /////////////////////////////////////////////// CARRITO /////////////////////////////////////////////////////7
-        if (url.equals(Constantes.GET_URL_EMPLEADOS)) {
+        Toast.makeText(getContext(), url+"   "+Constantes.GET_URL_EMPLEADOS, Toast.LENGTH_LONG).show();  ////error con los carritos
+        Toast.makeText(getContext(), url+"   "+Constantes.GET_URL_INVENTARIO, Toast.LENGTH_LONG).show();  ////error con los carritos
+
+        /*if (url.equals(Constantes.GET_URL_EMPLEADOS)) {
             JSONArray gastos = null;
 
             try {
                 // Obtener array "gastos"
-                gastos = response.getJSONArray(Constantes.CARRITO);
+                gastos = response.getJSONArray(Constantes.EMPLEADO);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -334,22 +330,29 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             com.example.ricardosernam.tienda.web.Empleados[] res2 = gson.fromJson(gastos != null ? gastos.toString() : null, com.example.ricardosernam.tienda.web.Empleados[].class);
             List<com.example.ricardosernam.tienda.web.Empleados> data2 = Arrays.asList(res2);
 
-            // Lista para recolección de operaciones pendientes
+            ///null  null 0 null        solo el entero activo trae cero
+            // Se pasan de web.Empleados hacias ops2 y luego se insertan
             ArrayList<ContentProviderOperation> ops2 = new ArrayList<ContentProviderOperation>();
 
             // Tabla hash para recibir las entradas entrantes
-            HashMap<String, com.example.ricardosernam.tienda.web.Empleados> expenseMap2 = new HashMap<String, Empleados>();   /////contiene los datos consultados
-            for (com.example.ricardosernam.tienda.web.Empleados e : data2) {
+            HashMap<Integer, com.example.ricardosernam.tienda.web.Empleados> expenseMap2 = new HashMap<>();   /////contiene los datos consultados
+
+            Toast.makeText(getContext(), String.valueOf(res2.length), Toast.LENGTH_LONG).show();
+
+
+            for (com.example.ricardosernam.tienda.web.Empleados e : data2) {  ///asignamos los datos de res2 a empleados
                 expenseMap2.put(e.idempleado, e);
+                Toast.makeText(getContext(), e.idempleado + " " + e.nombre + " " + e.tipo + " " + e.codigo + " " + e.disponible + " " + e.activo, Toast.LENGTH_LONG).show();
             }
-            // Consultar registros remotos actuales
-            Uri uri2 = ContractParaProductos.CONTENT_URI_EMPLEADOS;
+            SyncAdapter.sincronizarAhora(getContext(), false, Constantes.GET_URL_INVENTARIO);
+       }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Consultar registros remotos actuales
+        /*    Uri uri2 = ContractParaProductos.CONTENT_URI_EMPLEADOS;
             String select2 = ContractParaProductos.Columnas.ID_REMOTA + " IS NOT NULL";
             Cursor c2 = resolver.query(uri2, PROJECTION_EMPLEADOS, select2, null, null);
-            //assert c2 != null;
 
-//            Log.i(TAG, "Se encontraron " + String.valueOf(c2.getCount()) + " registros locales CARRITO.");
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Encontrar datos obsoletos
              String idempleado;
              String nombre;
@@ -357,9 +360,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
              String codigo;
              int activo;
 
-
-            //if ((c2.moveToFirst())){
-            if ((c2 != null ? c2.getCount() : 0) > 0) {  ///api 19
+             ///CHECAMOS LOS REGISTROS QUE YA ESTAN INSERTADOS
+             if ((c2 != null ? c2.getCount() : 0) > 0) {  ///api 19
             while (c2.moveToNext()) {
                      syncResult.stats.numEntries++;
 
@@ -388,7 +390,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
 
-                         if (b || b2 || b3) {
+                         if (b || b2 || b3 || b4) {
                              Log.i(TAG, "Programando actualización de: " + existingUri + " EMPLEADOS");
                              ops2.add(ContentProviderOperation.newUpdate(existingUri)
                                      .withValue(ContractParaProductos.Columnas.NOMBRE_EMPLEADO, match.nombre)
@@ -414,10 +416,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             if (c2 != null) {
                 c2.close();
             }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             ////insertamos los valores de la base de datos
             for (com.example.ricardosernam.tienda.web.Empleados e : expenseMap2.values()) {
-                Log.i(TAG, "Programando inserción de: " + e.idempleado + " EMPLEADOS");
+                Log.i(TAG, "Programando inserción de: " + e.idempleado + " EMPLEADOS");    ////no trae ningun dato
                 ops2.add(ContentProviderOperation.newInsert(ContractParaProductos.CONTENT_URI_EMPLEADOS)   /////error
                         .withValue(ContractParaProductos.Columnas.ID_REMOTA, e.idempleado)
                         .withValue(ContractParaProductos.Columnas.NOMBRE_EMPLEADO, e.nombre)
@@ -427,9 +430,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         .build());
                 syncResult.stats.numInserts++;
             }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if (syncResult.stats.numInserts > 0 || syncResult.stats.numUpdates > 0 || syncResult.stats.numDeletes > 0) {
-                Log.i(TAG, "Aplicando operaciones... EMPLEADOS");
+                Log.i(TAG, "Aplicando operaciones... EMPLEADOS");  //por aqui está el  error (al insertar)
                 try {
                     resolver.applyBatch(ContractParaProductos.AUTHORITY, ops2);
                 } catch (RemoteException | OperationApplicationException e) {
@@ -437,7 +439,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
                 resolver.notifyChange(ContractParaProductos.CONTENT_URI_EMPLEADOS, null, false);
                 Log.i(TAG, "Sincronización finalizada EMPLEADOS.");
-                com.example.ricardosernam.tienda.Empleados.Empleados.relleno(getContext());
+                //com.example.ricardosernam.tienda.Empleados.Empleados.relleno();
 
             } else {
                 Log.i(TAG, "No se requiere sincronización CARRITO");
@@ -446,31 +448,37 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             //Sincronizar.buscar.setText(" Buscar carritos ");
             //Sincronizar.buscar.getBackground().setColorFilter(null);  //habilitado
 
-        }
+       // }*/
 ///////////////////////////////////////////////INVENTARIO/////////////////////////////////////////////////////7
-      /*  else if (url.equals(Constantes.GET_URL_INVENTARIO) ) {
-            JSONArray gastos = null;
+     //else if (url.equals(Constantes.GET_URL_INVENTARIO) ) {
+         JSONArray gastosI = null;
 
-            try {
-                // Obtener array "gastos"
-                gastos = response.getJSONArray(Constantes.INVENTARIO);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            // Parsear con Gson
-            com.example.ricardosernam.puntodeventa.web.Inventario[] res2 = gson.fromJson(gastos != null ? gastos.toString() : null, com.example.ricardosernam.puntodeventa.web.Inventario[].class);
-            List<com.example.ricardosernam.puntodeventa.web.Inventario> data2 = Arrays.asList(res2);
+         try {
+             // Obtener array "gastos"
+             gastosI = response.getJSONArray(Constantes.INVENTARIO);
+         } catch (JSONException e) {
+             e.printStackTrace();
+         }
+         // Parsear con Gson
+         com.example.ricardosernam.tienda.web.Inventario[] res3 = gson.fromJson(gastosI != null ? gastosI.toString() : null, com.example.ricardosernam.tienda.web.Inventario[].class);
+         List<com.example.ricardosernam.tienda.web.Inventario> data3 = Arrays.asList(res3);
 
-            // Lista para recolección de operaciones pendientes
-            ArrayList<ContentProviderOperation> ops2 = new ArrayList<ContentProviderOperation>();
+         Toast.makeText(getContext(), String.valueOf(res3.length), Toast.LENGTH_LONG).show();
 
-            // Tabla hash para recibir las entradas entrantes
-            HashMap<String, com.example.ricardosernam.puntodeventa.web.Inventario> expenseMap2 = new HashMap<String, com.example.ricardosernam.puntodeventa.web.Inventario>();   /////contiene los datos consultados
-            for (com.example.ricardosernam.puntodeventa.web.Inventario e : data2) {
-                expenseMap2.put(e.idinventario, e);
-            }
+
+         // Lista para recolección de operaciones pendientes
+         ArrayList<ContentProviderOperation> ops3 = new ArrayList<ContentProviderOperation>();
+
+         // Tabla hash para recibir las entradas entrantes
+         HashMap<String, com.example.ricardosernam.tienda.web.Inventario> expenseMap3 = new HashMap<String, com.example.ricardosernam.tienda.web.Inventario>();   /////contiene los datos consultados
+         for (com.example.ricardosernam.tienda.web.Inventario e : data3) {
+             expenseMap3.put(e.idproducto, e);  ///id y nombre nos los trae, existentes lo hace mal
+             Toast.makeText(getContext(), e.idproducto + " " + e.nombre + " " + e.precio + " " + e.codigo_barras + " " + e.existentes, Toast.LENGTH_LONG).show();
+
+         }
+   //  }
             // Consultar registros remotos actuales
-            Uri uri2 = ContractParaProductos.CONTENT_URI_INVENTARIO;
+            /*Uri uri2 = ContractParaProductos.CONTENT_URI_INVENTARIO;
             String select2 = ContractParaProductos.Columnas.ID_REMOTA + " IS NOT NULL";
             Cursor c2 = resolver.query(uri2, PROJECTION_INVENTARIO, select2, null, null);
             //assert c2 != null;

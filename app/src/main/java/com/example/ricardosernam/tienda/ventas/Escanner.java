@@ -1,4 +1,4 @@
-package com.example.ricardosernam.tienda.Ventas;
+package com.example.ricardosernam.tienda.ventas;
 
 import android.Manifest;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.example.ricardosernam.tienda.Ventas;
+package com.example.ricardosernam.tienda.ventas;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
@@ -16,9 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.ricardosernam.tienda.Carrito.Carrito;
 import com.example.ricardosernam.tienda.DatabaseHelper;
-import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
 
 import java.text.DecimalFormat;

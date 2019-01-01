@@ -1,4 +1,4 @@
-package com.example.ricardosernam.tienda.Provider;
+package com.example.ricardosernam.tienda.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -8,10 +8,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import com.example.ricardosernam.tienda.DatabaseHelper;
 
-import static com.example.ricardosernam.tienda.Provider.ContractParaProductos.DATABASE_NAME;
+import static com.example.ricardosernam.tienda.provider.ContractParaProductos.DATABASE_NAME;
 
 /**
  * Content Provider personalizado para los gastos
@@ -288,7 +289,7 @@ public class ProviderDeProductos extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         ContentValues contentValues;
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         // Validar la uri

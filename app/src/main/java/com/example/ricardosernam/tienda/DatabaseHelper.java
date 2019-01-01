@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 
 
 /**

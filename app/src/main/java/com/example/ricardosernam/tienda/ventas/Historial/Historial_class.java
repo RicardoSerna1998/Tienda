@@ -1,4 +1,4 @@
-package com.example.ricardosernam.tienda.Ventas.Historial;
+package com.example.ricardosernam.tienda.ventas.Historial;
 
 
 

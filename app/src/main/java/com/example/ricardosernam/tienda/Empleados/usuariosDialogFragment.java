@@ -3,13 +3,11 @@ package com.example.ricardosernam.tienda.Empleados;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +18,11 @@ import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.MainActivity;
-import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
-import com.example.ricardosernam.tienda.Ventas.Ventas;
+import com.example.ricardosernam.tienda.ventas.Ventas;
 
 import static com.example.ricardosernam.tienda.Empleados.Empleados.relleno;
-import static com.example.ricardosernam.tienda.Provider.ContractParaProductos.rojo;
-import static com.example.ricardosernam.tienda.Provider.ContractParaProductos.verde;
 
 
 @SuppressLint("ValidFragment")
@@ -79,7 +75,7 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
                                 values.put("activo", 1);
                                 db.update("empleados", values, "nombre_empleado='" + usuario + "'", null);
                                 MainActivity.empleadoActivo.setText("Cajer@: "+usuario);
-                                relleno(getContext());
+                                relleno();
                                 getDialog().dismiss();
                                 getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas(), "Ventas").addToBackStack("Ventas").commit(); ///cambio de fragment
                             }
@@ -87,7 +83,7 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
                         else{///otro puesto que no implica caja
                             values.put("activo", 1);
                             db.update("empleados", values, "nombre_empleado='" + usuario + "'", null);
-                            relleno(getContext());
+                            relleno();
                             getDialog().dismiss();
                             }
                     }
@@ -97,7 +93,7 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
                             }
                         values.put("activo", 0);
                         db.update("empleados", values, "nombre_empleado='" + usuario + "'", null);
-                        relleno(getContext());
+                        relleno();
                         getDialog().dismiss();
                         }
                 }

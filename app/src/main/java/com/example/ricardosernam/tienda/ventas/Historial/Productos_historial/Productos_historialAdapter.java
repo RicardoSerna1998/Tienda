@@ -1,13 +1,9 @@
-package com.example.ricardosernam.tienda.Ventas.Historial.Productos_historial;
+package com.example.ricardosernam.tienda.ventas.Historial.Productos_historial;
 
-import android.app.FragmentManager;
-import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.ricardosernam.tienda.R;

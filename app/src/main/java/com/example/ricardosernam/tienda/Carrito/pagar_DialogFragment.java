@@ -25,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.DatabaseHelper;
-import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
 
 import java.io.IOException;

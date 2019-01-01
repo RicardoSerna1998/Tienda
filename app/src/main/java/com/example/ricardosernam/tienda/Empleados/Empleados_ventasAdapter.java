@@ -3,30 +3,22 @@ package com.example.ricardosernam.tienda.Empleados;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.R;
 
 import java.util.ArrayList;
 
-import static com.example.ricardosernam.tienda.Provider.ContractParaProductos.rojo;
-import static com.example.ricardosernam.tienda.Provider.ContractParaProductos.verde;
+import static com.example.ricardosernam.tienda.provider.ContractParaProductos.rojo;
+import static com.example.ricardosernam.tienda.provider.ContractParaProductos.verde;
 
 public class Empleados_ventasAdapter extends RecyclerView.Adapter <Empleados_ventasAdapter.Productos_ventasViewHolder>{  ///adaptador para el Fragmet Ventas
     private ArrayList<Empleados_class> itemsEmpleados;

@@ -1,7 +1,6 @@
-package com.example.ricardosernam.tienda.Ventas;
+package com.example.ricardosernam.tienda.ventas;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -23,14 +21,11 @@ import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.Carrito.Carrito;
 import com.example.ricardosernam.tienda.DatabaseHelper;
-import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
-import com.example.ricardosernam.tienda.Ventas.Historial.Historial;
+import com.example.ricardosernam.tienda.ventas.Historial.Historial;
 
 import java.util.ArrayList;
-import java.util.Objects;
-
-import static com.example.ricardosernam.tienda.MainActivity.bar;
 
 public class Ventas extends Fragment {
     private SearchView nombreCodigo;

@@ -3,7 +3,6 @@ package com.example.ricardosernam.tienda.Carrito;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,16 +14,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
-import com.example.ricardosernam.tienda.Ventas.ProductosVenta_class;
-import com.example.ricardosernam.tienda.Ventas.Productos_class;
-import com.example.ricardosernam.tienda.Ventas.cantidad_producto_DialogFragment;
+import com.example.ricardosernam.tienda.ventas.ProductosVenta_class;
 import com.example.ricardosernam.tienda._____interfazes.actualizado;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.function.UnaryOperator;
 
 public class CarritosAdapter extends RecyclerView.Adapter <CarritosAdapter.Productos_ventasViewHolder>{  ///adaptador para el Fragmet Ventas
     private ArrayList<ProductosVenta_class> itemsProductosVenta;

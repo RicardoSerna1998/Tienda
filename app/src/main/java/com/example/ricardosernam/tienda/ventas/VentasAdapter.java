@@ -1,21 +1,13 @@
-package com.example.ricardosernam.tienda.Ventas;
+package com.example.ricardosernam.tienda.ventas;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.ricardosernam.tienda.Empleados.Empleados_class;
-import com.example.ricardosernam.tienda.Empleados.usuariosDialogFragment;
 import com.example.ricardosernam.tienda.R;
 
 import java.text.DecimalFormat;

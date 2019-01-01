@@ -1,20 +1,15 @@
 package com.example.ricardosernam.tienda.Carrito;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.DatabaseHelper;
-import com.example.ricardosernam.tienda.Provider.ContractParaProductos;
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
-import com.example.ricardosernam.tienda.Ventas.ProductosVenta_class;
-import com.example.ricardosernam.tienda.Ventas.Productos_class;
-import com.example.ricardosernam.tienda.Ventas.Ventas;
-import com.example.ricardosernam.tienda.Ventas.VentasAdapter;
-import com.example.ricardosernam.tienda.Ventas.cantidad_producto_DialogFragment;
-import com.example.ricardosernam.tienda._____interfazes.actualizado;
+import com.example.ricardosernam.tienda.ventas.ProductosVenta_class;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 

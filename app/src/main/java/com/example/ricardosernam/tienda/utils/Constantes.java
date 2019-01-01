@@ -47,6 +47,10 @@ public class Constantes {
     }
 
     public static final String CARRITO = "carrito";
+    public static final String EMPLEADO = "empleado";
+
+
+
 
     public static final String ID_PRODUCTO = "idproducto";
     public static final String PRODUCTO = "producto";
@@ -67,5 +71,5 @@ public class Constantes {
     /**
      * Tipo de cuenta para la sincronización
      */
-    public static final String ACCOUNT_TYPE = "com.example.ricardosernam.puntodeventa.account";
+    public static final String ACCOUNT_TYPE = "com.example.ricardosernam.tienda.account";
 }
