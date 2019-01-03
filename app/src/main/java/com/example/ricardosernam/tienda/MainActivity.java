@@ -78,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
             if(Empleados.ip.isEnabled()){
                 Toast.makeText(getApplicationContext(), "Establece la IP", LENGTH_LONG).show();
             } else{
-                //SyncAdapter.inicializarSyncAdapter(getApplicationContext(), Constantes.GET_URL_EMPLEADOS, null);
-                //SyncAdapter.sincronizarAhora(getApplicationContext(), false, Constantes.GET_URL_EMPLEADOS);
-                SyncAdapter.sincronizarAhora(getApplicationContext(), false, Constantes.GET_URL_INVENTARIO);
+                //SyncAdapter.inicializarSyncAdapter(getApplicationContext(), Constantes.GET_URL_INVENTARIO, null);
+                //SyncAdapter.sincronizarAhora(getApplicationContext(), false, null);
+                SyncAdapter.sincronizarAhora(getApplicationContext(), false, Constantes.GET_URL_EMPLEADOS);
 
             }
             return true;

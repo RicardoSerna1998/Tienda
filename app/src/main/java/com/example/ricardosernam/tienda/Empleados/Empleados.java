@@ -80,7 +80,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
 
         empleados = db.rawQuery("select nombre_empleado, tipo_empleado, activo, codigo from empleados ORDER by activo desc", null);
         if (empleados.moveToFirst()) {///si hay un elemento
-            Toast.makeText(context, "Entra", LENGTH_LONG).show();
             itemsEmpleados.add(new Empleados_class(empleados.getString(0), empleados.getString(1), empleados.getInt(2), empleados.getString(3)));
             while (empleados.moveToNext()) {
                 itemsEmpleados.add(new Empleados_class(empleados.getString(0), empleados.getString(1), empleados.getInt(2), empleados.getString(3)));

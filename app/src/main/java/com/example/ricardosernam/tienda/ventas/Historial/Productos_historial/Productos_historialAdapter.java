@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ricardosernam.tienda.R;
+import com.example.ricardosernam.tienda.ventas.Historial.Historial;
 
 import java.util.ArrayList;
 
@@ -51,6 +52,5 @@ public class Productos_historialAdapter extends RecyclerView.Adapter<Productos_h
         holder.cantidad.setText(String.valueOf(itemsProductosHistorial.get(position).getCantidad()));
         holder.precio.setText("$ "+itemsProductosHistorial.get(position).getPrecio().toString());
         holder.subtotal.setText("$ "+itemsProductosHistorial.get(position).getSubTotal().toString());
-
     }
 }

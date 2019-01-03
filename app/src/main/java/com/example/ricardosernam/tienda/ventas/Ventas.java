@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public class Ventas extends Fragment {
     private SearchView nombreCodigo;
-    private Cursor fila, filaBusqueda, datoEscaneado;
+    private Cursor fila, filaBusqueda, datoEscaneado, ventas;
     private SQLiteDatabase db;
     private RecyclerView recycler;
     private RecyclerView.Adapter adapter;
@@ -82,9 +82,13 @@ public class Ventas extends Fragment {
         historial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-                getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Historial(), "Historial").addToBackStack("Historial").commit(); ///cambio de fragment
-
+                ventas = db.rawQuery("select * from ventas", null);
+                if (ventas.moveToFirst()) {
+                    actionBar.setDisplayHomeAsUpEnabled(true);
+                    getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Historial(), "Historial").addToBackStack("Historial").commit(); ///cambio de fragment
+                }else{
+                    Toast.makeText(getContext(), "No hay ventas realizadas aun", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -98,10 +102,8 @@ public class Ventas extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(!(TextUtils.isEmpty(newText))) {   ///el campo tiene algo
-                    //if ((TextUtils.isDigitsOnly(newText))) {  ///si el campo tiene tan solo numeros es un codigo
-                        filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existentes from inventario where nombre_producto='" + newText + "'", null);
-                    //}
-                    if (filaBusqueda.moveToFirst()) { ///si hay un elemento
+                    filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existentes from inventario where nombre_producto like ?", new String[] { "%" + newText + "%" });
+                        if (filaBusqueda.moveToFirst()) { ///si hay un elemento
                         itemsProductos.removeAll(itemsProductos);
                         itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
                         while (filaBusqueda.moveToNext()) {

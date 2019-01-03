@@ -29,6 +29,8 @@ public class Historial extends Fragment {
     private static RecyclerView.LayoutManager lManager;
     public static ArrayList<Historial_class> itemsHistorial= new ArrayList <>(); ///Arraylist que contiene los productos///
     public static ArrayList<Productos_historial_class> itemsProductosHistorial= new ArrayList <>(); ///Arraylist que contiene los productos///
+    public static TextView totalDia;
+    public static float total;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,10 @@ public class Historial extends Fragment {
         DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db=admin.getWritableDatabase();
         recycler = view.findViewById(R.id.RVhistorial); ///declaramos el recycler
+        totalDia = view.findViewById(R.id.TVtotalDelDia); ///declaramos el recycler
+        total=0;
+
+
         fm=getActivity().getSupportFragmentManager();
 
         rellenado_total();
@@ -81,20 +87,28 @@ public class Historial extends Fragment {
             filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
             if(filaProducto.moveToFirst()) {///si hay un elemento
                 if(filaProducto.isNull(1)){   ///gramos
-                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), (fila2.getFloat(1)/1000)* fila2.getFloat(2)));
+                    float subtotal=(fila2.getFloat(1)/1000)* fila2.getFloat(2);
+                    total=total+subtotal;
+                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), subtotal));
                 }
                 else{  ///pieza
-                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), fila2.getFloat(1)* fila2.getFloat(2)));
+                    float subtotal=fila2.getFloat(1)* fila2.getFloat(2);
+                    total=total+subtotal;
+                    itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), subtotal));
                 }
         }
             while (fila2.moveToNext()) {
                 filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
                 while (filaProducto.moveToNext()) {
                     if(filaProducto.isNull(1)){   ///gramos
-                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), (fila2.getFloat(1)/1000)* fila2.getFloat(2)));
+                        float subtotal=(fila2.getFloat(1)/1000)* fila2.getFloat(2);
+                        total=total+subtotal;
+                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), subtotal));
                     }
                     else{  ///pieza
-                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), fila2.getFloat(1)* fila2.getFloat(2)));
+                        float subtotal=fila2.getFloat(1)* fila2.getFloat(2);
+                        total=total+subtotal;
+                        itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), subtotal));
                     }
                 }
             }
@@ -104,14 +118,17 @@ public class Historial extends Fragment {
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        calcularTotalporDia();
     }
 
-    public static void calcularTotal(TextView total){
+    public static void calcularTotalporVenta(TextView total){  ///total por venta
         float suma=0;
         for(int i=0; i<itemsProductosHistorial.size(); i++){
             suma=suma+itemsProductosHistorial.get(i).getSubTotal();
             total.setText("Total: $"+String.valueOf(suma));
         }
     }
-
+    public static void calcularTotalporDia(){  ///total por venta
+        totalDia.setText("Total del dia: $"+String.valueOf(total));
+    }
 }

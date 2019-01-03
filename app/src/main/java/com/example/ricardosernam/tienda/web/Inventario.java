@@ -8,10 +8,10 @@ public class Inventario {
     public String nombre;
     public double precio;
     public String codigo_barras;
-    public double existentes;
+    public Double existentes;
 
 
-    public Inventario(String idproducto, String nombre, double precio, String codigo_barras, double existentes) {
+    public Inventario(String idproducto, String nombre, double precio, String codigo_barras, Double existentes) {
         this.idproducto = idproducto;
         this.nombre = nombre;
         this.precio = precio;

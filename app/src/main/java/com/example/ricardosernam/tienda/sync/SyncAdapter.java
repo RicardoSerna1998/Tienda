@@ -31,15 +31,20 @@ import com.example.ricardosernam.tienda.utils.Constantes;
 import com.example.ricardosernam.tienda.web.Empleados;
 import com.example.ricardosernam.tienda.web.VolleySingleton;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -57,7 +62,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private ContentResolver resolver;
     private DatabaseHelper admin = new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
     private SQLiteDatabase database = admin.getWritableDatabase();
+    //private Gson gson = new Gson();
     private Gson gson = new Gson();
+
 
     /**
      * Proyección para las consultas
@@ -312,14 +319,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void actualizarDatosLocales(JSONObject response, SyncResult syncResult, String url) {   ///aqui esta el error
+    private void actualizarDatosLocales(JSONObject response, SyncResult syncResult, String url) throws JSONException {   ///aqui esta el error
 /////////////////////////////////////////////// CARRITO /////////////////////////////////////////////////////7
-        Toast.makeText(getContext(), url+"   "+Constantes.GET_URL_EMPLEADOS, Toast.LENGTH_LONG).show();  ////error con los carritos
-        Toast.makeText(getContext(), url+"   "+Constantes.GET_URL_INVENTARIO, Toast.LENGTH_LONG).show();  ////error con los carritos
+        //Toast.makeText(getContext(), url+"   "+Constantes.GET_URL_EMPLEADOS, Toast.LENGTH_LONG).show();  ////error con los carritos
 
-        /*if (url.equals(Constantes.GET_URL_EMPLEADOS)) {
+        //if (url.equals(Constantes.GET_URL_EMPLEADOS)) {
             JSONArray gastos = null;
-
             try {
                 // Obtener array "gastos"
                 gastos = response.getJSONArray(Constantes.EMPLEADO);
@@ -327,39 +332,85 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 e.printStackTrace();
             }
             // Parsear con Gson
-            com.example.ricardosernam.tienda.web.Empleados[] res2 = gson.fromJson(gastos != null ? gastos.toString() : null, com.example.ricardosernam.tienda.web.Empleados[].class);
-            List<com.example.ricardosernam.tienda.web.Empleados> data2 = Arrays.asList(res2);
+            //com.example.ricardosernam.tienda.web.Empleados[] res2 = gson.fromJson(gastos != null ? gastos.toString() : null, com.example.ricardosernam.tienda.web.Empleados[].class);
+         //List<com.example.ricardosernam.tienda.web.Empleados> data2 = Arrays.asList(res2);
+        //List<com.example.ricardosernam.tienda.web.Empleados> data2 = null;
 
-            ///null  null 0 null        solo el entero activo trae cero
+
+        ///null  null 0 null        solo el entero activo trae cero
             // Se pasan de web.Empleados hacias ops2 y luego se insertan
             ArrayList<ContentProviderOperation> ops2 = new ArrayList<ContentProviderOperation>();
 
             // Tabla hash para recibir las entradas entrantes
-            HashMap<Integer, com.example.ricardosernam.tienda.web.Empleados> expenseMap2 = new HashMap<>();   /////contiene los datos consultados
+            HashMap<String, com.example.ricardosernam.tienda.web.Empleados> expenseMap2 = new HashMap<>();   /////contiene los datos consultados
+            //HashMap<String, String> datos2 = new HashMap<>();   /////contiene los datos consultados
+        List<com.example.ricardosernam.tienda.web.Empleados> datos2 =new ArrayList <>();;
 
-            Toast.makeText(getContext(), String.valueOf(res2.length), Toast.LENGTH_LONG).show();
 
+        //Toast.makeText(getContext(), String.valueOf(res2.length), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), String.valueOf(gastos.length()), Toast.LENGTH_LONG).show();
 
-            for (com.example.ricardosernam.tienda.web.Empleados e : data2) {  ///asignamos los datos de res2 a empleados
-                expenseMap2.put(e.idempleado, e);
-                Toast.makeText(getContext(), e.idempleado + " " + e.nombre + " " + e.tipo + " " + e.codigo + " " + e.disponible + " " + e.activo, Toast.LENGTH_LONG).show();
+        for (int i = 0; i < gastos.length(); i++) {
+            JSONObject c= null;
+            try {
+                c = gastos.getJSONObject(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            SyncAdapter.sincronizarAhora(getContext(), false, Constantes.GET_URL_INVENTARIO);
-       }
+            Toast.makeText(getContext(), c.getString("id_empleado")+" "+c.getString("nombre_empleado")+" "+c.getString("tipo_empleado")+" "+c.getString("codigo")+" "+c.getInt("activo"), Toast.LENGTH_LONG).show();
+
+            //  hashmap for single match
+            //HashMap<String, String> matchFixture = new HashMap<String, String>();
+            // adding each child node to HashMap key => value
+            //matchFixture.put("id_producto", c.getString("id_producto"));
+            //matchFixture.put("nombre_producto", c.getString("nombre_producto"));
+            //matchFixtureList.add(matchFixture);
+            //res2= gson.fromJson(c.toString(), com.example.ricardosernam.tienda.web.Empleados[].class);
+
+            /*datos2.put("id_empleado", c.getString("id_empleado"));
+            datos2.put("nombre_empleado", c.getString("nombre_empleado"));
+            datos2.put("tipo_empleado", c.getString("tipo_empleado"));
+            datos2.put("codigo", c.getString("codigo"));
+            datos2.put("activo", c.getString("activo"));*/
+            datos2.add(new Empleados(c.getString("id_empleado"), c.getString("nombre_empleado"),c.getString("tipo_empleado"),c.getString("codigo"),c.getInt("activo")));
+        }
+
+                    //List<com.example.ricardosernam.tienda.web.Empleados> res2 = new ArrayList<Empleados>(datos2.values());
+
+        //String json=gson.toJson(datos2);
+        //Type typeOfHashMap = new TypeToken<Map<String, String>>() { }.getType();
+        //Type typeOfHashMap = new TypeToken<Collection<Empleados>>() { }.getType();
+
+        //Map<String, String> newMap=gson.fromJson(json, typeOfHashMap);
+
+        //List<com.example.ricardosernam.tienda.web.Empleados> res2 = gson.fromJson(json, typeOfHashMap);
+
+
+        //com.example.ricardosernam.tienda.web.Empleados[] res2 = gson.fromJson(json, typeOfHashMap);
+
+        //List<com.example.ricardosernam.tienda.web.Empleados> data2 = Arrays.asList(res2);
+
+
+        for (com.example.ricardosernam.tienda.web.Empleados e : datos2) {  ///asignamos los datos de data2 a empleados
+                expenseMap2.put(e.idempleado, e);
+                Toast.makeText(getContext(), e.idempleado, Toast.LENGTH_LONG).show();
+            }
+         //   SyncAdapter.sincronizarAhora(getContext(), false, Constantes.GET_URL_INVENTARIO);
+      // }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Consultar registros remotos actuales
-        /*    Uri uri2 = ContractParaProductos.CONTENT_URI_EMPLEADOS;
+         Uri uri2 = ContractParaProductos.CONTENT_URI_EMPLEADOS;
             String select2 = ContractParaProductos.Columnas.ID_REMOTA + " IS NOT NULL";
             Cursor c2 = resolver.query(uri2, PROJECTION_EMPLEADOS, select2, null, null);
 
             // Encontrar datos obsoletos
+
              String idempleado;
              String nombre;
              String tipo;
              String codigo;
              int activo;
-
              ///CHECAMOS LOS REGISTROS QUE YA ESTAN INSERTADOS
              if ((c2 != null ? c2.getCount() : 0) > 0) {  ///api 19
             while (c2.moveToNext()) {
@@ -418,7 +469,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            ////insertamos los valores de la base de datos
+            ////insertamos los valores a la base de datos
             for (com.example.ricardosernam.tienda.web.Empleados e : expenseMap2.values()) {
                 Log.i(TAG, "Programando inserción de: " + e.idempleado + " EMPLEADOS");    ////no trae ningun dato
                 ops2.add(ContentProviderOperation.newInsert(ContractParaProductos.CONTENT_URI_EMPLEADOS)   /////error
@@ -442,7 +493,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 //com.example.ricardosernam.tienda.Empleados.Empleados.relleno();
 
             } else {
-                Log.i(TAG, "No se requiere sincronización CARRITO");
+                Log.i(TAG, "No se requiere sincronización EMPLEADO");
             }
             //Sincronizar.buscar.setEnabled(true);
             //Sincronizar.buscar.setText(" Buscar carritos ");
@@ -450,7 +501,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
        // }*/
 ///////////////////////////////////////////////INVENTARIO/////////////////////////////////////////////////////7
-     //else if (url.equals(Constantes.GET_URL_INVENTARIO) ) {
+     /*else if (url.equals(Constantes.GET_URL_INVENTARIO) ) {
          JSONArray gastosI = null;
 
          try {
@@ -461,18 +512,35 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          }
          // Parsear con Gson
          com.example.ricardosernam.tienda.web.Inventario[] res3 = gson.fromJson(gastosI != null ? gastosI.toString() : null, com.example.ricardosernam.tienda.web.Inventario[].class);
-         List<com.example.ricardosernam.tienda.web.Inventario> data3 = Arrays.asList(res3);
+         //List<com.example.ricardosernam.tienda.web.Inventario> data3 = Arrays.asList(res3);
 
-         Toast.makeText(getContext(), String.valueOf(res3.length), Toast.LENGTH_LONG).show();
+         Toast.makeText(getContext(), String.valueOf(gastosI.length()), Toast.LENGTH_LONG).show();
 
+        for (int i = 0; i < gastosI.length(); i++) {
+            JSONObject c= null;
+            try {
+                c = gastosI.getJSONObject(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(getContext(), c.getString("id_producto")+" "+c.getString("nombre_producto"), Toast.LENGTH_LONG).show();
+
+            //  hashmap for single match
+            /*HashMap<String, String> matchFixture = new HashMap<String, String>();
+            // adding each child node to HashMap key => value
+            matchFixture.put("id_producto", c.getString("id_producto"));
+            matchFixture.put("nombre_producto", c.getString("nombre_producto"));*/
+            //matchFixtureList.add(matchFixture);
+        }
 
          // Lista para recolección de operaciones pendientes
-         ArrayList<ContentProviderOperation> ops3 = new ArrayList<ContentProviderOperation>();
+         /*ArrayList<ContentProviderOperation> ops3 = new ArrayList<ContentProviderOperation>();
 
          // Tabla hash para recibir las entradas entrantes
          HashMap<String, com.example.ricardosernam.tienda.web.Inventario> expenseMap3 = new HashMap<String, com.example.ricardosernam.tienda.web.Inventario>();   /////contiene los datos consultados
-         for (com.example.ricardosernam.tienda.web.Inventario e : data3) {
-             expenseMap3.put(e.idproducto, e);  ///id y nombre nos los trae, existentes lo hace mal
+
+        for (com.example.ricardosernam.tienda.web.Inventario e : data3) {
+             expenseMap3.put(e.idproducto, e);  ///id, existentes  y nombre nos los trae,
              Toast.makeText(getContext(), e.idproducto + " " + e.nombre + " " + e.precio + " " + e.codigo_barras + " " + e.existentes, Toast.LENGTH_LONG).show();
 
          }
@@ -1350,7 +1418,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     }*/
 }
-}
+//}
 
 
 

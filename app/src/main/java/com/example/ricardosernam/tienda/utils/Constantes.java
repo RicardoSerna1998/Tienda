@@ -33,7 +33,9 @@ public class Constantes {
 
         GET_URL_INFORMACION= ip + PUERTO_HOST + "/Eduardo/productos/obtener_productos.php";
 
-        GET_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/obtener_inventarios.php?idcarrito=";   //////
+        //GET_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/obtener_inventarios.php?idcarrito=";   //////
+
+        GET_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/obtener_inventarios.php";   //////
 
         UPDATE_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/actualizar_inventario.php?idinventario=";   //////
 

@@ -1,6 +1,7 @@
 package com.example.ricardosernam.tienda.ventas;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import com.example.ricardosernam.tienda.R;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import static com.example.ricardosernam.tienda.provider.ContractParaProductos.rojo;
 
 public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos_ventasViewHolder>{  ///adaptador para el Fragmet Ventas
     private ArrayList<Productos_class> itemsProductos;
@@ -51,12 +54,15 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
         holder.precio.setText("$"+String.valueOf(itemsProductos.get(position).getPrecio()));
         DecimalFormat df = new DecimalFormat("#.00");
 
+        if(itemsProductos.get(position).getExistentes()<=0) { ////0 son gramos
+            holder.existentes.setTextColor(ColorStateList.valueOf(rojo));
+        }
         if(itemsProductos.get(position).getCodigo_barras()==null) { ////0 son gramos
             holder.existentes.setText(String.valueOf(df.format(itemsProductos.get(position).getExistentes())) +" Gramos aún");
         }
         else{ //1 es piezas
             holder.existentes.setText(String.valueOf(df.format(itemsProductos.get(position).getExistentes()) +" Pieza(s) aún"));
-            }
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
