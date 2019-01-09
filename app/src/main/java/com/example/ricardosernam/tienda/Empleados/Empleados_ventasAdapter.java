@@ -23,12 +23,10 @@ import static com.example.ricardosernam.tienda.provider.ContractParaProductos.ve
 public class Empleados_ventasAdapter extends RecyclerView.Adapter <Empleados_ventasAdapter.Productos_ventasViewHolder>{  ///adaptador para el Fragmet Ventas
     private ArrayList<Empleados_class> itemsEmpleados;
     private FragmentManager fm;
-    private Context context;
 
-    public Empleados_ventasAdapter(ArrayList<Empleados_class> itemsEmpleados, FragmentManager fm, Context context) {  ///recibe el arrayProductos como parametro y la interface
+    public Empleados_ventasAdapter(ArrayList<Empleados_class> itemsEmpleados, FragmentManager fm) {  ///recibe el arrayProductos como parametro y la interface
         this.itemsEmpleados=itemsEmpleados;
         this.fm=fm;
-        this.context=context;
     }
     public static class Productos_ventasViewHolder extends RecyclerView.ViewHolder{    ////clase donde van los elementos del cardview
         // Campos respectivos de un item

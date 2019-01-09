@@ -1,5 +1,6 @@
 package com.example.ricardosernam.tienda.ventas.Historial;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.icu.util.Calendar;
 import android.os.Build;
@@ -17,7 +18,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.HistorialVentasViewHolder> {
 
@@ -54,6 +57,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
     public int getItemCount() {
         return itemsHistorial.size();
     }
+    @SuppressLint("WrongConstant")
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(HistorialVentasViewHolder holder, final int position) {
@@ -65,7 +69,8 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Calendar cal = Calendar.getInstance();
+        //Calendar cal = Calendar.getInstance();
+        GregorianCalendar cal = new GregorianCalendar(TimeZone.getDefault());
         cal.setTime(date);
 
         for(int i=0; i<meses.length;i++){
@@ -75,10 +80,11 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
             }
         }
         String año=String.valueOf(cal.get(Calendar.YEAR));
-        String dia=String.valueOf(cal.get(Calendar.DAY_OF_MONTH)-1);
+        String dia=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
 
         holder.empleado.setText("Cajero: "+itemsHistorial.get(position).getEmpleado());
         holder.fecha.setText("Fecha: "+dia+"/"+mes +"/"+año);
+        //holder.fecha.setText(itemsHistorial.get(position).getFecha());
         Historial.rellenado_items(itemsHistorial.get(position).getIdVenta(), holder.recycler, context);
         Historial.calcularTotalporVenta(holder.total);
 

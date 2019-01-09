@@ -1,8 +1,11 @@
 package com.example.ricardosernam.tienda;
 
+import android.content.ClipData;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.Empleados.Empleados;
+import com.example.ricardosernam.tienda._____interfazes.actualizado;
 import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.ventas.Ventas;
 import com.example.ricardosernam.tienda.sync.SyncAdapter;
@@ -20,9 +24,11 @@ import static android.widget.Toast.LENGTH_LONG;
 
 public class MainActivity extends AppCompatActivity {
     public static TextView empleadoActivo;
-    private SQLiteDatabase db;
-    private Cursor activos,  empleadoEnCaja;
+    private static SQLiteDatabase db;
+    private static Cursor activos,  empleadoEnCaja, informacion;
     public static Toolbar toolbar;
+    public static MenuItem sincronizar;
+    public static FragmentManager fm;
     public static android.support.v7.app.ActionBar bar;
 
 
@@ -34,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         DatabaseHelper admin = new DatabaseHelper(getApplicationContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db = admin.getWritableDatabase();
+        fm=getSupportFragmentManager();
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Empleados(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
+            fm.beginTransaction().add(new Empleados(), "Empleados").replace(R.id.LLprincipal, new Empleados(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
+            //fm.beginTransaction().replace(R.id.LLprincipal, new Empleados(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
+
         }
         empleadoEnCaja= db.rawQuery("select nombre_empleado from empleados where tipo_empleado='Admin.' and activo=1 or tipo_empleado='Cajero' and activo=1", null);
 
@@ -52,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -59,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         activos= db.rawQuery("select * from empleados where tipo_empleado='Admin.' and activo=1 or tipo_empleado='Cajero' and activo=1", null);
 
         if (id == R.id.action_user) {
@@ -70,18 +81,8 @@ public class MainActivity extends AppCompatActivity {
                 else{  ///no estoy en empleados
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     getSupportFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Empleados(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
+                    //aqui debe ser
                 }
-            }
-            return true;
-        }
-        else if (id == R.id.sync_data) {   ////SINCRONIZACIÓN DE DATOS
-            if(Empleados.ip.isEnabled()){
-                Toast.makeText(getApplicationContext(), "Establece la IP", LENGTH_LONG).show();
-            } else{
-                //SyncAdapter.inicializarSyncAdapter(getApplicationContext(), Constantes.GET_URL_INVENTARIO, null);
-                //SyncAdapter.sincronizarAhora(getApplicationContext(), false, null);
-                SyncAdapter.sincronizarAhora(getApplicationContext(), false, Constantes.GET_URL_EMPLEADOS);
-
             }
             return true;
         }
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         }
             return super.onOptionsItemSelected(item);
     }
+
+
     @Override
     public void onBackPressed() {  ///anulamos el onBackPressed
     }

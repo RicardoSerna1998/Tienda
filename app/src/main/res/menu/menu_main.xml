@@ -8,9 +8,9 @@
         android:icon="@mipmap/ic_supervisor_account_black_24dp"
         android:title="Usuarios"
         app:showAsAction="ifRoom" />
-    <item
+    <!--<item
         android:id="@+id/sync_data"
         android:icon="@android:drawable/ic_popup_sync"
         android:title="Usuarios"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />-->
 </menu>

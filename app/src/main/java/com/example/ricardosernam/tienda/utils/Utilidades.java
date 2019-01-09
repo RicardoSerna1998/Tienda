@@ -5,6 +5,8 @@ import android.os.Build;
 import android.util.Log;
 
 
+import com.example.ricardosernam.tienda.provider.ContractParaProductos;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,28 +37,40 @@ public class Utilidades {
     public static boolean materialDesign() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
-}
+
 
     /**
      * Copia los datos de un gasto almacenados en un cursor hacia un
      * JSONObject
      *
      * @param c cursor
-     * @return objeto jason
+     * @return objeto jason*/
 
     public static JSONObject deCursorAJSONObject(Cursor c, String url) {
         JSONObject jObject = new JSONObject();
 
-        if (url.equals(Constantes.UPDATE_URL_INVENTARIO)) {
-
+        if (url.equals(Constantes.UPDATE_URL_EMPLEADOS)) {
+            Integer activo;
+            activo = c.getInt(0);
             try {
-                jObject.put(ContractParaProductos.Columnas.DISPONIBLE, 0);
+                jObject.put(ContractParaProductos.Columnas.ACTIVO, activo);
             }
             catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        else if (url.equals(Constantes.UPDATE_URL_INVENTARIO_DETALLE)) {
+        else if (url.equals(Constantes.UPDATE_URL_INVENTARIO)) {
+            Double existente;
+            existente = c.getDouble(0);
+
+            try {
+                jObject.put(ContractParaProductos.Columnas.EXISTENTES, existente);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        /*else if (url.equals(Constantes.UPDATE_URL_INVENTARIO_DETALLE)) {
             int idinventario;
             int idproducto;
             Double existente_inicial;
@@ -124,10 +138,10 @@ public class Utilidades {
                 } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
         Log.i("Cursor a JSONObject", String.valueOf(jObject));    ////mostramos que valores se han insertado
         return jObject;
     }
-}*/
+}
 
 

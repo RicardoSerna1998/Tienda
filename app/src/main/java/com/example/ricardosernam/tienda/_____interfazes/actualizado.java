@@ -1,5 +1,7 @@
 package com.example.ricardosernam.tienda._____interfazes;
 
+import android.content.Context;
+
 public interface actualizado {
-    void actualizar(Float cantidad, String nombre);
+    void actualizar(Context context);
 }

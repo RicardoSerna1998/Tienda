@@ -82,12 +82,14 @@ public class Ventas extends Fragment {
         historial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ventas = db.rawQuery("select * from ventas", null);
+                android.text.format.DateFormat df = new android.text.format.DateFormat();
+                String fechaActual=String.valueOf(df.format("yyyy-MM-dd", new java.util.Date()));
+                ventas = db.rawQuery("select * from ventas where STRFTIME('%Y-%m-%d', fecha)='"+fechaActual+"'", null);
                 if (ventas.moveToFirst()) {
                     actionBar.setDisplayHomeAsUpEnabled(true);
                     getFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Historial(), "Historial").addToBackStack("Historial").commit(); ///cambio de fragment
                 }else{
-                    Toast.makeText(getContext(), "No hay ventas realizadas aun", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "No hay ventas realizadas el día de hoy", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -102,7 +104,7 @@ public class Ventas extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(!(TextUtils.isEmpty(newText))) {   ///el campo tiene algo
-                    filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existentes from inventario where nombre_producto like ?", new String[] { "%" + newText + "%" });
+                    filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existente from inventario where nombre_producto like ?", new String[] { "%" + newText + "%" });
                         if (filaBusqueda.moveToFirst()) { ///si hay un elemento
                         itemsProductos.removeAll(itemsProductos);
                         itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
@@ -127,7 +129,7 @@ public class Ventas extends Fragment {
     }
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         fm=getFragmentManager();
-        fila=db.rawQuery("select nombre_producto, precio, codigo_barras, existentes from inventario order by codigo_barras" ,null);
+        fila=db.rawQuery("select nombre_producto, precio, codigo_barras, existente from inventario order by codigo_barras" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
             itemsProductos.removeAll(itemsProductos);

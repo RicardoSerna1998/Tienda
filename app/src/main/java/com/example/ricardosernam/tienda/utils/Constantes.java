@@ -1,17 +1,23 @@
 package com.example.ricardosernam.tienda.utils;
 
+import android.support.v7.widget.RecyclerView;
+
 /**
  * Constantes
  */
 public class Constantes {
 
+    public static  String GET_URL_INFORMACION;
+
     public static  String GET_URL_EMPLEADOS;
 
-    public static  String GET_URL_INFORMACION;
+    public static String GET_URL_INVENTARIO;   //////
+
+    public static String UPDATE_URL_EMPLEADOS;   ////Este si
 
     public static  String UPDATE_URL_INVENTARIO;
 
-    public static String GET_URL_INVENTARIO;   //////
+    public static String INSERT_URL_TURNO;
 
     public static String INSERT_URL_VENTA;
 
@@ -19,9 +25,6 @@ public class Constantes {
 
 
 ////TURNO (DUDA)
-    public static String GET_URL_TURNO;  ///en duda
-
-    public static String UPDATE_URL_TURNO;   ////Este si
 
 
     //private static final String PUERTO_HOST = "";
@@ -29,29 +32,33 @@ public class Constantes {
     private static final String PUERTO_HOST = ":82";
 
     public Constantes(String ip){
+        GET_URL_INFORMACION= ip + PUERTO_HOST + "/Eduardo/informacion/obtener_informacion.php";
+
         GET_URL_EMPLEADOS = ip + PUERTO_HOST + "/Eduardo/empleados/obtener_empleados.php";
-
-        GET_URL_INFORMACION= ip + PUERTO_HOST + "/Eduardo/productos/obtener_productos.php";
-
-        //GET_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/obtener_inventarios.php?idcarrito=";   //////
 
         GET_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/obtener_inventarios.php";   //////
 
-        UPDATE_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/actualizar_inventario.php?idinventario=";   //////
+        UPDATE_URL_EMPLEADOS = ip + PUERTO_HOST + "/Eduardo/empleados/actualizar_empleado.php?idempleado=";
+
+        UPDATE_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/actualizar_inventario.php?idproducto=";   //////
+
+
+        INSERT_URL_TURNO = ip + PUERTO_HOST + "/Eduardo/ventas/insertar_venta.php";
 
         INSERT_URL_VENTA = ip + PUERTO_HOST + "/Eduardo/ventas/insertar_venta.php";
 
        INSERT_URL_VENTA_DETALLE = ip + PUERTO_HOST + "/Eduardo/venta_detalles/insertar_venta_detalle.php";
 
-        GET_URL_TURNO = ip + PUERTO_HOST + "/Eduardo/inventario_detalles/obtener_inventario_detalles.php?idinventario=";
 
-        UPDATE_URL_TURNO = ip + PUERTO_HOST + "/Eduardo/inventario_detalles/actualizar_inventario_detalle.php";
     }
 
     public static final String CARRITO = "carrito";
     public static final String EMPLEADO = "empleado";
+    public static final String INFORMACION = "informacion";
 
 
+
+    public static final String ID_EMPLEADOS = "idempleado";
 
 
     public static final String ID_PRODUCTO = "idproducto";

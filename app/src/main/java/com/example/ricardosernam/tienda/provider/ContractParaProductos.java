@@ -4,7 +4,9 @@ import android.content.UriMatcher;
 import android.graphics.Color;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.v7.widget.RecyclerView;
 
+import com.example.ricardosernam.tienda.R;
 import com.example.ricardosernam.tienda.ventas.ProductosVenta_class;
 
 import java.util.ArrayList;
@@ -38,9 +40,9 @@ public class ContractParaProductos {
     public static final String ESTADOS= "estados";
 
 
-public final static String SINGLE_MIME_CARRITO = "vnd.android.cursor.item/vnd." + AUTHORITY + EMPLEADOS;
+final static String SINGLE_MIME_EMPLEADO = "vnd.android.cursor.item/vnd." + AUTHORITY + EMPLEADOS;
 
-public final static String MULTIPLE_MIME_CARRITO = "vnd.android.cursor.dir/vnd." + AUTHORITY + EMPLEADOS;
+final static String MULTIPLE_MIME_EMPLEADO= "vnd.android.cursor.dir/vnd." + AUTHORITY + EMPLEADOS;
 
 public final static String SINGLE_MIME_INVENTARIO = "vnd.android.cursor.item/vnd." + AUTHORITY + INVENTARIO;
 
@@ -54,9 +56,9 @@ public final static String SINGLE_MIME_PRODUCTO = "vnd.android.cursor.item/vnd."
 
 public final static String MULTIPLE_MIME_PRODUCTO = "vnd.android.cursor.dir/vnd." + AUTHORITY + VENTA_DETALLES;
 
-    public final static String SINGLE_MIME_VENTA = "vnd.android.cursor.item/vnd." + AUTHORITY + INFORMACION;
+public final static String SINGLE_MIME_VENTA = "vnd.android.cursor.item/vnd." + AUTHORITY + INFORMACION;
 
-    public final static String MULTIPLE_MIME_VENTA = "vnd.android.cursor.dir/vnd." + AUTHORITY + INFORMACION;
+public final static String MULTIPLE_MIME_VENTA = "vnd.android.cursor.dir/vnd." + AUTHORITY + INFORMACION;
 
 public final static String SINGLE_MIME_VENTA_DETALLE = "vnd.android.cursor.item/vnd." + AUTHORITY + TURNOS;
 
@@ -84,7 +86,7 @@ public final static Uri CONTENT_URI_TURNOS = Uri.parse("content://" + AUTHORITY 
 
 
 
-public static final UriMatcher uriMatcherEmpleado;
+static final UriMatcher uriMatcherEmpleado;
 public static final UriMatcher uriMatcherInventario;
 public static final UriMatcher uriMatcherInformacion;
 public static final UriMatcher uriMatcherTurnos;
@@ -96,11 +98,11 @@ public static final UriMatcher uriMatcherVentaDetalles;
 /**
  * Código para URIs de multiples registros
  */
-public static final int ALLROWS = 1;
+static final int ALLROWS = 1;
 /**
  * Código para URIS de un solo registro
  */
-public static final int SINGLE_ROW = 2;
+static final int SINGLE_ROW = 2;
 
 
 // Asignación de URIs
@@ -136,6 +138,7 @@ static {
 public static final int ESTADO_OK = 0;
 public static final int ESTADO_SYNC = 1;
 public static ArrayList<ProductosVenta_class> itemsProductosVenta= new ArrayList <>(); ///Arraylist que contiene los productos///
+
     public static final int rojo = Color.parseColor("#FFF62D2D");
     public static final int verde = Color.parseColor("#FF0AEA45");
 
@@ -170,7 +173,7 @@ public static class Columnas implements BaseColumns {
     public final static String NOMBRE_PRODUCTO = "nombre_producto";
     public final static String PRECIO = "precio";
     public final static String CODIGO_BARRAS = "codigo_barras";
-    public final static String EXISTENTES = "existentes";
+    public final static String EXISTENTES = "existente";
 
 
     ////////////////////informacion////////////

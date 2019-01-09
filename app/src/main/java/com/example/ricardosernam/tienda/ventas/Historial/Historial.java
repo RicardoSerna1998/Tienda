@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.provider.ContractParaProductos;
@@ -18,7 +19,11 @@ import com.example.ricardosernam.tienda.R;
 import com.example.ricardosernam.tienda.ventas.Historial.Productos_historial.Productos_historialAdapter;
 import com.example.ricardosernam.tienda.ventas.Historial.Productos_historial.Productos_historial_class;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 public class Historial extends Fragment {
     private static Cursor fila, filaEmpleado, fila2, filaProducto;
@@ -52,11 +57,19 @@ public class Historial extends Fragment {
         return view;
     }
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
+        android.text.format.DateFormat df = new android.text.format.DateFormat();
+        String fechaActual=String.valueOf(df.format("yyyy-MM-dd", new java.util.Date()));
+        Toast.makeText(getContext(), fechaActual, Toast.LENGTH_SHORT).show();
+
         itemsHistorial.clear();
         fm=getFragmentManager();
-        fila=db.rawQuery("select id_empleado, fecha, _id from ventas order by fecha desc" ,null);
+        fila=db.rawQuery("select id_empleado, fecha, _id from ventas where STRFTIME('%Y-%m-%d', fecha)='"+fechaActual+"' order by fecha desc" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
+            /*long datemillis = fila.getLong(fila.getColumnIndex("fecha"));
+            String dateString = new SimpleDateFormat("yyyy-MM-dd").format(new Date(datemillis));*/
+            //Toast.makeText(getContext(), fila.getString(0), Toast.LENGTH_SHORT).show();
+
             filaEmpleado=db.rawQuery("select nombre_empleado from empleados where idRemota='"+fila.getInt(0)+"'" ,null);
 
             if(filaEmpleado.moveToFirst()) {///si hay un elemento

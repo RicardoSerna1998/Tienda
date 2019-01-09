@@ -10,8 +10,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.example.ricardosernam.tienda.DatabaseHelper;
 
+import static android.content.ContentValues.TAG;
+import static android.widget.Toast.LENGTH_LONG;
 import static com.example.ricardosernam.tienda.provider.ContractParaProductos.DATABASE_NAME;
 
 /**
@@ -21,7 +26,7 @@ public class ProviderDeProductos extends ContentProvider {
     /**
      * Nombre de la base de datos
      */
-    //public static final String DATABASE_NAME = "administrador_tienda.db";
+    public static final String DATABASE_NAME = "administrador_tienda.db";
 
     /**
      * Versión actual de la base de datos
@@ -211,10 +216,10 @@ public class ProviderDeProductos extends ContentProvider {
             switch (ContractParaProductos.uriMatcherEmpleado.match(uri)) {
                 case ContractParaProductos.ALLROWS:
                     //return ContractParaProductos.MULTIPLE_MIME_PRODUCTO;
-                    caso=ContractParaProductos.MULTIPLE_MIME_CARRITO;
+                    caso=ContractParaProductos.MULTIPLE_MIME_EMPLEADO;
                 case ContractParaProductos.SINGLE_ROW:
                     //return ContractParaProductos.SINGLE_MIME_PRODUCTO;
-                    caso=ContractParaProductos.SINGLE_MIME_CARRITO;
+                    caso=ContractParaProductos.SINGLE_MIME_EMPLEADO;
                 default:
                     throw new IllegalArgumentException("Tipo de gasto desconocido: " + uri);
             }
@@ -292,7 +297,7 @@ public class ProviderDeProductos extends ContentProvider {
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         ContentValues contentValues;
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        // Validar la uri
+
         if (uri == ContractParaProductos.CONTENT_URI_EMPLEADOS) {
             if (ContractParaProductos.uriMatcherEmpleado.match(uri) != ContractParaProductos.ALLROWS) {
                 throw new IllegalArgumentException("URI desconocida : " + uri);
@@ -406,7 +411,7 @@ public class ProviderDeProductos extends ContentProvider {
                 return uri_gasto;
             }
         }
-        throw new SQLException("Falla al insertar fila en : " + uri);
+        throw new SQLException("Falla al insertar fila en : " + uri+" "+ContractParaProductos.CONTENT_URI_EMPLEADOS);
     }
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {

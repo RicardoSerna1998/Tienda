@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,6 +10,40 @@
         android:layout_height="match_parent"
         android:background="@android:color/holo_blue_dark"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/TVnombreNegocio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="Nombre negocio"
+            android:textColor="@android:color/background_light"
+            android:textSize="25dp"
+            android:layout_marginBottom="10dp"/>
+        <TextView
+            android:id="@+id/TVdireccionNegocio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Dirección"
+            android:textColor="@android:color/background_light"
+            android:textSize="25dp"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/TVtelefonoNegocio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Teléfono"
+            android:textColor="@android:color/background_light"
+            android:textSize="25dp"
+            android:layout_marginBottom="30dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -17,7 +52,7 @@
             android:gravity="center"
             android:text="Empleados"
             android:textColor="@android:color/background_light"
-            android:textSize="30dp"
+            android:textSize="25dp"
             android:layout_marginBottom="30dp"/>
 
         <android.support.v7.widget.RecyclerView
@@ -38,6 +73,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textSize="25sp"
+            android:textColor="@android:color/background_light"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="IP: " />
@@ -47,9 +83,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:hint="Ej. 192.168.1.101"
-            android:text="192.168.1.104"
-            android:textColorLink="@color/colorPrimary"
+            android:hint="Ej. 192.168.0.13"
+            android:text="192.168.0.13"
             android:backgroundTint="@android:color/holo_blue_light"
             android:textSize="20sp" />
 
@@ -60,6 +95,13 @@
             android:saveEnabled="true"
             android:text=" Establecer IP " />
     </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/BtnSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_popup_sync"
+            android:tint="@android:color/background_dark" />
     </LinearLayout>
 </LinearLayout>
 

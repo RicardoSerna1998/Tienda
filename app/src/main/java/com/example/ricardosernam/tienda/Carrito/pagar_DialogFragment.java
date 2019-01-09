@@ -27,6 +27,8 @@ import android.widget.Toast;
 import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
+import com.example.ricardosernam.tienda.sync.SyncAdapter;
+import com.example.ricardosernam.tienda.utils.Constantes;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -187,6 +189,8 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                             Log.i("Inventario", String.valueOf(values3));    ////mostramos que valores se han insertado
                         }
                     }
+                    SyncAdapter.sincronizarAhora(getContext(), true,0, Constantes.UPDATE_URL_INVENTARIO);   ///actualizamos el inventario disponible a cero
+
                     if(imprimir.isChecked()){
                         ///imprimimos el recibo
                         try {
