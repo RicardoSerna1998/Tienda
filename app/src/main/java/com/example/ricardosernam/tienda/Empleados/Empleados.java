@@ -62,8 +62,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         direccion= view.findViewById(R.id.TVdireccionNegocio);
         telefono= view.findViewById(R.id.TVtelefonoNegocio);
 
-
-
         establecer = view.findViewById(R.id.BtnEstablecer);
         sync = view.findViewById(R.id.BtnSync);
         recycler = view.findViewById(R.id.RVempleados); ///declaramos el recycler
@@ -98,6 +96,7 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                 }
             }
         });
+        relleno(getContext());
         return view;
     }
 

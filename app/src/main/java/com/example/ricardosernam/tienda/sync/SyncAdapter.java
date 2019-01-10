@@ -57,6 +57,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.widget.Toast.LENGTH_LONG;
+import static com.example.ricardosernam.tienda.utils.Constantes.INSERT_URL_VENTA;
+import static com.example.ricardosernam.tienda.utils.Constantes.INSERT_URL_VENTA_DETALLE;
 import static com.example.ricardosernam.tienda.utils.Constantes.UPDATE_URL_EMPLEADOS;
 import static com.example.ricardosernam.tienda.utils.Constantes.UPDATE_URL_INVENTARIO;
 
@@ -69,7 +71,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String TAG = SyncAdapter.class.getSimpleName();
     private static String urlChingon, seleccionado, url2, URL_EMPLEADO;
     private Cursor empladosActualizados;
-    private static int conteo, or;
+    private static int conteo, or, cuentaInventario, cuentaVentas, cuentaVentasDetalles;
     private ContentValues values, values2;
     private ContentResolver resolver;
     private static actualizado Interfaz;
@@ -694,7 +696,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                                     .withValue(ContractParaProductos.Columnas.PRECIO, match.precio)
                                     .withValue(ContractParaProductos.Columnas.CODIGO_BARRAS, match.codigo_barras)
                                     .withValue(ContractParaProductos.Columnas.EXISTENTES, match.existentes)
-                                    .withValue(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1)
                                     .build());
                             syncResult.stats.numUpdates++;
                         } else {
@@ -743,6 +744,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         .withValue(ContractParaProductos.Columnas.PRECIO, e.precio)
                         .withValue(ContractParaProductos.Columnas.CODIGO_BARRAS, e.codigo_barras)
                         .withValue(ContractParaProductos.Columnas.EXISTENTES, e.existentes)
+                        .withValue(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1)
                         .build());
                 syncResult.stats.numInserts++;
             }
@@ -769,7 +771,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.i(TAG, "Actualizando el servidor...");
         if (url.equals(UPDATE_URL_EMPLEADOS)) {  ///actualizamos al importar
             iniciarActualizacion(url);
-            final Cursor c = db.rawQuery("select activo from empleados where pendiente_insercion=1", null);
+            final Cursor c = db.rawQuery("select activo, idRemota from empleados where pendiente_insercion=1", null);
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios EMPLEADOS");
 
             if (c.getCount() > 0) {  ///api 19
@@ -779,7 +781,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     if (idempleado.moveToFirst()) {
                         VolleySingleton.getInstance(getContext()).addToRequestQueue(
                                 new JsonObjectRequest(Request.Method.POST,
-                                        UPDATE_URL_EMPLEADOS + idempleado.getString(0),
+                                        UPDATE_URL_EMPLEADOS + c.getString(1),
                                         Utilidades.deCursorAJSONObject(c, url),  //////////////////////////////////////////////
                                         new Response.Listener<JSONObject>() {
                                             @Override
@@ -790,7 +792,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                                         new Response.ErrorListener() {
                                             @Override
                                             public void onErrorResponse(VolleyError error) {
-                                                Log.d(TAG, "Error Volley: " + error.getMessage()); ///error aqui
+                                                Log.d(TAG, "Error Volley EMPLEADOS: " + error.getMessage()); ///error aqui
                                                 //realizarSincronizacionRemota(url);
 
                                             }
@@ -821,28 +823,29 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             c.close();
         } else if (url.equals(UPDATE_URL_INVENTARIO)) {  ///actualizamos al importar
             iniciarActualizacion(url);
-            final Cursor c = db.rawQuery("select existente from inventario where pendiente_insercion=1", null);
+            final Cursor c = db.rawQuery("select existente, idRemota from inventario where pendiente_insercion=1", null);
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios INVENTARIO");
-
+            cuentaInventario=c.getCount();
             if (c.getCount() > 0) {  ///api 19
                 while (c.moveToNext()) {
-                    @SuppressLint("Recycle") Cursor idinventario = db.rawQuery("select idRemota from inventarios", null);
+                    @SuppressLint("Recycle") Cursor idinventario = db.rawQuery("select idRemota from inventario", null);
 
                     if (idinventario.moveToFirst()) {
                         VolleySingleton.getInstance(getContext()).addToRequestQueue(
                                 new JsonObjectRequest(Request.Method.POST,
-                                        UPDATE_URL_INVENTARIO + idinventario.getString(0),
+                                        UPDATE_URL_INVENTARIO + c.getString(1),
                                         Utilidades.deCursorAJSONObject(c, url),  //////////////////////////////////////////////
                                         new Response.Listener<JSONObject>() {
                                             @Override
                                             public void onResponse(JSONObject response) {
-                                                procesarRespuestaInsert(response, 0, url, c.getCount());
+                                                procesarRespuestaInsert(response, 0, url, cuentaInventario);
+                                                cuentaInventario--;
                                             }
                                         },
                                         new Response.ErrorListener() {
                                             @Override
                                             public void onErrorResponse(VolleyError error) {
-                                                Log.d(TAG, "Error Volley: " + error.getMessage()); ///error aqui
+                                                Log.d(TAG, "Error Volley INVENTARIO: " + error.getMessage()); ///error aqui
                                                 //realizarSincronizacionRemota(url);
                                             }
                                         }
@@ -928,13 +931,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.i(TAG, "No se requiere sincronización");
             }
                 c.close();
-        }
+        }*/
         else if (url.equals(Constantes.INSERT_URL_VENTA)) {
             iniciarActualizacion(url);
 
-            final Cursor c=database.rawQuery("select * from ventas where pendiente_insercion=1", null);
+            final Cursor c=db.rawQuery("select _id, id_empleado, fecha from ventas where pendiente_insercion=1", null);
 
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios VENTAS.");
+            cuentaVentas=c.getCount();
 
             if (c.getCount() > 0) {  ///api 19
                 while (c.moveToNext()) {
@@ -948,14 +952,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                                     new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
-                                            procesarRespuestaInsert(response, idLocal, url, c.getCount());
+                                            procesarRespuestaInsert(response, idLocal, url, cuentaVentas);
+                                            cuentaVentas--;
                                         }
                                     },
                                     new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            Log.d(TAG, "Error Volley: " + error.getMessage());
-                                            realizarSincronizacionRemota(url);
+                                            Log.d(TAG, "Error Volley VENTAS: " + error.getMessage());
+                                            //realizarSincronizacionRemota(url);
                                         }
                                     }
 
@@ -979,54 +984,36 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             } else {
                 Log.i(TAG, "No se requiere sincronización VENTAS");   ////si no hay venta
                 Log.i(TAG, "RECREA BD");
-                Sincronizar.carritos.setEnabled(true);
-                Sincronizar.carritos.setAdapter(null);
-
-
-                Sincronizar.importar.setEnabled(true);
-                Sincronizar.exportar.setEnabled(false);
-                Sincronizar.buscar.setEnabled(true);
-
-                Sincronizar.importar.getBackground().setColorFilter(null);  //habilitado
-                Sincronizar.exportar.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP); ///deshabilitado
-                Sincronizar.buscar.getBackground().setColorFilter(null);  //habilitado
-
-                values.put(ContractParaProductos.Columnas.IMPORTADO, 1);
-                database.update("estados", values, null, null);
-
-                Sincronizar.progressDialog.dismiss();
-                Toast.makeText(getContext(), "Tus datos han sido subidos", Toast.LENGTH_LONG).show();
-                DatabaseHelper admin=new DatabaseHelper(getContext(), ProviderDeProductos.DATABASE_NAME, null, ProviderDeProductos.DATABASE_VERSION);
-                DatabaseHelper.limpiar(admin.getWritableDatabase());
             }
                 c.close();
         }
-        else if (url.equals(Constantes.INSERT_URL_VENTA_DETALLE)) {
+        else if (url.equals(INSERT_URL_VENTA_DETALLE)) {
             iniciarActualizacion(url);   //NO OBTIENE BIEN LA CUENTA
 
-            final Cursor c=database.rawQuery("select * from venta_detalles where pendiente_insercion=1", null);
+            final Cursor c=db.rawQuery("select idRemota, id_producto, precio, cantidad from venta_detalles where pendiente_insercion=1", null);
 
 
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios VENTA DETALLE.");
-
-                if (c.getCount()  > 0) {  ///api 19
+            cuentaVentasDetalles=c.getCount();
+            if (c.getCount()  > 0) {  ///api 19
                 while (c.moveToNext()) {
                     final int idLocal = c.getInt(COLUMNA_ID_VENTA_DETALLES);
 
                     VolleySingleton.getInstance(getContext()).addToRequestQueue(
                             new JsonObjectRequest(Request.Method.POST,
-                                    Constantes.INSERT_URL_VENTA_DETALLE,
+                                    INSERT_URL_VENTA_DETALLE,
                                     Utilidades.deCursorAJSONObject(c, url),  //////////////////////////////////////////////
                                     new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
-                                            procesarRespuestaInsert(response, idLocal, url, c.getCount());
+                                            procesarRespuestaInsert(response, idLocal, url, cuentaVentasDetalles);
+                                            cuentaVentasDetalles--;
                                         }
                                     }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Log.d(TAG, "Error Volley: " + error.getMessage());
-                                    realizarSincronizacionRemota(url);
+                                    Log.d(TAG, "Error Volley VENTA_DETALLE: " + error.getMessage());
+                                    //realizarSincronizacionRemota(url);
                                 }
                             }
 
@@ -1048,7 +1035,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
 
             } else {
-                Log.i(TAG, "No se requiere sincronización VENTA_DETALLE");
+                Log.i(TAG, "No se requiere sincronización VENTA_DETALLE");   ////se queda aquí
             }
             //c.close();
                 c.close();
@@ -1062,7 +1049,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * @return Cursor con el registro.*/
         /**
          * Cambia a estado "de sincronización" el registro que se acaba de insertar localmente*/
-    }
 
          private void iniciarActualizacion(String url) {
          if (url.equals(UPDATE_URL_EMPLEADOS)) {
@@ -1098,7 +1084,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
          int results = resolver.update(uri, v, selection, selectionArgs);
          Log.i(TAG, "Registros puestos en cola de inserción:" + results);
-         }
+         }*/
 
          else if (url.equals(Constantes.INSERT_URL_VENTA)) {
          Uri uri = ContractParaProductos.CONTENT_URI_VENTA;
@@ -1111,7 +1097,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          int results = resolver.update(uri, v, selection, selectionArgs);
          Log.i(TAG, "Registros puestos en cola de inserción:" + results);
          }
-         else if (url.equals(Constantes.INSERT_URL_VENTA_DETALLE)) {   //Aquí esta el problema
+         else if (url.equals(INSERT_URL_VENTA_DETALLE)) {   //Aquí esta el problema
          Uri uri = ContractParaProductos.CONTENT_URI_VENTA_DETALLE;
          String selection = ContractParaProductos.Columnas.PENDIENTE_INSERCION + "=? AND " + ContractParaProductos.Columnas.ESTADO + "=?";
          String[] selectionArgs = new String[]{"1", ContractParaProductos.ESTADO_OK + ""};
@@ -1121,7 +1107,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
          int results = resolver.update(uri, v, selection, selectionArgs);
          Log.i(TAG, "Registros puestos en cola de inserción VENTA_DETALLES:" + results);
-         }*/
+         }
          }
 
 
@@ -1132,28 +1118,45 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          * @param idRemota id remota
 
          @TargetApi(Build.VERSION_CODES.KITKAT)
-         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+         @RequiresApi(api = Build.VERSION_CODES.KITKAT)*/
          private void finalizarActualizacion(String idRemota, int idLocal, String url, int cuenta) {     /////actualizamos lo insertado en la app
+             Log.i(TAG, "Cuenta fINALIZAR "+cuenta);
 
-         if (url.equals(Constantes.UPDATE_URL_INVENTARIO_DETALLE)) {
-         Log.i(TAG, "TERMINA INVENTARIO DETALLES "+idLocal);
+             if (url.equals(Constantes.UPDATE_URL_INVENTARIO)) {   ////idLocal es cero (no interesa quitar pendiente_insercion)
 
-         Uri uri = ContractParaProductos.CONTENT_URI_INVENTARIO_DETALLE;
-         String selection = ContractParaProductos.Columnas._ID + "=?";
-         String[] selectionArgs = new String[]{String.valueOf(idLocal)};
-
-         ContentValues v = new ContentValues();
-         v.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, "0");
-         v.put(ContractParaProductos.Columnas.ESTADO, ContractParaProductos.ESTADO_OK);
-         resolver.update(uri, v, selection, selectionArgs);
-
-         if(idLocal==cuenta){
-         conteo=1;
-         realizarSincronizacionRemota(Constantes.INSERT_URL_VENTA);
-         }
+                 if(cuenta==1){
+                     Log.i(TAG, "INVENTARIO FINALIZADO ");
+                     Cursor cont = db.rawQuery("select _id from ventas where pendiente_insercion=1", null);
+                     if(cont.moveToFirst()){
+                         conteo=cont.getInt(0);
+                     }
+                     realizarSincronizacionRemota(INSERT_URL_VENTA);
+                 }
+         //Cursor verificar = db.rawQuery("select * from inventario where pendiente_insercion=1", null);
+           //  if(!verificar.moveToFirst()){
          }
          else if (url.equals(Constantes.INSERT_URL_VENTA)) {
-         Log.i(TAG, "TERMINA VENTAS "+idLocal);
+                 Uri uri = ContractParaProductos.CONTENT_URI_VENTA;
+         String selection = ContractParaProductos.Columnas._ID + "=?";
+         String[] selectionArgs = new String[]{String.valueOf(idLocal)};
+
+         ContentValues v = new ContentValues();
+         v.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, "0");
+         v.put(ContractParaProductos.Columnas.ESTADO, ContractParaProductos.ESTADO_OK);
+         v.put(ContractParaProductos.Columnas.ID_REMOTA, idRemota);
+         resolver.update(uri, v, selection, selectionArgs);
+
+                 //v.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, "0");
+             //db.update("inventario", v, "_id='" + idLocal + "'", null);
+             // idlocal es el id de la venta       cuenta es el numero de registros
+         //if(idLocal==cuenta){     ////NO LO LLAMA
+                 if(cuenta==1){
+                     Log.i(TAG, "VENTAS FINALIZADO ");
+                     realizarSincronizacionRemota(INSERT_URL_VENTA_DETALLE);
+                 }
+         }
+
+         else if (url.equals(INSERT_URL_VENTA_DETALLE)) {
 
          Uri uri = ContractParaProductos.CONTENT_URI_VENTA;
          String selection = ContractParaProductos.Columnas._ID + "=?";
@@ -1165,44 +1168,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          v.put(ContractParaProductos.Columnas.ID_REMOTA, idRemota);
 
          resolver.update(uri, v, selection, selectionArgs);
-         if(idLocal==cuenta){
-         realizarSincronizacionRemota(Constantes.INSERT_URL_VENTA_DETALLE);
-         }
-         }
-         else if (url.equals(Constantes.INSERT_URL_VENTA_DETALLE)) {
-         Log.i(TAG, "TERMINA VENTA_DETALLE "+idLocal);
-
-         Uri uri = ContractParaProductos.CONTENT_URI_VENTA;
-         String selection = ContractParaProductos.Columnas._ID + "=?";
-         String[] selectionArgs = new String[]{String.valueOf(idLocal)};
-
-         ContentValues v = new ContentValues();
-         v.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, "0");
-         v.put(ContractParaProductos.Columnas.ESTADO, ContractParaProductos.ESTADO_OK);
-         v.put(ContractParaProductos.Columnas.ID_REMOTA, idRemota);
-
-         resolver.update(uri, v, selection, selectionArgs);
-         if(idLocal==(cuenta*2)){    //idlocal son 10      cuenta es siempre la mitad
-         Log.i(TAG, "RECREA BD");
-         Sincronizar.carritos.setEnabled(true);
-         Sincronizar.carritos.setAdapter(null);
-
-
-         Sincronizar.importar.setEnabled(true);
-         Sincronizar.exportar.setEnabled(false);
-         Sincronizar.buscar.setEnabled(true);
-
-         Sincronizar.importar.getBackground().setColorFilter(null);  //habilitado
-         Sincronizar.exportar.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP); ///deshabilitado
-         Sincronizar.buscar.getBackground().setColorFilter(null);  //habilitado
-
-         values.put(ContractParaProductos.Columnas.IMPORTADO, 1);
-         database.update("estados", values, null, null);
-
-         Sincronizar.progressDialog.dismiss();
-         Toast.makeText(getContext(), "Tus datos han sido subidos", Toast.LENGTH_LONG).show();
-         DatabaseHelper admin=new DatabaseHelper(getContext(), ProviderDeProductos.DATABASE_NAME, null, ProviderDeProductos.DATABASE_VERSION);
-         DatabaseHelper.limpiar(admin.getWritableDatabase());
+         //if(idLocal==(cuenta*2)){    //idlocal son 10      cuenta es siempre la mitad
+                 if(cuenta==1){
+                     Log.i(TAG, "VENTA DETALLES FINALIZADO");
          }
          }
          }
@@ -1216,7 +1184,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          @RequiresApi(api = Build.VERSION_CODES.KITKAT)*/
          @SuppressLint("Recycle") private void procesarRespuestaInsert(JSONObject response, int idLocal, String url, int cuenta) {
          ///////////////////////////////obtenemos los datos por php//////////////////////////////////////////////////////////////////////////////////////////////////////////
-         Cursor consulta;
+         Cursor consulta, cont;
          if (url.equals(UPDATE_URL_EMPLEADOS)) {
          try {
          values=new ContentValues();
@@ -1242,7 +1210,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          }
 
          }
-         if (url.equals(UPDATE_URL_INVENTARIO)) {
+        else if (url.equals(UPDATE_URL_INVENTARIO)) {
                  try {
                      values=new ContentValues();
                      // Obtener estado
@@ -1255,13 +1223,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                      switch (estado) {
                          case Constantes.SUCCESS:
                              Log.i(TAG, mensaje +" "+ idRemota); ////muestra el " creacion exitosa"
-
+                             finalizarActualizacion(idRemota, idLocal, url, cuenta);
+                             ///ACTUALIZACION EXITOSA INVENTARIO
                              break;
 
                          case Constantes.FAILED:
                              Log.i(TAG, mensaje +" "+ idRemota);
                              break;
                      }
+
+
                  } catch (JSONException e) {
                      e.printStackTrace();
                  }
@@ -1288,7 +1259,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          e.printStackTrace();
          }
 
-         }
+         }*/
          else if (url.equals(Constantes.INSERT_URL_VENTA)) {
          try {
          values = new ContentValues();
@@ -1297,7 +1268,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          // Obtener mensaje
          String mensaje = response.getString(Constantes.MENSAJE);
 
-         Log.i(TAG, mensaje);
 
          // Obtener identificador del nuevo registro creado en el servidor
          String idRemota = response.getString(Constantes.ID_VENTA);
@@ -1306,15 +1276,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          ///creacion de venta_detalles
          Log.i(TAG, "Conteo "+conteo);
          ///idRemota es idventa
-         consulta = database.rawQuery("select * from venta_detalles where idRemota='"+conteo+"' and pendiente_insercion=0", null);
+         consulta = db.rawQuery("select * from venta_detalles where idRemota='"+conteo+"' and pendiente_insercion=0", null);
          if (consulta.getCount()  > 0) {
          while (consulta.moveToNext()) {
          values.put("idRemota", Integer.parseInt(idRemota));
-         values.put("cantidad", consulta.getString(1));
-         values.put("idproducto", consulta.getString(3));
-         values.put("precio", consulta.getDouble(2));
+             values.put("id_producto", consulta.getString(2));
+             values.put("precio", consulta.getDouble(3));
+             values.put("cantidad", consulta.getDouble(4));
          values.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
-         database.insertOrThrow("venta_detalles", null, values);
+         db.insertOrThrow("venta_detalles", null, values);
          Log.i("Datos", String.valueOf(values));    ////mostramos que valores se han insertado
          }
          }
@@ -1334,8 +1304,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          e.printStackTrace();
          }
 
-         }*/
-         /*else if (url.equals(INSERT_URL_VENTA_DETALLE)) {
+         }
+         else if (url.equals(INSERT_URL_VENTA_DETALLE)) {
          try {
          values=new ContentValues();
          // Obtener estado
@@ -1357,9 +1327,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
          }
 
-         }*/
+         }
     }
-}
+
 //}
 
 

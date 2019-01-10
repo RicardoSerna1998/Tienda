@@ -16,11 +16,9 @@ public class Utilidades {
     private static final int COLUMNA_EXISTENTE_INICIAL = 2;
     private static final int COLUMNA_EXISTENTE_FINAL = 3;
 
-    private static final int COLUMNA_ID_CARRITO_VENTA = 1;
-    private static final int COLUMNA_ID_INVENTARIO_VENTA = 2;
-    private static final int COLUMNA_FECHA_VENTA = 3;
-    private static final int COLUMNA_UBICACIÓN_VENTA = 4;
-    private static final int COLUMNA_VENDEDOR_VENTA = 5;
+    private static final int COLUMNA_ID_EMPLEADO_VENTA = 1;
+    private static final int COLUMNA_FECHA_VENTA = 2;
+
 
     private static final int COLUMNA_ID_REMOTA_VENTA_DETALLE = 4;
     private static final int COLUMNA_CANTIDAD = 1;
@@ -91,28 +89,19 @@ public class Utilidades {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
         else if (url.equals(Constantes.INSERT_URL_VENTA)) {
-            int idcarrito;
-            int idinventario;
+            int idempleado;
             String fecha;
-            String ubicacion;
-            String vendedor;
 
 
-            idcarrito = c.getInt(COLUMNA_ID_CARRITO_VENTA);
-            idinventario = c.getInt(COLUMNA_ID_INVENTARIO_VENTA);
+
+            idempleado = c.getInt(COLUMNA_ID_EMPLEADO_VENTA);
             fecha = c.getString(COLUMNA_FECHA_VENTA);
-            ubicacion = c.getString(COLUMNA_UBICACIÓN_VENTA);
-            vendedor = c.getString(COLUMNA_VENDEDOR_VENTA);
 
             try {
-                jObject.put(ContractParaProductos.Columnas.ID_CARRITO, idcarrito);
-                jObject.put(ContractParaProductos.Columnas.ID_INVENTARIO, idinventario);
+                jObject.put(ContractParaProductos.Columnas.ID_EMPLEADO, idempleado);
                 jObject.put(ContractParaProductos.Columnas.FECHA, fecha);
-                jObject.put(ContractParaProductos.Columnas.UBICACION, ubicacion);
-                jObject.put(ContractParaProductos.Columnas.VENDEDOR, vendedor);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -123,22 +112,22 @@ public class Utilidades {
             int idproducto;
             Double precio;
 
-            idventa = c.getInt(COLUMNA_ID_REMOTA_VENTA_DETALLE);
-            cantidad = c.getInt(COLUMNA_CANTIDAD);
-            idproducto = c.getInt(COLUMNA_ID_PRODUCTO_VENTA_DETALLE);
-            precio = c.getDouble(COLUMNA_PRECIO);
+            idventa = c.getInt(0);
+            idproducto = c.getInt(1);
+            precio = c.getDouble(2);
+            cantidad = c.getInt(3);
 
 
 
             try {
-                jObject.put("idventa", idventa);
-                jObject.put(ContractParaProductos.Columnas.CANTIDAD, cantidad);
+                jObject.put("id_iventa", idventa);
                 jObject.put(ContractParaProductos.Columnas.ID_PRODUCTO, idproducto);
                 jObject.put(ContractParaProductos.Columnas.PRECIO, precio);
+                jObject.put(ContractParaProductos.Columnas.CANTIDAD, cantidad);
                 } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }*/
+        }
         Log.i("Cursor a JSONObject", String.valueOf(jObject));    ////mostramos que valores se han insertado
         return jObject;
     }

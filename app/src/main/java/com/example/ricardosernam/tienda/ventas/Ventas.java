@@ -51,18 +51,11 @@ public class Ventas extends Fragment {
         DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db=admin.getWritableDatabase();
         recycler = view.findViewById(R.id.RVproductosVenta); ///declaramos el recycler
-        escanear= view.findViewById(R.id.BtnEscanearProducto);
+        //escanear= view.findViewById(R.id.BtnEscanearProducto);
         carrito= view.findViewById(R.id.BtnCarrito);
         historial= view.findViewById(R.id.BtnHistorial);
         actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
 
-        escanear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), Escanner.class);//intanciando el activity del scanner
-                startActivityForResult(intent,2);//inicializar el activity con RequestCode2
-            }
-        });
 
         carrito.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
@@ -104,16 +97,27 @@ public class Ventas extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(!(TextUtils.isEmpty(newText))) {   ///el campo tiene algo
-                    filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existente from inventario where nombre_producto like ?", new String[] { "%" + newText + "%" });
-                        if (filaBusqueda.moveToFirst()) { ///si hay un elemento
-                        itemsProductos.removeAll(itemsProductos);
-                        itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
-                        while (filaBusqueda.moveToNext()) {
-                            itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
+                    if ((TextUtils.isDigitsOnly(newText))) {  ///si el campo tiene tan solo numeros es un codigo
+                        datoEscaneado=db.rawQuery("select nombre_producto, precio from inventario where codigo_barras='"+newText+"'" ,null);
+                        if(datoEscaneado.moveToFirst()) {
+                            new cantidad_producto_DialogFragment(datoEscaneado.getString(0), datoEscaneado.getFloat(1), 1).show(fm, "Producto_ventas");
                         }
+                        else{
+                            Toast.makeText(getContext(), "Este producto no esta registrado", Toast.LENGTH_SHORT).show();
+                        }
+                        nombreCodigo.clearFocus();
                     }
-                    else{ ///El producto no existe
-                        Toast.makeText(getContext(), "Producto inexistente", Toast.LENGTH_SHORT).show();
+                    else {   ///es un nombre de producto
+                        filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existente from inventario where nombre_producto like ?", new String[]{"%" + newText + "%"});
+                        if (filaBusqueda.moveToFirst()) { ///si hay un elemento
+                            itemsProductos.clear();
+                            itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
+                            while (filaBusqueda.moveToNext()) {
+                                itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
+                            }
+                        } else { ///El producto no existe
+                            Toast.makeText(getContext(), "Producto inexistente", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }  ////esta vacio
                 else {
@@ -132,7 +136,7 @@ public class Ventas extends Fragment {
         fila=db.rawQuery("select nombre_producto, precio, codigo_barras, existente from inventario order by codigo_barras" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
-            itemsProductos.removeAll(itemsProductos);
+            itemsProductos.clear();
             itemsProductos.add(new Productos_class(fila.getString(0), fila.getFloat(1), fila.getString(2), fila.getFloat(3)));
             while (fila.moveToNext()) {
                 itemsProductos.add(new Productos_class(fila.getString(0), fila.getFloat(1), fila.getString(2), fila.getFloat(3)));
@@ -146,7 +150,7 @@ public class Ventas extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    @Override
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 2 && data != null) {
             //obtener resultados
@@ -158,5 +162,5 @@ public class Ventas extends Fragment {
                 Toast.makeText(getContext(), "Este producto no esta registrado", Toast.LENGTH_SHORT).show();
             }
         }
-    }
+    }*/
 }

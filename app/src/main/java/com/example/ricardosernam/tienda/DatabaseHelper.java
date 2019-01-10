@@ -68,7 +68,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String cmd4 = "CREATE TABLE " + ContractParaProductos.VENTAS + " (" +
                 ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ContractParaProductos.Columnas.ID_REMOTA + " INT," +
                 ContractParaProductos.Columnas.ID_EMPLEADO + " INT, " +
                 ContractParaProductos.Columnas.FECHA + " TEXT, " +
                 ContractParaProductos.Columnas.ESTADO + " INTEGER NOT NULL DEFAULT "+ ContractParaProductos.ESTADO_OK+"," +

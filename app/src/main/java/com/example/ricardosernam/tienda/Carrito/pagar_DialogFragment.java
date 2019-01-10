@@ -181,10 +181,10 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                         //////////////////////////////////////////inventario detalles//////////////////////////////
                         values3 = new ContentValues();
                         ///obtenemos el guisado donde tenemos que descontar
-                        existente = db.rawQuery("select existentes from inventario where nombre_producto='" + ContractParaProductos.itemsProductosVenta.get(i).getNombre() + "'", null);
+                        existente = db.rawQuery("select existente from inventario where nombre_producto='" + ContractParaProductos.itemsProductosVenta.get(i).getNombre() + "'", null);
                         if (existente.moveToFirst()) {
                             float porcion = existente.getFloat(0) - (ContractParaProductos.itemsProductosVenta.get(i).getCantidad());
-                            values3.put("existentes", porcion);
+                            values3.put("existente", porcion);
                             db.update("inventario", values3, "idRemota='" + ContractParaProductos.itemsProductosVenta.get(i).getIdRemota() + "'", null);
                             Log.i("Inventario", String.valueOf(values3));    ////mostramos que valores se han insertado
                         }
@@ -232,22 +232,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
         }
         return validado;
     }
-    public void cantidadApagar(Float recibido, int tipo){
-        if(tipo==1) {
-            for (int i = 0; i < pagos.length; i++) {
-                if (recibido >= pagos[i] & recibido < pagos[i + 1]) {
-                    cantidad.setText(String.valueOf(df.format( pagos[i + 1])));
-                }
-            }
-        }{
-            for (int i = pagos.length; i >0 ; i--) {
-                if(recibido>pagos[i-1] & recibido<=pagos[i]){
-                     cantidad.setText(String.valueOf(df.format(pagos[i-1])));
-                 }
-             }
 
-         }
-    }
     /////////////////////////////////////////////////////////////////////BLUETOOTH ///////////////////////
     /////////////////////////////////////////////////////////////////// ABRIR
     // open bluetooth connection
