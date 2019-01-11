@@ -1,6 +1,7 @@
 package com.example.ricardosernam.tienda.Empleados;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,7 +34,7 @@ import static android.widget.Toast.LENGTH_LONG;
 
 @SuppressLint("ValidFragment")
 public class Empleados extends Fragment {     /////Fragment de categoria ventas
-    public static Cursor empleados, informacion;
+    public static Cursor empleados, informacion, estado;
     @SuppressLint("StaticFieldLeak")
     public static RecyclerView recycler;
     public static RecyclerView.Adapter adapter;
@@ -48,6 +49,7 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
     public static EditText ip;
     @SuppressLint("StaticFieldLeak")
     public static Context context;
+    public ContentValues values=new ContentValues();
     private static ArrayList<Empleados_class> itemsEmpleados = new ArrayList<>();  ///Arraylist que contiene los cardviews seleccionados de productos
 
     @Override
@@ -75,9 +77,16 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                     } else {
                         establecer.setText(" Modificar IP ");
                         ip.setEnabled(false);
+                        estado=db.rawQuery("select ip, importado from estados" ,null);
+
                         ///guardamo el estado de la pantalla
-                        //values.put(ContractParaProductos.Columnas.IP,  String.valueOf(ip.getText()));
-                        //db.update("estados", values, null, null);
+                        values.put(ContractParaProductos.Columnas.IP,  String.valueOf(ip.getText()));
+                        if(estado.moveToFirst()){
+                            db.update("estados", values, null, null);
+                        }
+                        else{
+                            db.insertOrThrow("estados", null, values);
+                        }
                         new Constantes("http://" + String.valueOf(ip.getText()));
                     }
                 } else {
@@ -107,6 +116,17 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
 
         empleados = db.rawQuery("select nombre_empleado, tipo_empleado, activo, codigo from empleados ORDER by tipo_empleado, activo desc", null);
         informacion= db.rawQuery("select nombre_negocio, direccion, telefono from informacion", null);
+        estado=db.rawQuery("select ip, importado from estados" ,null);
+
+        if(estado.moveToFirst()) {///si hay un elemento
+            establecer.setText(" Modificar IP ");
+            ip.setEnabled(false);
+            ip.setText(estado.getString(0));
+        }
+        else{
+            establecer.setText(" Establecer IP ");
+            ip.setEnabled(true);
+        }
         if(informacion.moveToFirst()){
             if(!informacion.getString(0).isEmpty()){
                 nombre.setVisibility(View.VISIBLE);

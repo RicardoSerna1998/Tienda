@@ -75,5 +75,7 @@
 
 </manifest>
     <!--android:allowBackup="false"  este comando permite respaldar datos aunque se desintale-->
+    <!--android:screenOrientation="landscape"-->
+
 
 

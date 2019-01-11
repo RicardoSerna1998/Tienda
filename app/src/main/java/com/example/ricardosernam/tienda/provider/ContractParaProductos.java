@@ -182,9 +182,11 @@ public static class Columnas implements BaseColumns {
     public final static String TELEFONO = "telefono";
 
     ////////////turnos///////////////////77
-    public final static String HORA_INICIO = "nombre_producto";
-    public final static String HORA_FIN = "precio";
+    public final static String HORA_INICIO = "hora_inicio";
+    public final static String HORA_FIN = "hora_fin";
 
+    public final static String IP = "ip";
+    public final static String IMPORTADO = "importado";
 
     public static final String ESTADO = "estado";
     public static final String ID_REMOTA = "idRemota";

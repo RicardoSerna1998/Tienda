@@ -19,6 +19,8 @@ public class Constantes {
 
     public static String INSERT_URL_TURNO;
 
+    public static String UPDATE_URL_TURNO;
+
     public static String INSERT_URL_VENTA;
 
     public static String INSERT_URL_VENTA_DETALLE;
@@ -42,8 +44,11 @@ public class Constantes {
 
         UPDATE_URL_INVENTARIO = ip + PUERTO_HOST + "/Eduardo/inventarios/actualizar_inventario.php?idproducto=";   //////
 
+        INSERT_URL_TURNO = ip + PUERTO_HOST + "/Eduardo/turnos/insertar_turno.php";
 
-        INSERT_URL_TURNO = ip + PUERTO_HOST + "/Eduardo/ventas/insertar_venta.php";
+        UPDATE_URL_TURNO = ip + PUERTO_HOST + "/Eduardo/turnos/actualizar_turno.php?idempleado=";   //////
+
+
 
         INSERT_URL_VENTA = ip + PUERTO_HOST + "/Eduardo/ventas/insertar_venta.php";
 
@@ -65,6 +70,7 @@ public class Constantes {
     public static final String PRODUCTO = "producto";
 
     public static final String ID_INVENTARIO = "idinventario";
+
     public static final String INVENTARIO = "inventario";
 
     public static final String ID_INVENTARIO_DETALLE = "idinventario";//////////////id del localhost

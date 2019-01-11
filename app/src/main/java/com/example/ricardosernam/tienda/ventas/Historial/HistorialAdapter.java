@@ -81,9 +81,13 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
         }
         String año=String.valueOf(cal.get(Calendar.YEAR));
         String dia=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+        String hora=String.valueOf(cal.get(Calendar.HOUR_OF_DAY));
+        String minuto=String.valueOf(cal.get(Calendar.MINUTE));
+
+
 
         holder.empleado.setText("Cajero: "+itemsHistorial.get(position).getEmpleado());
-        holder.fecha.setText("Fecha: "+dia+"/"+mes +"/"+año);
+        holder.fecha.setText("Fecha: "+dia+"/"+mes +"/"+año+" "+hora+":"+minuto);
         //holder.fecha.setText(itemsHistorial.get(position).getFecha());
         Historial.rellenado_items(itemsHistorial.get(position).getIdVenta(), holder.recycler, context);
         Historial.calcularTotalporVenta(holder.total);

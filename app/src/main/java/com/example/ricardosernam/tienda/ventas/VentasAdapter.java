@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.R;
 
@@ -57,7 +58,7 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
         if(itemsProductos.get(position).getExistentes()<=0) { ////0 son gramos
             holder.existentes.setTextColor(ColorStateList.valueOf(rojo));
         }
-        if(itemsProductos.get(position).getCodigo_barras()==null) { ////0 son gramos
+        if(itemsProductos.get(position).getCodigo_barras().equals("null")) { ////0 son gramos
             holder.existentes.setText(String.valueOf(df.format(itemsProductos.get(position).getExistentes())) +" Gramos aún");
         }
         else{ //1 es piezas
@@ -67,7 +68,7 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(itemsProductos.get(position).getCodigo_barras()==null) { ////0 son gramos
+                if(itemsProductos.get(position).getCodigo_barras().equals("null")) { ////0 son gramos
                     new cantidad_producto_DialogFragment(itemsProductos.get(position).getNombre(), itemsProductos.get(position).getPrecio(), 0).show(fm, "Producto_ventas");
                 }
                 else{ //1 es piezas

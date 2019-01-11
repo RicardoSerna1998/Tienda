@@ -99,7 +99,7 @@ public class Historial extends Fragment {
         if(fila2.moveToFirst()) {///si hay un elemento
             filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
             if(filaProducto.moveToFirst()) {///si hay un elemento
-                if(filaProducto.isNull(1)){   ///gramos
+                if(filaProducto.getString(1).equals("null")){   ///gramos
                     float subtotal=(fila2.getFloat(1)/1000)* fila2.getFloat(2);
                     total=total+subtotal;
                     itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), subtotal));

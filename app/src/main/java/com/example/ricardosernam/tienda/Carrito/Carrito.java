@@ -119,7 +119,7 @@ public class Carrito extends Fragment {
     public static void actualizar(Float cantidad, String nombre, final int position) {
         datosSeleccionado=db.rawQuery("select precio, codigo_barras, idRemota from inventario where nombre_producto='"+nombre+"'" ,null);
         if(datosSeleccionado.moveToFirst()) {
-            if (datosSeleccionado.getString(1) == null) {  ///fruta
+            if (datosSeleccionado.getString(1).equals("null")) {  ///fruta
                 ContractParaProductos.itemsProductosVenta.set(position, new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0), 0, (cantidad / 1000) * datosSeleccionado.getFloat(0), datosSeleccionado.getInt(2)));//obtenemos el cardview seleccionado y lo agregamos a items2
             } else {   //pieza
                 ContractParaProductos.itemsProductosVenta.set(position, new ProductosVenta_class(nombre, cantidad, datosSeleccionado.getFloat(0), 1, cantidad * datosSeleccionado.getFloat(0), datosSeleccionado.getInt(2)));//obtenemos el cardview seleccionado y lo agregamos a items2

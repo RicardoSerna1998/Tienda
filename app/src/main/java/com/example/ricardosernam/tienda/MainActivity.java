@@ -1,6 +1,7 @@
 package com.example.ricardosernam.tienda;
 
 import android.content.ClipData;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,14 +22,16 @@ import com.example.ricardosernam.tienda.sync.SyncAdapter;
 import com.example.ricardosernam.tienda.utils.Constantes;
 
 import static android.widget.Toast.LENGTH_LONG;
+import static com.example.ricardosernam.tienda.Empleados.Empleados.ip;
 
 public class MainActivity extends AppCompatActivity {
     public static TextView empleadoActivo;
     private static SQLiteDatabase db;
-    private static Cursor activos,  empleadoEnCaja, informacion;
+    private static Cursor activos,  empleadoEnCaja, estado;
     public static Toolbar toolbar;
     public static MenuItem sincronizar;
     public static FragmentManager fm;
+    public ContentValues values=new ContentValues();
     public static android.support.v7.app.ActionBar bar;
 
 
@@ -76,6 +79,18 @@ public class MainActivity extends AppCompatActivity {
             if(activos.moveToFirst()){   ////hay alguien activo en caja
                 if(getSupportFragmentManager().findFragmentByTag("Empleados").isVisible()){  //estoy en empleados
                     getSupportFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas(), "Ventas").addToBackStack("Ventas").commit(); ///cambio de fragment
+
+                    estado=db.rawQuery("select ip, importado from estados" ,null);
+
+                    ///guardamo el estado de la pantalla
+                    values.put(ContractParaProductos.Columnas.IP,  String.valueOf(ip.getText()));
+                    if(estado.moveToFirst()){
+                        db.update("estados", values, null, null);
+                    }
+                    else{
+                        db.insertOrThrow("estados", null, values);
+                    }
+                    new Constantes("http://" + String.valueOf(ip.getText()));
                     //item.setIcon(ContextCompat.getDrawable(this, R.mipmap.ic_supervisor_account_black_24dp));
                 }
                 else{  ///no estoy en empleados

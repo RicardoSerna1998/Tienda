@@ -93,6 +93,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContractParaProductos.Columnas.ESTADO + " INTEGER NOT NULL DEFAULT "+ ContractParaProductos.ESTADO_OK+"," +
                 ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
         database.execSQL(cmd6);
+
+        String cmd7 = "CREATE TABLE IF NOT EXISTS " + ContractParaProductos.ESTADOS + " (" +
+                ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                ContractParaProductos.Columnas.IMPORTADO + " INTEGER NOT NULL DEFAULT 1, " +
+                ContractParaProductos.Columnas.IP + " TEXT)";
+
+        database.execSQL(cmd7);
     }
 
     //@Override

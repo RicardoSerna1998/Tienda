@@ -57,6 +57,32 @@ public class Utilidades {
                 e.printStackTrace();
             }
         }
+        else if (url.equals(Constantes.INSERT_URL_TURNO)) {
+            int idempleado;
+            String hora_incio;
+
+
+
+            idempleado = c.getInt(COLUMNA_ID_EMPLEADO_VENTA);
+            hora_incio = c.getString(COLUMNA_FECHA_VENTA);
+
+            try {
+                jObject.put(ContractParaProductos.Columnas.ID_EMPLEADO, idempleado);
+                jObject.put(ContractParaProductos.Columnas.HORA_INICIO, hora_incio);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (url.equals(Constantes.UPDATE_URL_TURNO)) {
+           String hora_fin;
+            hora_fin = c.getString(2);
+            try {
+                jObject.put(ContractParaProductos.Columnas.HORA_FIN, hora_fin);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         else if (url.equals(Constantes.UPDATE_URL_INVENTARIO)) {
             Double existente;
             existente = c.getDouble(0);
