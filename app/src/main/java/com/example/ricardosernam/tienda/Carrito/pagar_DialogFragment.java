@@ -189,7 +189,8 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                             Log.i("Inventario", String.valueOf(values3));    ////mostramos que valores se han insertado
                         }
                     }
-                    SyncAdapter.sincronizarAhora(getContext(), true,0, Constantes.UPDATE_URL_INVENTARIO);   ///actualizamos el inventario disponible a cero
+                    //DESCOMENTAR MODO ONLINE
+                    ///SyncAdapter.sincronizarAhora(getContext(), true,0, Constantes.UPDATE_URL_INVENTARIO);   ///actualizamos el inventario disponible a cero
 
                     if(imprimir.isChecked()){
                         ///imprimimos el recibo

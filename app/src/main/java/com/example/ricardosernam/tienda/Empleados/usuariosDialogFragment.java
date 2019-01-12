@@ -125,7 +125,7 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
                         relleno(getContext());
                         getDialog().dismiss();
                     }
-                    SyncAdapter.sincronizarAhora(getContext(), true, 0, Constantes.UPDATE_URL_EMPLEADOS);   ///actualizamos el inventario disponible a cero
+                    ///SyncAdapter.sincronizarAhora(getContext(), true, 0, Constantes.UPDATE_URL_EMPLEADOS);   ///actualizamos el inventario disponible a cero
                 } else {  //codigo incorrecto
                     contrasena.setError("Contraseña invalida");
                 }
@@ -146,12 +146,12 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
         Cursor empleado = db.rawQuery("select idRemota from empleados where nombre_empleado='" + usuario + "'", null);
 
         if (empleado.moveToFirst()) {
-            values2.put("id_empleado", empleado.getString(0));
+            values2.put("idRemota", empleado.getString(0));
         }
         values2.put("hora_inicio", formattedDate);
         values2.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
         db.insertOrThrow("turnos", null, values2);
-        SyncAdapter.sincronizarAhora(context, true, 0, Constantes.INSERT_URL_TURNO);
+        //SyncAdapter.sincronizarAhora(context, true, 0, Constantes.INSERT_URL_TURNO);   descomentar en online
     }
 
     public static void actualizarTurno(Context context) {
@@ -162,8 +162,9 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
             id_empleado=empleado.getString(0);
         }
         values2.put("hora_fin", formattedDate);
-        db.update("turnos", values2, "id_empleado='" + id_empleado + "' and hora_fin is null", null);
+        values2.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
+        db.update("turnos", values2, "idRemota='" + id_empleado + "' and hora_fin is null", null);
 
-        SyncAdapter.sincronizarAhora(context, true, 0, Constantes.UPDATE_URL_TURNO);
+        //SyncAdapter.sincronizarAhora(context, true, 0, Constantes.UPDATE_URL_TURNO);  descomentar en online
     }
 }

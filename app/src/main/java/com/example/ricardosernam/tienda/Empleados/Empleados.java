@@ -32,23 +32,17 @@ import java.util.ArrayList;
 import static android.content.ContentValues.TAG;
 import static android.widget.Toast.LENGTH_LONG;
 
-@SuppressLint("ValidFragment")
 public class Empleados extends Fragment {     /////Fragment de categoria ventas
-    public static Cursor empleados, informacion, estado;
-    @SuppressLint("StaticFieldLeak")
+    public static Cursor empleados, informacion, estado, empleadosActivos;
     public static RecyclerView recycler;
     public static RecyclerView.Adapter adapter;
     public static RecyclerView.LayoutManager lManager;
     public static android.support.v4.app.FragmentManager fm;
     public static SQLiteDatabase db;
     public static TextView nombre, direccion, telefono;
-    @SuppressLint("StaticFieldLeak")
     public static Button establecer;
     public static ImageButton sync;
-    @SuppressLint("StaticFieldLeak")
     public static EditText ip;
-    @SuppressLint("StaticFieldLeak")
-    public static Context context;
     public ContentValues values=new ContentValues();
     private static ArrayList<Empleados_class> itemsEmpleados = new ArrayList<>();  ///Arraylist que contiene los cardviews seleccionados de productos
 
@@ -57,7 +51,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         View view = inflater.inflate(R.layout.fragment_empleados, container, false);
         onViewCreated(view, savedInstanceState);
 
-        context=getContext();
         fm = getFragmentManager();
         ip = view.findViewById(R.id.ETip);
         nombre= view.findViewById(R.id.TVnombreNegocio);
@@ -67,6 +60,9 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         establecer = view.findViewById(R.id.BtnEstablecer);
         sync = view.findViewById(R.id.BtnSync);
         recycler = view.findViewById(R.id.RVempleados); ///declaramos el recycler
+
+        DatabaseHelper admin = new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
+        db = admin.getWritableDatabase();
 
         establecer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,10 +94,19 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                empleadosActivos = db.rawQuery("select * from empleados where activo=1", null);
                 if(Empleados.ip.isEnabled()){
                     Toast.makeText(getContext(), "Establece la IP", LENGTH_LONG).show();
-                } else {
-                    SyncAdapter.sincronizarAhora(getContext(), false, 0, Constantes.GET_URL_INFORMACION);
+                }
+                else if(empleadosActivos.moveToFirst()){
+                    Toast.makeText(getContext(), "Cierra sesión de todos los usuarios", LENGTH_LONG).show();
+                }
+                else {
+                    ///SyncAdapter.sincronizarAhora(getContext(), false, 0, Constantes.GET_URL_INFORMACION);  descomentar en online
+                    //quitar en online
+                    SyncAdapter.sincronizarAhora(getContext(), false, 0, Constantes.INSERT_URL_TURNO);
+
+                    //SyncAdapter.sincronizarAhora(getContext(), true, 0, Constantes.INSERT_URL_TURNO);
                 }
             }
         });
@@ -111,9 +116,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
 
     public static void relleno(Context context) {    ///llamamos el adapter del recycler
         itemsEmpleados.clear();
-        DatabaseHelper admin = new DatabaseHelper(context, ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
-        db = admin.getWritableDatabase();
-
         empleados = db.rawQuery("select nombre_empleado, tipo_empleado, activo, codigo from empleados ORDER by tipo_empleado, activo desc", null);
         informacion= db.rawQuery("select nombre_negocio, direccion, telefono from informacion", null);
         estado=db.rawQuery("select ip, importado from estados" ,null);
@@ -164,7 +166,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         lManager = new LinearLayoutManager(context);  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
-        //adapter.notifyDataSetChanged();
     }
 
 }

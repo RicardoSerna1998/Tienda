@@ -57,12 +57,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
         database.execSQL(cmd);
 
-        /*database.execSQL("INSERT INTO inventario (idRemota, nombre_producto, precio, codigo_barras, existentes) values (1, 'Jitomate', 15.0, null, 3000)");
-        database.execSQL("INSERT INTO inventario (idRemota, nombre_producto, precio, codigo_barras, existentes) values (2, 'Salsa', 10.0 , '097339000054', 20)");
-        database.execSQL("INSERT INTO inventario (idRemota, nombre_producto, precio, codigo_barras, existentes) values (3, 'Cebolla', 15.0, null, 3000)");
-        database.execSQL("INSERT INTO inventario (idRemota, nombre_producto, precio, codigo_barras, existentes) values (4, 'Trojan', 60.0 , '022600972525', 30)");*/
+        /*database.execSQL("INSERT INTO inventario (idRemota, nombre_producto, precio, codigo_barras, existente) values (1, 'Jitomate', 15.0, null, 3000)");
+        database.execSQL("INSERT INTO inventario (idRemota, nombre_producto, precio, codigo_barras, existente) values (2, 'Coca', 10.0 , '7501055354672', 20)");
+        database.execSQL("INSERT INTO inventario (idRemota, nombre_producto, precio, codigo_barras, existente) values (3, 'Cebolla', 15.0, null, 3000)");
+        database.execSQL("INSERT INTO inventario (idRemota, nombre_producto, precio, codigo_barras, existente) values (4, 'Trojan', 60.0 , '022600972525', 30)");
 
-        /*database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (1,'juan', 'Juan', 'Cajero', 0)");
+        database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (1,'juan', 'Juan', 'Cajero', 0)");
         database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (2,'manuel', 'Manuel', 'Admin.', 0)");
         database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (3,'maria', 'María', 'Cerillo',0)");*/
 

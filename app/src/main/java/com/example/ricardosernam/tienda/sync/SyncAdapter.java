@@ -258,19 +258,38 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         //uri = url;
 
         //}
-        Log.i(TAG, "Actualizando el cliente.");   ////hasta aqui bien
-        VolleySingleton.getInstance(getContext()).addToRequestQueue(
-                new JsonObjectRequest(Request.Method.GET, url,  ////POSIBLE ERROR
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                procesarRespuestaGet(response, syncResult, orden);
+        if(url.equals(INSERT_URL_TURNO)){
+            VolleySingleton.getInstance(getContext()).addToRequestQueue(
+                    new JsonObjectRequest(Request.Method.POST, url,  ////POSIBLE ERROR
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                        SyncAdapter.sincronizarAhora(getContext(), true, 0, Constantes.INSERT_URL_TURNO);
+
+                                }
+                            },
+                            new Response.ErrorListener() {  //// Si el ip es incorrecto
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(getContext(), "Revisa los servicios de XAMPP, tu IP, o tu conexión a Internet e intentalo nuevamente", Toast.LENGTH_LONG).show();
+                                }
                             }
-                        },
-                        new Response.ErrorListener() {  //// Si el ip es incorrecto
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(getContext(), "Revisa los servicios de XAMPP, tu IP, o tu conexión a Internet e intentalo nuevamente", Toast.LENGTH_LONG).show();
+                    )
+            );
+        }
+        else{
+            VolleySingleton.getInstance(getContext()).addToRequestQueue(
+                    new JsonObjectRequest(Request.Method.GET, url,  ////POSIBLE ERROR
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                        procesarRespuestaGet(response, syncResult, orden);
+                                }
+                            },
+                            new Response.ErrorListener() {  //// Si el ip es incorrecto
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(getContext(), "Revisa los servicios de XAMPP, tu IP, o tu conexión a Internet e intentalo nuevamente", Toast.LENGTH_LONG).show();
 
                                 /*if(!(uri.equals(Constantes.GET_URL_CARRITO))){  //SI NO ES CARRRITO
                                     new android.os.Handler().postDelayed(
@@ -287,10 +306,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                                     Sincronizar.buscar.getBackground().setColorFilter(null);  //habilitado  SE PRESIONO BUSCAR
                                     Toast.makeText(getContext(), "Revisa los servicios de XAMPP, tu IP, o tu conexión a Internet e intentalo nuevamente", Toast.LENGTH_LONG).show();
                                     }*/
+                                }
                             }
-                        }
-                )
-        );
+                    )
+            );
+        }
+        Log.i(TAG, "Actualizando el cliente.");   ////hasta aqui bien
+
     }
 
     /**
@@ -770,6 +792,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             iniciarActualizacion(url);
             final Cursor c = db.rawQuery("select activo, idRemota from empleados where pendiente_insercion=1", null);
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios EMPLEADOS");
+            cuentaEmpleado=c.getCount();
+
 
             if (c.getCount() > 0) {  ///api 19
                 while (c.moveToNext()) {
@@ -783,7 +807,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                                         new Response.Listener<JSONObject>() {
                                             @Override
                                             public void onResponse(JSONObject response) {
-                                                procesarRespuestaInsert(response, 0, url, c.getCount());
+                                                procesarRespuestaInsert(response, 0, url, cuentaEmpleado);
+                                                cuentaEmpleado--;
                                             }
                                         },
                                         new Response.ErrorListener() {
@@ -816,7 +841,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
 
             } else {
-                Log.i(TAG, "No se requiere sincronización UPDATE INVENTARIO");
+                Log.i(TAG, "No se requiere sincronización URL EMPLEADOS");
+                realizarSincronizacionRemota(UPDATE_URL_INVENTARIO);
                 //}
             }
             c.close();
@@ -824,7 +850,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         else if (url.equals(Constantes.INSERT_URL_TURNO)) {
             iniciarActualizacion(url);
 
-            final Cursor c=db.rawQuery("select _id, idRemota, hora_inicio from turnos where pendiente_insercion=1", null);
+            final Cursor c=db.rawQuery("select _id, idRemota, hora_inicio, hora_fin from turnos where pendiente_insercion=1", null);
 
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios INSERT TURNO.");
             cuentaInsertTurno=c.getCount();
@@ -874,7 +900,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             } else {
                 Log.i(TAG, "No se requiere sincronización TURNOS");   ////si no hay venta
-                Log.i(TAG, "RECREA BD");
+                realizarSincronizacionRemota(UPDATE_URL_INVENTARIO);
+                //Log.i(TAG, "RECREA BD");
             }
             c.close();
         }
@@ -891,7 +918,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     if (idinventario.moveToFirst()) {
                         VolleySingleton.getInstance(getContext()).addToRequestQueue(
                                 new JsonObjectRequest(Request.Method.POST,
-                                        UPDATE_URL_INVENTARIO + c.getString(1),
+                                        UPDATE_URL_TURNO + c.getString(1),
                                         Utilidades.deCursorAJSONObject(c, url),  //////////////////////////////////////////////
                                         new Response.Listener<JSONObject>() {
                                             @Override
@@ -903,7 +930,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                                         new Response.ErrorListener() {
                                             @Override
                                             public void onErrorResponse(VolleyError error) {
-                                                Log.d(TAG, "Error Volley UPDATE INVENTARIO: " + error.getMessage()); ///error aqui
+                                                Log.d(TAG, "Error Volley UPDATE TURNO: " + error.getMessage()); ///error aqui
                                                 Toast.makeText(getContext(), "Revisa los servicios de XAMPP, tu IP, o tu conexión a Internet e intentalo nuevamente", Toast.LENGTH_LONG).show();
 
                                                 //realizarSincronizacionRemota(url);
@@ -929,7 +956,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
 
             } else {
-                Log.i(TAG, "No se requiere sincronización UPDATE INVENTARIO");
+                Log.i(TAG, "No se requiere sincronización UPDATE TURNO");
+                realizarSincronizacionRemota(UPDATE_URL_EMPLEADOS);
                 //}
             }
             c.close();
@@ -985,6 +1013,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             } else {
                 Log.i(TAG, "No se requiere sincronización UPDATE INVENTARIO");
+                realizarSincronizacionRemota(INSERT_URL_VENTA);
                 //}
             }
             c.close();
@@ -1042,7 +1071,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             } else {
                 Log.i(TAG, "No se requiere sincronización VENTAS");   ////si no hay venta
-                Log.i(TAG, "RECREA BD");
+                realizarSincronizacionRemota(INSERT_URL_VENTA_DETALLE);
+                //Log.i(TAG, "RECREA BD");
             }
                 c.close();
         }
@@ -1050,7 +1080,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             iniciarActualizacion(url);   //NO OBTIENE BIEN LA CUENTA
 
             final Cursor c=db.rawQuery("select idRemota, id_producto, precio, cantidad from venta_detalles where pendiente_insercion=1", null);
-
 
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios VENTA DETALLE.");
             cuentaVentasDetalles=c.getCount();
@@ -1097,7 +1126,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             } else {
                 Log.i(TAG, "No se requiere sincronización VENTA_DETALLE");   ////se queda aquí
-            }
+                SyncAdapter.sincronizarAhora(getContext(), false, 0, Constantes.GET_URL_INFORMACION);
+                }
             //c.close();
                 c.close();
         }
@@ -1198,33 +1228,32 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
                  if(cuenta==1){
                      Log.i(TAG, "EMPLEADOS FINALIZADO ");
+                     realizarSincronizacionRemota(UPDATE_URL_INVENTARIO);  ///QUITAR PARA MODO online
 
                  }
 
              }
              else if (url.equals(Constantes.INSERT_URL_TURNO)) {
+                 ///desomentar en online
                  ContentValues v = new ContentValues();
                  v.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 0);
                  db.update("turnos", v, "_id='" + idLocal + "'", null);
-                     /*Cursor verificar = db.rawQuery("select pendiente_insercion from ventas where _id='"+idLocal+"'", null);
-                       if(verificar.moveToFirst()){
-                           Log.i(TAG, "ACTUALIZADO "+verificar.getString(0));
-                       }*/
+
                  if(cuenta==1){
                      Log.i(TAG, "INSERTAR TURNOS FINALIZADO ");
-                     }
+                     //realizarSincronizacionRemota(UPDATE_URL_EMPLEADOS);    ////DESCOMENTAR PARA MODOD online
+                     realizarSincronizacionRemota(UPDATE_URL_INVENTARIO);
+                 }
              }
              else if (url.equals(Constantes.UPDATE_URL_TURNO)) {
                  ContentValues v = new ContentValues();
                  v.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 0);
                  db.update("turnos", v, "_id='" + idLocal + "'", null);
-                     /*Cursor verificar = db.rawQuery("select pendiente_insercion from ventas where _id='"+idLocal+"'", null);
-                       if(verificar.moveToFirst()){
-                           Log.i(TAG, "ACTUALIZADO "+verificar.getString(0));
-                       }*/
                  if(cuenta==1){
                      Log.i(TAG, "ACTUALIZAR TURNOS  FINALIZADO ");
-                     }
+                     realizarSincronizacionRemota(UPDATE_URL_EMPLEADOS);
+
+                 }
              }
              if (url.equals(Constantes.UPDATE_URL_INVENTARIO)) {   ////idLocal es cero (no interesa quitar pendiente_insercion)
 
@@ -1260,6 +1289,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          //if(idLocal==(cuenta*2)){    //idlocal son 10      cuenta es siempre la mitad
                  if(cuenta==1){
                      Log.i(TAG, "VENTA DETALLES FINALIZADO");
+                     ///QUITAR ONLINE
+                     SyncAdapter.sincronizarAhora(getContext(), false, 0, Constantes.GET_URL_INFORMACION);
                      //db.close();
          }
          }

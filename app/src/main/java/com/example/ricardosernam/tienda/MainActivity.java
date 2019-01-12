@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private static SQLiteDatabase db;
     private static Cursor activos,  empleadoEnCaja, estado;
     public static Toolbar toolbar;
-    public static MenuItem sincronizar;
-    public static FragmentManager fm;
     public ContentValues values=new ContentValues();
     public static android.support.v7.app.ActionBar bar;
 
@@ -43,11 +41,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         DatabaseHelper admin = new DatabaseHelper(getApplicationContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db = admin.getWritableDatabase();
-        fm=getSupportFragmentManager();
         if (savedInstanceState == null) {
-            fm.beginTransaction().add(new Empleados(), "Empleados").replace(R.id.LLprincipal, new Empleados(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
-            //fm.beginTransaction().replace(R.id.LLprincipal, new Empleados(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Empleados(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
         }
         empleadoEnCaja= db.rawQuery("select nombre_empleado from empleados where tipo_empleado='Admin.' and activo=1 or tipo_empleado='Cajero' and activo=1", null);
 

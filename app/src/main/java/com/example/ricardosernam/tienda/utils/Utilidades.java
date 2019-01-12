@@ -18,6 +18,8 @@ public class Utilidades {
 
     private static final int COLUMNA_ID_EMPLEADO_VENTA = 1;
     private static final int COLUMNA_FECHA_VENTA = 2;
+    private static final int COLUMNA_FECHA_FIN = 3;
+
 
 
     private static final int COLUMNA_ID_REMOTA_VENTA_DETALLE = 4;
@@ -60,15 +62,18 @@ public class Utilidades {
         else if (url.equals(Constantes.INSERT_URL_TURNO)) {
             int idempleado;
             String hora_incio;
-
-
+            String hora_fin;
 
             idempleado = c.getInt(COLUMNA_ID_EMPLEADO_VENTA);
             hora_incio = c.getString(COLUMNA_FECHA_VENTA);
+            hora_fin = c.getString(COLUMNA_FECHA_FIN);
+
 
             try {
                 jObject.put(ContractParaProductos.Columnas.ID_EMPLEADO, idempleado);
                 jObject.put(ContractParaProductos.Columnas.HORA_INICIO, hora_incio);
+                jObject.put(ContractParaProductos.Columnas.HORA_FIN, hora_fin);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

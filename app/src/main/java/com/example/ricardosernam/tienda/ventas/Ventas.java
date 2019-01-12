@@ -144,8 +144,8 @@ public class Ventas extends Fragment {
             }
         }
         adapter = new VentasAdapter(itemsProductos, fm, getContext());///llamamos al adaptador y le enviamos el array como parametro
-        lManager = new LinearLayoutManager(this.getActivity());  //declaramos el layoutmanager
-        //lManager = new GridLayoutManager(this.getActivity(), 3);  //declaramos el layoutmanager
+        //lManager = new LinearLayoutManager(this.getActivity());  //declaramos el layoutmanager
+        lManager = new GridLayoutManager(this.getActivity(), 3);  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
