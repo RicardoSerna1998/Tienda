@@ -82,7 +82,6 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
 
         aceptar.setOnClickListener(new View.OnClickListener() {
 
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 java.util.Calendar c = java.util.Calendar.getInstance();
@@ -151,7 +150,10 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
         values2.put("hora_inicio", formattedDate);
         values2.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
         db.insertOrThrow("turnos", null, values2);
-        //SyncAdapter.sincronizarAhora(context, true, 0, Constantes.INSERT_URL_TURNO);   descomentar en online
+        if(Empleados.online.isChecked()){
+            SyncAdapter.sincronizarAhora(context, false, 0, Constantes.INSERT_URL_TURNO);
+            //SyncAdapter.sincronizarAhora(context, true, 0, Constantes.UPDATE_URL_TURNO);  descomentar en online
+        }
     }
 
     public static void actualizarTurno(Context context) {
@@ -163,8 +165,10 @@ public class usuariosDialogFragment extends android.support.v4.app.DialogFragmen
         }
         values2.put("hora_fin", formattedDate);
         values2.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
-        db.update("turnos", values2, "idRemota='" + id_empleado + "' and hora_fin is null", null);
-
-        //SyncAdapter.sincronizarAhora(context, true, 0, Constantes.UPDATE_URL_TURNO);  descomentar en online
+        db.update("turnos", values2, "idRemota='" + id_empleado + "' and hora_fin IS NULL", null);
+        if(Empleados.online.isChecked()){
+            SyncAdapter.sincronizarAhora(context, false, 0, Constantes.INSERT_URL_TURNO);
+            //SyncAdapter.sincronizarAhora(context, true, 0, Constantes.UPDATE_URL_TURNO);  descomentar en online
+        }
     }
 }

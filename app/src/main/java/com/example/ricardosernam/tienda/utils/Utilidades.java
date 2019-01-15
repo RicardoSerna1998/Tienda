@@ -68,7 +68,6 @@ public class Utilidades {
             hora_incio = c.getString(COLUMNA_FECHA_VENTA);
             hora_fin = c.getString(COLUMNA_FECHA_FIN);
 
-
             try {
                 jObject.put(ContractParaProductos.Columnas.ID_EMPLEADO, idempleado);
                 jObject.put(ContractParaProductos.Columnas.HORA_INICIO, hora_incio);
@@ -89,38 +88,15 @@ public class Utilidades {
             }
         }
         else if (url.equals(Constantes.UPDATE_URL_INVENTARIO)) {
-            Double existente;
-            existente = c.getDouble(0);
-
+            Double existenteFinal;
+            existenteFinal=c.getDouble(0)-c.getDouble(1);
             try {
-                jObject.put(ContractParaProductos.Columnas.EXISTENTES, existente);
+                jObject.put(ContractParaProductos.Columnas.EXISTENTES, existenteFinal);
             }
             catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        /*else if (url.equals(Constantes.UPDATE_URL_INVENTARIO_DETALLE)) {
-            int idinventario;
-            int idproducto;
-            Double existente_inicial;
-            Double existente_final;
-
-
-            idinventario = c.getInt(COLUMNA_ID_REMOTA_INVENTARIO_DETALLE);
-            idproducto = c.getInt(COLUMNA_ID_PRODUCTO_INVENTARIO_DETALLE);
-            existente_inicial = c.getDouble(COLUMNA_EXISTENTE_INICIAL);
-            existente_final = c.getDouble(COLUMNA_EXISTENTE_FINAL);
-
-
-            try {
-                jObject.put("idinventario", idinventario);
-                jObject.put(ContractParaProductos.Columnas.ID_PRODUCTO, idproducto);
-                jObject.put(ContractParaProductos.Columnas.INVENTARIO_INICIAL, existente_inicial);
-                jObject.put(ContractParaProductos.Columnas.INVENTARIO_FINAL, existente_final);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }*/
         else if (url.equals(Constantes.INSERT_URL_VENTA)) {
             int idempleado;
             String fecha;

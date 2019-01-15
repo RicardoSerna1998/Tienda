@@ -9,13 +9,17 @@ public class Inventario {
     public double precio;
     public String codigo_barras;
     public Double existentes;
+    public Double existentes2;
 
 
-    public Inventario(String idproducto, String nombre, double precio, String codigo_barras, Double existentes) {
+
+    public Inventario(String idproducto, String nombre, double precio, String codigo_barras, Double existentes, Double existentes2) {
         this.idproducto = idproducto;
         this.nombre = nombre;
         this.precio = precio;
         this.codigo_barras = codigo_barras;
         this.existentes = existentes;
+        this.existentes2 = existentes2;
+
     }
 }

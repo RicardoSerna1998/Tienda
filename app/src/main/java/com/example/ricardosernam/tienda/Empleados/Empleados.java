@@ -1,8 +1,10 @@
 package com.example.ricardosernam.tienda.Empleados;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -33,7 +36,7 @@ import static android.content.ContentValues.TAG;
 import static android.widget.Toast.LENGTH_LONG;
 
 public class Empleados extends Fragment {     /////Fragment de categoria ventas
-    public static Cursor empleados, informacion, estado, empleadosActivos;
+    public static Cursor empleados, informacion, estado, empleadosActivos, ipMode, onlineMode;
     public static RecyclerView recycler;
     public static RecyclerView.Adapter adapter;
     public static RecyclerView.LayoutManager lManager;
@@ -41,8 +44,9 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
     public static SQLiteDatabase db;
     public static TextView nombre, direccion, telefono;
     public static Button establecer;
-    public static ImageButton sync;
+    public static Button sync;
     public static EditText ip;
+    public static CheckBox online;
     public ContentValues values=new ContentValues();
     private static ArrayList<Empleados_class> itemsEmpleados = new ArrayList<>();  ///Arraylist que contiene los cardviews seleccionados de productos
 
@@ -56,6 +60,8 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         nombre= view.findViewById(R.id.TVnombreNegocio);
         direccion= view.findViewById(R.id.TVdireccionNegocio);
         telefono= view.findViewById(R.id.TVtelefonoNegocio);
+        online= view.findViewById(R.id.CBonline);
+
 
         establecer = view.findViewById(R.id.BtnEstablecer);
         sync = view.findViewById(R.id.BtnSync);
@@ -73,7 +79,7 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                     } else {
                         establecer.setText(" Modificar IP ");
                         ip.setEnabled(false);
-                        estado=db.rawQuery("select ip, importado from estados" ,null);
+                        estado=db.rawQuery("select ip, online from estados" ,null);
 
                         ///guardamo el estado de la pantalla
                         values.put(ContractParaProductos.Columnas.IP,  String.valueOf(ip.getText()));
@@ -98,9 +104,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                 if(Empleados.ip.isEnabled()){
                     Toast.makeText(getContext(), "Establece la IP", LENGTH_LONG).show();
                 }
-                else if(empleadosActivos.moveToFirst()){
-                    Toast.makeText(getContext(), "Cierra sesión de todos los usuarios", LENGTH_LONG).show();
-                }
                 else {
                     ///SyncAdapter.sincronizarAhora(getContext(), false, 0, Constantes.GET_URL_INFORMACION);  descomentar en online
                     //quitar en online
@@ -110,6 +113,93 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                 }
             }
         });
+        online.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                estado=db.rawQuery("select ip, online from estados" ,null);
+
+
+                if(online.isChecked()) {    ////si queremos activar el modo online
+                    final AlertDialog.Builder aceptarVenta = new AlertDialog.Builder(getContext());
+                    aceptarVenta .setTitle("Cuidado");
+                    aceptarVenta .setMessage("El modo online requiere conexión a Internet");
+                    aceptarVenta .setCancelable(false);
+                    aceptarVenta .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface aceptarVenta, int id) {
+                            values.put(ContractParaProductos.Columnas.ONLINE, 1);
+                            Toast.makeText(getContext(), "ONLINE", LENGTH_LONG).show();
+                            if (estado.moveToFirst()) {
+                                db.update("estados", values, null, null);
+                                }
+                                else{
+                                db.insertOrThrow("estados", null, values);
+
+                            }
+                        }
+                    });
+                    aceptarVenta .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface aceptarVenta, int id) {
+                            aceptarVenta .dismiss();
+                            online.setChecked(false);
+                            Toast.makeText(getContext(), "NO", LENGTH_LONG).show();
+                        }
+                    });
+                    aceptarVenta .show();
+                }
+                else {    ////si queremos activar el modo offline
+                    final AlertDialog.Builder aceptarVenta = new AlertDialog.Builder(getContext());
+                    aceptarVenta .setTitle("Cuidado");
+                    aceptarVenta .setMessage("Podras sincronizar tus datos hasta que tengas conexión a Internet");
+                    aceptarVenta .setCancelable(false);
+                    aceptarVenta .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface aceptarVenta, int id) {
+                            values.put(ContractParaProductos.Columnas.ONLINE, 0);
+                            Toast.makeText(getContext(), "NO", LENGTH_LONG).show();
+                            if (estado.moveToFirst()) {
+                                db.update("estados", values, null, null);
+                            }
+                            else{
+                                db.insertOrThrow("estados", null, values);
+
+                            }
+                        }
+                    });
+                    aceptarVenta .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface aceptarVenta, int id) {
+                            aceptarVenta .dismiss();
+                            online.setChecked(true);
+                            Toast.makeText(getContext(), "ONLINE", LENGTH_LONG).show();
+                        }
+                    });
+                    aceptarVenta .show();
+                }
+
+
+                    /*if(estado.moveToFirst()){
+                    if(online.isChecked()){
+                        Toast.makeText(getContext(), "ONLINE", LENGTH_LONG).show();
+                        values.put(ContractParaProductos.Columnas.ONLINE,  1);
+                    }
+                    else{
+                        Toast.makeText(getContext(), "NO", LENGTH_LONG).show();
+                        values.put(ContractParaProductos.Columnas.ONLINE,  0);
+                    }
+                    db.update("estados", values, null, null);
+                }
+                else{
+                    if(online.isChecked()){
+                        Toast.makeText(getContext(), "ONLINE", LENGTH_LONG).show();
+                        values.put(ContractParaProductos.Columnas.ONLINE,  1);
+                    }
+                    else{
+                        Toast.makeText(getContext(), "NO", LENGTH_LONG).show();
+                        values.put(ContractParaProductos.Columnas.ONLINE,  0);
+                    }
+                    db.insertOrThrow("estados", null, values);
+
+                }*/
+
+            }});
         relleno(getContext());
         return view;
     }
@@ -118,17 +208,26 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         itemsEmpleados.clear();
         empleados = db.rawQuery("select nombre_empleado, tipo_empleado, activo, codigo from empleados ORDER by tipo_empleado, activo desc", null);
         informacion= db.rawQuery("select nombre_negocio, direccion, telefono from informacion", null);
-        estado=db.rawQuery("select ip, importado from estados" ,null);
+        ipMode=db.rawQuery("select ip from estados" ,null);
+        onlineMode=db.rawQuery("select online from estados" ,null);
 
-        if(estado.moveToFirst()) {///si hay un elemento
-            establecer.setText(" Modificar IP ");
-            ip.setEnabled(false);
-            ip.setText(estado.getString(0));
+        if(ipMode.moveToFirst()) {///si hay un elemento
+            ///establecer.setText(" Modificar IP ");
+            ip.setText(ipMode.getString(0));
         }
-        else{
+        if(onlineMode.moveToFirst()) {///si hay un elemento
+            ///establecer.setText(" Modificar IP ");
+            if(onlineMode.getInt(0)==1){
+                online.setChecked(true);
+            }
+            else{
+                online.setChecked(false);
+            }
+        }
+
+        /*else{
             establecer.setText(" Establecer IP ");
-            ip.setEnabled(true);
-        }
+        }*/
         if(informacion.moveToFirst()){
             if(!informacion.getString(0).isEmpty()){
                 nombre.setVisibility(View.VISIBLE);

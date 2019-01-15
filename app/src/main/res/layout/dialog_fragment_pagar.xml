@@ -95,6 +95,7 @@
     <CheckBox
         android:id="@+id/CBimprimir"
         android:textSize="20dp"
+        android:checked="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Imprimir recibo" />

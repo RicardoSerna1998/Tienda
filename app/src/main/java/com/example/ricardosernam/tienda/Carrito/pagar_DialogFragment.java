@@ -25,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.DatabaseHelper;
+import com.example.ricardosernam.tienda.Empleados.Empleados;
+import com.example.ricardosernam.tienda.MainActivity;
 import com.example.ricardosernam.tienda.provider.ContractParaProductos;
 import com.example.ricardosernam.tienda.R;
 import com.example.ricardosernam.tienda.sync.SyncAdapter;
@@ -38,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.Set;
 import java.util.UUID;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static com.example.ricardosernam.tienda.Carrito.Carrito.aceptar_cancelar;
 
 @SuppressLint("ValidFragment")
@@ -45,7 +48,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
     private Button aceptar,cancelar, sumar, restar;
     private SQLiteDatabase db;
     private android.support.v4.app.FragmentManager fm;
-    private Cursor empleado, venta, existente;
+    private Cursor empleado, venta, existente, informacion, filaProducto;
     private ContentValues values, values2, values3;
     private TextView total,cambio, deuda, abono;
     private EditText cantidad;
@@ -146,52 +149,6 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             @Override
             public void onClick(View view) {
                 if(validar(totalPagar)){   /////si  ya se pago todo bien
-                    values = new ContentValues();
-                    /////obtener fecha actual
-                    java.util.Calendar c = java.util.Calendar.getInstance();
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                    String formattedDate = df.format(c.getTime());
-
-                    empleado= db.rawQuery("select idRemota from empleados where tipo_empleado='Admin.' and activo=1 or tipo_empleado='Cajero' and activo=1", null);
-
-                    if (empleado.moveToFirst()) {
-                        values.put("id_empleado", empleado.getString(0));
-                    }
-
-                    values.put("fecha", formattedDate);
-                    values.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
-                    db.insertOrThrow("ventas", null, values);
-                    Log.i("Venta", String.valueOf(values));    ////mostramos que valores se han insertado
-
-/////////////////////////////////incersion-modificación ventas-inventario_detalles
-                    values2 = new ContentValues();
-                    venta = db.rawQuery("select * from ventas", null);
-
-                    for (int i = 0; i < ContractParaProductos.itemsProductosVenta.size(); i++) {
-                        ////////////////venta detalles/////////////////////////////77
-                        if (venta.moveToFirst()) {
-                            venta.moveToLast();
-                            values2.put("idRemota", venta.getString(0));
-                            values2.put("id_producto", ContractParaProductos.itemsProductosVenta.get(i).getIdRemota());
-                            values2.put("cantidad", ContractParaProductos.itemsProductosVenta.get(i).getCantidad());
-                            values2.put("precio",ContractParaProductos.itemsProductosVenta.get(i).getPrecio());
-                            db.insertOrThrow("venta_detalles", null, values2);
-                            Log.i("Venta_detalles", String.valueOf(values2));    ////mostramos que valores se han insertado
-                        }
-                        //////////////////////////////////////////inventario detalles//////////////////////////////
-                        values3 = new ContentValues();
-                        ///obtenemos el guisado donde tenemos que descontar
-                        existente = db.rawQuery("select existente from inventario where nombre_producto='" + ContractParaProductos.itemsProductosVenta.get(i).getNombre() + "'", null);
-                        if (existente.moveToFirst()) {
-                            float porcion = existente.getFloat(0) - (ContractParaProductos.itemsProductosVenta.get(i).getCantidad());
-                            values3.put("existente", porcion);
-                            db.update("inventario", values3, "idRemota='" + ContractParaProductos.itemsProductosVenta.get(i).getIdRemota() + "'", null);
-                            Log.i("Inventario", String.valueOf(values3));    ////mostramos que valores se han insertado
-                        }
-                    }
-                    //DESCOMENTAR MODO ONLINE
-                    ///SyncAdapter.sincronizarAhora(getContext(), true,0, Constantes.UPDATE_URL_INVENTARIO);   ///actualizamos el inventario disponible a cero
-
                     if(imprimir.isChecked()){
                         ///imprimimos el recibo
                         try {
@@ -204,10 +161,11 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                             e.printStackTrace();
                         }
                     }
-                    dismiss();
-                    Toast.makeText(getContext(), "Venta exitosa", Toast.LENGTH_LONG).show();
-                    aceptar_cancelar(fm);
+                    insertarVenta();
 
+                    /*else{
+                        insertarVenta();
+                    }*/
                 }
             }
         });
@@ -238,12 +196,71 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
     /////////////////////////////////////////////////////////////////// ABRIR
     // open bluetooth connection
     // this will find a bluetooth printer device
+    void insertarVenta(){
+        values = new ContentValues();
+        /////obtener fecha actual
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String formattedDate = df.format(c.getTime());
+
+        empleado= db.rawQuery("select idRemota from empleados where tipo_empleado='Admin.' and activo=1 or tipo_empleado='Cajero' and activo=1", null);
+
+        if (empleado.moveToFirst()) {
+            values.put("id_empleado", empleado.getString(0));
+        }
+
+        values.put("fecha", formattedDate);
+        values.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
+        db.insertOrThrow("ventas", null, values);
+        Log.i("Venta", String.valueOf(values));    ////mostramos que valores se han insertado
+
+/////////////////////////////////incersion-modificación ventas-inventario_detalles
+        values2 = new ContentValues();
+        venta = db.rawQuery("select * from ventas", null);
+
+        for (int i = 0; i < ContractParaProductos.itemsProductosVenta.size(); i++) {
+            ////////////////venta detalles/////////////////////////////77
+            if (venta.moveToFirst()) {
+                venta.moveToLast();
+                values2.put("idRemota", venta.getString(0));
+                values2.put("id_producto", ContractParaProductos.itemsProductosVenta.get(i).getIdRemota());
+                values2.put("cantidad", ContractParaProductos.itemsProductosVenta.get(i).getCantidad());
+                values2.put("precio",ContractParaProductos.itemsProductosVenta.get(i).getPrecio());
+                db.insertOrThrow("venta_detalles", null, values2);
+                Log.i("Venta_detalles", String.valueOf(values2));    ////mostramos que valores se han insertado
+            }
+            //////////////////////////////////////////inventario detalles//////////////////////////////
+            values3 = new ContentValues();
+            ///obtenemos el guisado donde tenemos que descontar
+            //le restamos a existente2
+            existente = db.rawQuery("select existente2 from inventario where nombre_producto='" + ContractParaProductos.itemsProductosVenta.get(i).getNombre() + "'", null);
+            if (existente.moveToFirst()) {
+                float porcion = existente.getFloat(0) - (ContractParaProductos.itemsProductosVenta.get(i).getCantidad());
+                values3.put("existente2", porcion);
+                db.update("inventario", values3, "idRemota='" + ContractParaProductos.itemsProductosVenta.get(i).getIdRemota() + "'", null);
+                Log.i("Inventario", String.valueOf(values3));    ////mostramos que valores se han insertado
+            }
+        }
+        //DESCOMENTAR MODO ONLINE
+        if(Empleados.online.isChecked()){
+            SyncAdapter.sincronizarAhora(getContext(), false, 0, Constantes.INSERT_URL_TURNO);
+            //SyncAdapter.sincronizarAhora(getContext(), true,0, Constantes.UPDATE_URL_INVENTARIO);   ///actualizamos el inventario disponible a cero
+        }
+
+        dismiss();
+        Toast.makeText(getContext(), "Venta exitosa", Toast.LENGTH_LONG).show();
+        MainActivity.bar.setDisplayHomeAsUpEnabled(false);
+
+        aceptar_cancelar(fm);  ///volvemos al fragment
+    }
     void findBT() {
         try {
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
             if(mBluetoothAdapter == null) {
                 myLabel.setText("No bluetooth adapter available");
+                //Toast.makeText(getContext(), "Enciende la impresora", LENGTH_LONG).show();
+
             }
 
             if(!mBluetoothAdapter.isEnabled()) {
@@ -376,15 +393,71 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
     // this will send text data to be printed by the bluetooth printer
     void sendData() throws IOException {
         try {
+            String nombre=null;
+            String direccion=null;
+            String telefono=null;
+            String vendedor=null;
+
+            informacion= db.rawQuery("select nombre_negocio, direccion, telefono from informacion", null);
+            if(informacion.moveToFirst()){
+                nombre=informacion.getString(0);
+                nombre += "\n";
+
+                direccion=informacion.getString(1);
+                direccion += "\n";
+
+                telefono=informacion.getString(2);
+                telefono += "\n \n";
+            }
+
+            empleado= db.rawQuery("select nombre_empleado from empleados where tipo_empleado='Admin.' and activo=1 or tipo_empleado='Cajero' and activo=1", null);
+            if(empleado.moveToFirst()){
+                vendedor="Cajero "+empleado.getString(0);
+                vendedor += "\n \n";
+            }
+
+
+
+            String indice="Producto Cant. $ Sub.";
+            indice += "\n";
+
+            mmOutputStream.write(nombre.getBytes());   ///// aqui imprime
+            mmOutputStream.write(direccion.getBytes());   ///// aqui imprime
+            mmOutputStream.write(telefono.getBytes());   ///// aqui imprime
+            mmOutputStream.write(vendedor.getBytes());   ///// aqui imprime
+            mmOutputStream.write(indice.getBytes());   ///// aqui imprime
+
+            for (int i = 0; i < ContractParaProductos.itemsProductosVenta.size(); i++) {
+                ////////////////venta detalles/////////////////////////////
+                String nombreProducto=null;
+                filaProducto=db.rawQuery("select nombre_producto from inventario where idRemota='"+ContractParaProductos.itemsProductosVenta.get(i).getIdRemota()+"'" ,null);
+                if(filaProducto.moveToFirst()) {///si hay un elemento}
+                    nombreProducto=filaProducto.getString(0);
+                }
+
+                String subtotal=String.valueOf(ContractParaProductos.itemsProductosVenta.get(i).getCantidad()*ContractParaProductos.itemsProductosVenta.get(i).getPrecio());
+
+                String items=String.valueOf(nombreProducto+"   "+ContractParaProductos.itemsProductosVenta.get(i).getCantidad()+" "+ContractParaProductos.itemsProductosVenta.get(i).getPrecio()+" "+subtotal);
+                    items += "\n";
+                    mmOutputStream.write(items.getBytes());   ///// aqui imprime
+
+
+            }
+            String espacio=" ";
+            espacio += "\n ";
+
+            mmOutputStream.write(espacio.getBytes());   ///// aqui imprime
+
+            String gracias="      Gracias por su compra";
+            gracias += "\n \n \n \n \n";
+
+            mmOutputStream.write(gracias.getBytes());   ///// aqui imprime
+
 
             // the text typed by the user
-            String msg = cantidad.getText().toString();
-            msg += "\n";
-
-            mmOutputStream.write(msg.getBytes());
-
+            //String msg = cantidad.getText().toString();
             // tell the user data were sent
-            myLabel.setText("Data sent.");
+            //myLabel.setText("Data sent.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -410,7 +483,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             mmOutputStream.close();
             mmInputStream.close();
             mmSocket.close();
-            myLabel.setText("Bluetooth Closed");
+            ///myLabel.setText("Bluetooth Closed");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -84,6 +84,7 @@ public class Carrito extends Fragment {
                 aceptarVenta .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface aceptarVenta , int id) {
                                 aceptar_cancelar(fm);
+                                //ContractParaProductos.itemsProductosVenta.clear();
                                 aceptarVenta.dismiss();
                         }
 
@@ -103,7 +104,8 @@ public class Carrito extends Fragment {
 
     }
     public static void aceptar_cancelar(FragmentManager fm){
-        ContractParaProductos.itemsProductosVenta.removeAll(ContractParaProductos.itemsProductosVenta);
+        //ContractParaProductos.itemsProductosVenta.removeAll(ContractParaProductos.itemsProductosVenta);
+        ContractParaProductos.itemsProductosVenta.clear();
         fm.beginTransaction().replace(R.id.LLprincipal, fm.findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
     }
     public static void rellenado_total(Context context){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda

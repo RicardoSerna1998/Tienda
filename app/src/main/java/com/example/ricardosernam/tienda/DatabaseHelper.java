@@ -53,6 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContractParaProductos.Columnas.PRECIO + " DOUBLE, " +
                 ContractParaProductos.Columnas.CODIGO_BARRAS + " VARCHAR(45), " +
                 ContractParaProductos.Columnas.EXISTENTES + " DOUBLE," +
+                ContractParaProductos.Columnas.EXISTENTES2 + " DOUBLE," +
                 ContractParaProductos.Columnas.ESTADO + " INTEGER NOT NULL DEFAULT "+ ContractParaProductos.ESTADO_OK+"," +
                 ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
         database.execSQL(cmd);
@@ -96,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String cmd7 = "CREATE TABLE IF NOT EXISTS " + ContractParaProductos.ESTADOS + " (" +
                 ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ContractParaProductos.Columnas.IMPORTADO + " INTEGER NOT NULL DEFAULT 1, " +
+                ContractParaProductos.Columnas.ONLINE + " INT, " +
                 ContractParaProductos.Columnas.IP + " TEXT)";
 
         database.execSQL(cmd7);

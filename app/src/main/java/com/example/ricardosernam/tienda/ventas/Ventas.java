@@ -13,11 +13,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.method.KeyListener;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.Carrito.Carrito;
@@ -28,7 +33,7 @@ import com.example.ricardosernam.tienda.ventas.Historial.Historial;
 
 import java.util.ArrayList;
 
-public class Ventas extends Fragment {
+public class Ventas extends Fragment implements KeyListener {
     private SearchView nombreCodigo;
     private Cursor fila, filaBusqueda, datoEscaneado, ventas;
     private SQLiteDatabase db;
@@ -56,7 +61,7 @@ public class Ventas extends Fragment {
         carrito= view.findViewById(R.id.BtnCarrito);
         historial= view.findViewById(R.id.BtnHistorial);
         actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
-
+        nombreCodigo=view.findViewById(R.id.ETnombreProducto);
 
         carrito.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
@@ -87,9 +92,7 @@ public class Ventas extends Fragment {
                 }
             }
         });
-
         ///buscador
-        nombreCodigo=view.findViewById(R.id.ETnombreProducto);
         nombreCodigo.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -102,14 +105,12 @@ public class Ventas extends Fragment {
                         datoEscaneado=db.rawQuery("select nombre_producto, precio from inventario where codigo_barras='"+newText+"'" ,null);
                         if(datoEscaneado.moveToFirst()) {
                             new cantidad_producto_DialogFragment(datoEscaneado.getString(0), datoEscaneado.getFloat(1), 1).show(fm, "Producto_ventas");
+                            nombreCodigo.clearFocus();   ///deshabilitar buscador
+                            nombreCodigo.setQuery("", false);
                         }
-                        else{
-                            Toast.makeText(getContext(), "Este producto no esta registrado", Toast.LENGTH_SHORT).show();
-                        }
-                        nombreCodigo.clearFocus();
                     }
                     else {   ///es un nombre de producto
-                        filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existente from inventario where nombre_producto like ?", new String[]{"%" + newText + "%"});
+                        filaBusqueda = db.rawQuery("select nombre_producto, precio, codigo_barras, existente2 from inventario where nombre_producto like ?", new String[]{"%" + newText + "%"});
                         if (filaBusqueda.moveToFirst()) { ///si hay un elemento
                             itemsProductos.clear();
                             itemsProductos.add(new Productos_class(filaBusqueda.getString(0), filaBusqueda.getFloat(1), filaBusqueda.getString(2), filaBusqueda.getFloat(3)));
@@ -134,7 +135,7 @@ public class Ventas extends Fragment {
     }
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         fm=getFragmentManager();
-        fila=db.rawQuery("select nombre_producto, precio, codigo_barras, existente from inventario order by codigo_barras" ,null);
+        fila=db.rawQuery("select nombre_producto, precio, codigo_barras, existente2 from inventario order by codigo_barras" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
             itemsProductos.clear();
@@ -150,6 +151,81 @@ public class Ventas extends Fragment {
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+
+
+    /*@Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+
+
+        try
+        {
+            if(event.getAction()== KeyEvent.ACTION_UP)
+            {
+
+                try {
+
+                    char pressedKey = (char) event.getUnicodeChar();
+                    Barcode += "" + pressedKey;
+
+                    //pass data to fragment
+                    WMSSCANFragment WMSSCANFragment = (WMSSCANFragment)getSupportFragmentManager().findFragmentByTag(mFragmentList.get(2).getTag());
+                    WMSSCANFragment.receivedKeyDownEvent(Barcode);
+
+
+                }catch (Exception error) {
+                    error.printStackTrace();
+                }
+
+                //Toast.makeText(getApplicationContext(), event.getAction() + " " + event.getKeyCode() + " - " + (char) event.getUnicodeChar(), Toast.LENGTH_SHORT).show();
+
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return true;
+    }*/
+
+    @Override
+    public int getInputType() {
+        return 0;
+    }
+
+    @Override
+    public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
+        String barcode=null;
+        if(event.getAction()==KeyEvent.ACTION_DOWN){
+            //Log.i(TAG,"dispatchKeyEvent: "+e.toString());
+            char pressedKey = (char) event.getUnicodeChar();
+            barcode += pressedKey;
+        }
+        if (event.getAction()==KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            Toast.makeText(getContext(),
+                    "barcode--->>>" + barcode, Toast.LENGTH_LONG)
+                    .show();
+
+            barcode="";
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    @Override
+    public boolean onKeyOther(View view, Editable text, KeyEvent event) {
+        return false;
+    }
+
+    @Override
+    public void clearMetaKeyState(View view, Editable content, int states) {
+
+    }
+
 
     /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

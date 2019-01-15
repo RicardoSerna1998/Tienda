@@ -174,6 +174,7 @@ public static class Columnas implements BaseColumns {
     public final static String PRECIO = "precio";
     public final static String CODIGO_BARRAS = "codigo_barras";
     public final static String EXISTENTES = "existente";
+    public final static String EXISTENTES2 = "existente2";
 
 
     ////////////////////informacion////////////
@@ -186,7 +187,7 @@ public static class Columnas implements BaseColumns {
     public final static String HORA_FIN = "hora_fin";
 
     public final static String IP = "ip";
-    public final static String IMPORTADO = "importado";
+    public final static String ONLINE = "online";
 
     public static final String ESTADO = "estado";
     public static final String ID_REMOTA = "idRemota";

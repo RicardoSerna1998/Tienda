@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.KeyListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -24,7 +25,7 @@ import com.example.ricardosernam.tienda.utils.Constantes;
 import static android.widget.Toast.LENGTH_LONG;
 import static com.example.ricardosernam.tienda.Empleados.Empleados.ip;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
     public static TextView empleadoActivo;
     private static SQLiteDatabase db;
     private static Cursor activos,  empleadoEnCaja, estado;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         if(empleadoEnCaja.moveToFirst()){
             MainActivity.empleadoActivo.setText("Cajer@: "+empleadoEnCaja.getString(0));
         }
+        bar=getSupportActionBar();
+
 
     }
 
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 if(getSupportFragmentManager().findFragmentByTag("Empleados").isVisible()){  //estoy en empleados
                     getSupportFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Ventas(), "Ventas").addToBackStack("Ventas").commit(); ///cambio de fragment
 
-                    estado=db.rawQuery("select ip, importado from estados" ,null);
+                    estado=db.rawQuery("select ip, online from estados" ,null);
 
                     ///guardamo el estado de la pantalla
                     values.put(ContractParaProductos.Columnas.IP,  String.valueOf(ip.getText()));
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     //item.setIcon(ContextCompat.getDrawable(this, R.mipmap.ic_supervisor_account_black_24dp));
                 }
                 else{  ///no estoy en empleados
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    bar.setDisplayHomeAsUpEnabled(false);
                     getSupportFragmentManager().beginTransaction().replace(R.id.LLprincipal, new Empleados(), "Empleados").addToBackStack("Empleados").commit(); ///cambio de fragment
                     //aqui debe ser
                 }
@@ -98,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else if (id == android.R.id.home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.LLprincipal, getSupportFragmentManager().findFragmentByTag("Ventas")).addToBackStack("Ventas").commit(); ///cambio de fragment
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            bar.setDisplayHomeAsUpEnabled(false);
             return true;
         }
             return super.onOptionsItemSelected(item);

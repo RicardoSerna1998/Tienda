@@ -649,7 +649,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                datos2.add(new Inventario(c.getString("id_producto"), c.getString("nombre_producto"), c.getDouble("precio"), c.getString("codigo_barras"), c.getDouble("existente")));
+                datos2.add(new Inventario(c.getString("id_producto"), c.getString("nombre_producto"), c.getDouble("precio"), c.getString("codigo_barras"), c.getDouble("existente"), c.getDouble("existente")));
             }
 
             // Lista para recolección de operaciones pendientes
@@ -763,6 +763,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         .withValue(ContractParaProductos.Columnas.PRECIO, e.precio)
                         .withValue(ContractParaProductos.Columnas.CODIGO_BARRAS, e.codigo_barras)
                         .withValue(ContractParaProductos.Columnas.EXISTENTES, e.existentes)
+                        .withValue(ContractParaProductos.Columnas.EXISTENTES2, e.existentes2)
                         .withValue(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1)
                         .build());
                 syncResult.stats.numInserts++;
@@ -850,7 +851,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         else if (url.equals(Constantes.INSERT_URL_TURNO)) {
             iniciarActualizacion(url);
 
-            final Cursor c=db.rawQuery("select _id, idRemota, hora_inicio, hora_fin from turnos where pendiente_insercion=1", null);
+            final Cursor c=db.rawQuery("select _id, idRemota, hora_inicio, hora_fin from turnos where pendiente_insercion=1 AND hora_fin IS NOT NUll", null);
 
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios INSERT TURNO.");
             cuentaInsertTurno=c.getCount();
@@ -900,7 +901,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             } else {
                 Log.i(TAG, "No se requiere sincronización TURNOS");   ////si no hay venta
-                realizarSincronizacionRemota(UPDATE_URL_INVENTARIO);
+                realizarSincronizacionRemota(UPDATE_URL_EMPLEADOS);
                 //Log.i(TAG, "RECREA BD");
             }
             c.close();
@@ -964,17 +965,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
         else if (url.equals(UPDATE_URL_INVENTARIO)) {  ///actualizamos al importar
             iniciarActualizacion(url);
-            final Cursor c = db.rawQuery("select existente, idRemota from inventario where pendiente_insercion=1", null);
+            final Cursor c = db.rawQuery("select existente, existente2, idRemota from inventario where pendiente_insercion=1", null);
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios INVENTARIO");
             cuentaInventario=c.getCount();
             if (c.getCount() > 0) {  ///api 19
                 while (c.moveToNext()) {
                     @SuppressLint("Recycle") Cursor idinventario = db.rawQuery("select idRemota from inventario", null);
-
                     if (idinventario.moveToFirst()) {
                         VolleySingleton.getInstance(getContext()).addToRequestQueue(
                                 new JsonObjectRequest(Request.Method.POST,
-                                        UPDATE_URL_INVENTARIO + c.getString(1),
+                                        UPDATE_URL_INVENTARIO + c.getString(2),
                                         Utilidades.deCursorAJSONObject(c, url),  //////////////////////////////////////////////
                                         new Response.Listener<JSONObject>() {
                                             @Override
@@ -1224,16 +1224,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          private void finalizarActualizacion(String idRemota, int idLocal, String url, int cuenta) {     /////actualizamos lo insertado en la app
              Log.i(TAG, "Cuenta fINALIZAR "+cuenta+" IdLocal "+idLocal);
 
-             if (url.equals(Constantes.UPDATE_URL_EMPLEADOS)) {   ////idLocal es cero (no interesa quitar pendiente_insercion)
-
-                 if(cuenta==1){
-                     Log.i(TAG, "EMPLEADOS FINALIZADO ");
-                     realizarSincronizacionRemota(UPDATE_URL_INVENTARIO);  ///QUITAR PARA MODO online
-
-                 }
-
-             }
-             else if (url.equals(Constantes.INSERT_URL_TURNO)) {
+           if (url.equals(Constantes.INSERT_URL_TURNO)) {
                  ///desomentar en online
                  ContentValues v = new ContentValues();
                  v.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 0);
@@ -1242,9 +1233,19 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                  if(cuenta==1){
                      Log.i(TAG, "INSERTAR TURNOS FINALIZADO ");
                      //realizarSincronizacionRemota(UPDATE_URL_EMPLEADOS);    ////DESCOMENTAR PARA MODOD online
-                     realizarSincronizacionRemota(UPDATE_URL_INVENTARIO);
+                     realizarSincronizacionRemota(UPDATE_URL_EMPLEADOS);   ///O INVENTARIO
                  }
              }
+             else if (url.equals(Constantes.UPDATE_URL_EMPLEADOS)) {   ////idLocal es cero (no interesa quitar pendiente_insercion)
+
+                 if(cuenta==1){
+                     Log.i(TAG, "EMPLEADOS FINALIZADO ");
+                     realizarSincronizacionRemota(UPDATE_URL_INVENTARIO);  ///QUITAR PARA MODO online
+
+                 }
+
+             }
+
              else if (url.equals(Constantes.UPDATE_URL_TURNO)) {
                  ContentValues v = new ContentValues();
                  v.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 0);

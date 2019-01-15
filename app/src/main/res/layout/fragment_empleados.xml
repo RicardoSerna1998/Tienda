@@ -83,9 +83,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:hint="Ej. 192.168.0.13"
-            android:text="192.168.0.13"
             android:backgroundTint="@android:color/holo_blue_light"
+            android:hint="Ej. 192.168.0.13"
+            android:inputType="numberDecimal"
+            android:text="192.168.1.105"
             android:textSize="20sp" />
 
         <Button
@@ -96,12 +97,26 @@
             android:text=" Establecer IP " />
     </LinearLayout>
 
-        <ImageButton
+        <LinearLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <Button
             android:id="@+id/BtnSync"
+            android:drawableTop="@android:drawable/ic_popup_sync"
+            android:text="Sincronizar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_popup_sync"
             android:tint="@android:color/background_dark" />
+            <CheckBox
+                android:id="@+id/CBonline"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:text="Online"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
 

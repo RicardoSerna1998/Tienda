@@ -66,9 +66,6 @@ public class Historial extends Fragment {
         fila=db.rawQuery("select id_empleado, fecha, _id from ventas where STRFTIME('%Y-%m-%d', fecha)='"+fechaActual+"' order by fecha desc" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
-            /*long datemillis = fila.getLong(fila.getColumnIndex("fecha"));
-            String dateString = new SimpleDateFormat("yyyy-MM-dd").format(new Date(datemillis));*/
-            //Toast.makeText(getContext(), fila.getString(0), Toast.LENGTH_SHORT).show();
 
             filaEmpleado=db.rawQuery("select nombre_empleado from empleados where idRemota='"+fila.getInt(0)+"'" ,null);
 
@@ -98,7 +95,8 @@ public class Historial extends Fragment {
 
         if(fila2.moveToFirst()) {///si hay un elemento
             filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
-            if(filaProducto.moveToFirst()) {///si hay un elemento
+            if(filaProducto.moveToFirst()) {///si hay un elemento}
+                Toast.makeText(context, filaProducto.getString(0)+" "+filaProducto.getString(1), Toast.LENGTH_LONG).show();
                 if(filaProducto.getString(1).equals("null")){   ///gramos
                     float subtotal=(fila2.getFloat(1)/1000)* fila2.getFloat(2);
                     total=total+subtotal;
@@ -113,7 +111,7 @@ public class Historial extends Fragment {
             while (fila2.moveToNext()) {
                 filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
                 while (filaProducto.moveToNext()) {
-                    if(filaProducto.isNull(1)){   ///gramos
+                    if(filaProducto.getString(1).equals("null")){   ///gramos
                         float subtotal=(fila2.getFloat(1)/1000)* fila2.getFloat(2);
                         total=total+subtotal;
                         itemsProductosHistorial.add(new Productos_historial_class(filaProducto.getString(0), fila2.getFloat(1), fila2.getFloat(2), subtotal));
