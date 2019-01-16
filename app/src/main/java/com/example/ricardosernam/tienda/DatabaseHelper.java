@@ -46,6 +46,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
         database.execSQL(cmd0);
 
+        String cmd6 = "CREATE TABLE " + ContractParaProductos.TURNOS + " (" +
+                ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                ContractParaProductos.Columnas.ID_REMOTA + " INT," +
+                ContractParaProductos.Columnas.HORA_INICIO + " TEXT, " +
+                ContractParaProductos.Columnas.HORA_FIN + " TEXT, " +
+                ContractParaProductos.Columnas.ESTADO + " INTEGER NOT NULL DEFAULT "+ ContractParaProductos.ESTADO_OK+"," +
+                ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
+        database.execSQL(cmd6);
+
         String cmd = "CREATE TABLE " + ContractParaProductos.INVENTARIO + " (" +
                 ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ContractParaProductos.Columnas.ID_REMOTA + " INT," +
@@ -65,7 +74,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (1,'juan', 'Juan', 'Cajero', 0)");
         database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (2,'manuel', 'Manuel', 'Admin.', 0)");
-        database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (3,'maria', 'María', 'Cerillo',0)");*/
+        database.execSQL("INSERT INTO empleados (idRemota, codigo, nombre_empleado, tipo_empleado, activo) values (3,'maria', 'María', 'Cerillo',0)");
+
+        database.execSQL("INSERT INTO informacion (nombre_negocio, direccion, telefono) values ('Frueteria Gonazalez', 'Av. Media Luna #121', '4921721298')");*/
 
         String cmd4 = "CREATE TABLE " + ContractParaProductos.VENTAS + " (" +
                 ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -84,16 +95,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContractParaProductos.Columnas.ESTADO + " INTEGER NOT NULL DEFAULT "+ ContractParaProductos.ESTADO_OK+"," +
                 ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
         database.execSQL(cmd5);
-
-
-        String cmd6 = "CREATE TABLE " + ContractParaProductos.TURNOS + " (" +
-                ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ContractParaProductos.Columnas.ID_REMOTA + " INT," +
-                ContractParaProductos.Columnas.HORA_INICIO + " TEXT, " +
-                ContractParaProductos.Columnas.HORA_FIN + " TEXT, " +
-                ContractParaProductos.Columnas.ESTADO + " INTEGER NOT NULL DEFAULT "+ ContractParaProductos.ESTADO_OK+"," +
-                ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
-        database.execSQL(cmd6);
 
         String cmd7 = "CREATE TABLE IF NOT EXISTS " + ContractParaProductos.ESTADOS + " (" +
                 ContractParaProductos.Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

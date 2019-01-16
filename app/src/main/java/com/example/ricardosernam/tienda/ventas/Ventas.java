@@ -105,7 +105,7 @@ public class Ventas extends Fragment implements KeyListener {
                         datoEscaneado=db.rawQuery("select nombre_producto, precio from inventario where codigo_barras='"+newText+"'" ,null);
                         if(datoEscaneado.moveToFirst()) {
                             new cantidad_producto_DialogFragment(datoEscaneado.getString(0), datoEscaneado.getFloat(1), 1).show(fm, "Producto_ventas");
-                            nombreCodigo.clearFocus();   ///deshabilitar buscador
+                            //nombreCodigo.clearFocus();   ///deshabilitar buscador
                             nombreCodigo.setQuery("", false);
                         }
                     }

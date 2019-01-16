@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
-    android:background="@color/viewfinder_border"
+    android:background="@android:color/holo_orange_light"
     android:orientation="vertical">
 
     <LinearLayout
@@ -16,54 +16,57 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="20dp"
             android:gravity="left"
-            android:text="Cajero: Juan" />
+            android:text="Cajero: Juan"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/TVfechaHistorial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Fecha 03/12/2018 15:33" />
+            android:text="Fecha 03/12/2018 15:33"
+            android:textSize="20dp" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <TextView
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="17dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Producto" />
 
         <TextView
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="17dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cantidad"/>
-        <TextView
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="17dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Precio" />
+            android:text="Producto"
+            android:textSize="17dp" />
 
         <TextView
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="17dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Subtotal" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Cantidad"
+            android:textSize="17dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Precio"
+            android:textSize="17dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Subtotal"
+            android:textSize="17dp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
@@ -74,8 +77,8 @@
     <TextView
         android:id="@+id/TVtotalHistorial"
         android:layout_width="wrap_content"
-        android:textSize="18dp"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="Total: $20" />
+        android:text="Total: $20"
+        android:textSize="18dp" />
 </LinearLayout>

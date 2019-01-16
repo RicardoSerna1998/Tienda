@@ -73,18 +73,21 @@
         <LinearLayout
             android:id="@+id/LLBotones"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
             <Button
                 android:id="@+id/BtnSumar"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="20sp"
                 android:text="+"/>
+
             <Button
                 android:id="@+id/BtnRestar"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"/>
+                android:layout_height="match_parent"
+                android:text="-"
+                android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>
 

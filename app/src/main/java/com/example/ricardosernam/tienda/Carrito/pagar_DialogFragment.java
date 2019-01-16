@@ -109,7 +109,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
 
         fm=getFragmentManager();
 
-        total.setText(String.valueOf(totalPagar));
+        total.setText("$ "+String.valueOf(totalPagar));
         DatabaseHelper admin=new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db=admin.getWritableDatabase();
 

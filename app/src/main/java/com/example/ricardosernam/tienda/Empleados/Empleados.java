@@ -42,7 +42,7 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
     public static RecyclerView.LayoutManager lManager;
     public static android.support.v4.app.FragmentManager fm;
     public static SQLiteDatabase db;
-    public static TextView nombre, direccion, telefono;
+    public static TextView nombre;
     public static Button establecer;
     public static Button sync;
     public static EditText ip;
@@ -58,8 +58,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         fm = getFragmentManager();
         ip = view.findViewById(R.id.ETip);
         nombre= view.findViewById(R.id.TVnombreNegocio);
-        direccion= view.findViewById(R.id.TVdireccionNegocio);
-        telefono= view.findViewById(R.id.TVtelefonoNegocio);
         online= view.findViewById(R.id.CBonline);
 
 
@@ -229,31 +227,16 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
             establecer.setText(" Establecer IP ");
         }*/
         if(informacion.moveToFirst()){
-            if(!informacion.getString(0).isEmpty()){
+            //if(!informacion.getString(0).isEmpty()){
                 nombre.setVisibility(View.VISIBLE);
-                nombre.setText(informacion.getString(0));
-            }
-            else{
-                nombre.setVisibility(View.GONE);
-                nombre.setText("");
-            }
-            if(!informacion.getString(1).isEmpty()){
-                direccion.setVisibility(View.VISIBLE);
-                direccion.setText(informacion.getString(1));
-            }
-            else{
-                direccion.setVisibility(View.GONE);
-                direccion.setText("");
-            }
-            if(!informacion.getString(2).isEmpty()){
-                telefono.setVisibility(View.VISIBLE);
-                telefono.setText(informacion.getString(2));
-            }
-            else{
-                telefono.setVisibility(View.GONE);
-                telefono.setText("");
-            }
+                nombre.setText(informacion.getString(0)+" "+informacion.getString(1)+" "+informacion.getString(2));
+            //}
         }
+        else{
+            nombre.setVisibility(View.GONE);
+            nombre.setText("");
+        }
+
         if (empleados.moveToFirst()) {///si hay un elemento
 
             itemsEmpleados.add(new Empleados_class(empleados.getString(0), empleados.getString(1), empleados.getInt(2), empleados.getString(3)));
