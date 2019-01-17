@@ -17,13 +17,14 @@
             android:drawableTop="@mipmap/ic_history_black_24dp"
             android:text=" Historial "
             android:textSize="18dp" />
+
         <android.support.v7.widget.SearchView
+            android:id="@+id/ETnombreProducto"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/ETnombreProducto"
-            android:hint="Ingresa el nombre o código"
             android:layout_weight="1"
-            android:inputType="textCapSentences"/>
+            android:hint="Ingresa el nombre o código"
+            android:inputType="text" />
 
         <Button
             android:id="@+id/BtnCarrito"

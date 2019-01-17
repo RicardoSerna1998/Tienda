@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_gravity="center"
     android:layout_height="wrap_content"
     android:background="@android:color/holo_blue_bright"
@@ -14,7 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/TVdeuda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="Presiona si pagan con " />
         <TextView
             android:id="@+id/TVtotalCompra"
             android:layout_width="wrap_content"
@@ -22,12 +28,7 @@
             android:layout_marginLeft="10dp"
             android:text="$ Total"
             android:textSize="40dp" />
-        <TextView
-            android:id="@+id/TVdeuda"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15dp"
-            android:text="Presiona si la cantidad es exacta " />
+
     </LinearLayout>
 
 

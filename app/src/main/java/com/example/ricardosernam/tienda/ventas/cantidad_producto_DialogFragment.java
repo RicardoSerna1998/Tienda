@@ -3,13 +3,16 @@ package com.example.ricardosernam.tienda.ventas;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -42,6 +45,7 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
         this.tipo = tipo;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,14 +62,19 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
         final DecimalFormat df = new DecimalFormat("#.00");
 
 
+
         sumar = rootView.findViewById(R.id.BtnSumar);
         restar = rootView.findViewById(R.id.BtnRestar);
 
         //cantidad.setText("0");
 
-        cantidad.setSelection(cantidad.getText().length());
+        //cantidad.setSelection(cantidad.getText().length());
         DatabaseHelper admin = new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db = admin.getWritableDatabase();
+
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        //cantidad.setShowSoftInputOnFocus(false);
 
         if (tipo == 1) {   ///pieza
             unidad.setText("Pieza(s)");

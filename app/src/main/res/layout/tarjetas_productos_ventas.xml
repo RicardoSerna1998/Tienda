@@ -6,26 +6,27 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="3dp"
     android:layout_marginTop="10dp"
-    android:background="@android:color/holo_blue_bright"
+    android:background="@color/colorAccent"
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical">
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/TVproducto"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_weight="0"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Jitomate"
-        app:autoSizeMaxTextSize="40sp"
-        app:autoSizeMinTextSize="30sp"
-        app:autoSizeStepGranularity="1sp"
-        app:autoSizeTextType="uniform" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/TVproducto"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:text="Jitomate"
+            app:autoSizeMaxTextSize="40sp"
+            app:autoSizeMinTextSize="30sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/TVexistentes"
