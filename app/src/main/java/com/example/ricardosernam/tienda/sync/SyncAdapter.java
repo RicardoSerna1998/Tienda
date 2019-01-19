@@ -329,18 +329,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             switch (estado) {
 
                 case Constantes.SUCCESS: // EXITO En caso de 1
-                    Toast.makeText(getContext(), "actualizarDatosLocales", Toast.LENGTH_LONG).show();  ////error con los carritos
                     actualizarDatosLocales(response, syncResult, url);
                     break;
                 case Constantes.FAILED: // FALLIDO En caso de 2
-                    if (url==1) {   ////no hay carritos
+                    //if (url==1) {   ////no hay carritos
                         /*Sincronizar.carritos.setAdapter(null);
                         database.execSQL("delete from carritos");
                         Sincronizar.buscar.setEnabled(true);
                         Sincronizar.buscar.setText(" Buscar carritos ");
                         Sincronizar.buscar.getBackground().setColorFilter(null);  //habilitado*/
-                        Toast.makeText(getContext(), "No hay Empleados", Toast.LENGTH_LONG).show();  ////error con los carritos
-                    }
+                        Toast.makeText(getContext(), "Existen datos no insertados, verififica tus datos", Toast.LENGTH_LONG).show();  ////error con los carritos
+                    //}
                     /*else if(url.equals(Constantes.GET_URL_INVENTARIO)){   ///el carrro seleccionado ya no existe
                         new android.os.Handler().postDelayed(
                                 new Runnable() {
@@ -351,7 +350,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                                     }
                                 }, 3000);
                         }*/
-                    String mensaje = response.getString(Constantes.MENSAJE);
+                    String mensaje = response.getString(Constantes.MENSAJE);    //
                     Log.i(TAG, mensaje);
                     break;
             }
@@ -381,7 +380,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             List<com.example.ricardosernam.tienda.web.Informacion> datos2 = new ArrayList<>();
             ;
 
-            //Toast.makeText(getContext(), String.valueOf(gastos.length()), Toast.LENGTH_LONG).show();
 
             for (int i = 0; i < gastos.length(); i++) {
                 JSONObject c = null;
@@ -390,7 +388,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //Toast.makeText(getContext(), c.getString("id_empleado")+" "+c.getString("nombre_empleado")+" "+c.getString("tipo_empleado")+" "+c.getString("codigo")+" "+c.getInt("activo"), Toast.LENGTH_LONG).show();
 
                 datos2.add(new Informacion(c.getString("id_negocio"), c.getString("nombre_negocio"), c.getString("direccion"), c.getString("telefono")));
             }
@@ -512,7 +509,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             List<com.example.ricardosernam.tienda.web.Empleados> datos2 = new ArrayList<>();
             ;
 
-            //Toast.makeText(getContext(), String.valueOf(gastos.length()), Toast.LENGTH_LONG).show();
 
             for (int i = 0; i < gastos.length(); i++) {
                 JSONObject c = null;
@@ -521,7 +517,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //Toast.makeText(getContext(), c.getString("id_empleado")+" "+c.getString("nombre_empleado")+" "+c.getString("tipo_empleado")+" "+c.getString("codigo")+" "+c.getInt("activo"), Toast.LENGTH_LONG).show();
 
                 datos2.add(new Empleados(c.getString("id_empleado"), c.getString("nombre_empleado"), c.getString("tipo_empleado"), c.getString("codigo"), c.getInt("activo")));
             }
@@ -1436,12 +1431,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          consulta = db.rawQuery("select * from venta_detalles where idRemota='"+conteo+"' and pendiente_insercion=0", null);
          if (consulta.getCount()  > 0) {
          while (consulta.moveToNext()) {
-         values.put("idRemota", Integer.parseInt(idRemota));
+             values.put("idRemota", Integer.parseInt(idRemota));
              values.put("id_producto", consulta.getString(2));
              values.put("precio", consulta.getDouble(3));
              values.put("cantidad", consulta.getDouble(4));
-         values.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
-         db.insertOrThrow("venta_detalles", null, values);
+             values.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
+             values.put("local",0);
+             db.insertOrThrow("venta_detalles", null, values);
          Log.i("Datos", String.valueOf(values));    ////mostramos que valores se han insertado
          }
          }

@@ -36,13 +36,13 @@ import static android.content.ContentValues.TAG;
 import static android.widget.Toast.LENGTH_LONG;
 
 public class Empleados extends Fragment {     /////Fragment de categoria ventas
-    public static Cursor empleados, informacion, estado, empleadosActivos, ipMode, onlineMode;
+    public static Cursor empleados, informacion, estado, empleadosActivos, ipMode, onlineMode, datosAun;
     public static RecyclerView recycler;
     public static RecyclerView.Adapter adapter;
     public static RecyclerView.LayoutManager lManager;
     public static android.support.v4.app.FragmentManager fm;
     public static SQLiteDatabase db;
-    public static TextView nombre;
+    public static TextView nombre, datos;
     public static Button establecer;
     public static Button sync;
     public static EditText ip;
@@ -58,6 +58,7 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
         fm = getFragmentManager();
         ip = view.findViewById(R.id.ETip);
         nombre= view.findViewById(R.id.TVnombreNegocio);
+        datos= view.findViewById(R.id.TVdatosAun);
         online= view.findViewById(R.id.CBonline);
 
 
@@ -125,7 +126,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                     aceptarVenta .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface aceptarVenta, int id) {
                             values.put(ContractParaProductos.Columnas.ONLINE, 1);
-                            Toast.makeText(getContext(), "ONLINE", LENGTH_LONG).show();
                             if (estado.moveToFirst()) {
                                 db.update("estados", values, null, null);
                                 }
@@ -139,7 +139,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                         public void onClick(DialogInterface aceptarVenta, int id) {
                             aceptarVenta .dismiss();
                             online.setChecked(false);
-                            Toast.makeText(getContext(), "NO", LENGTH_LONG).show();
                         }
                     });
                     aceptarVenta .show();
@@ -152,7 +151,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                     aceptarVenta .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface aceptarVenta, int id) {
                             values.put(ContractParaProductos.Columnas.ONLINE, 0);
-                            Toast.makeText(getContext(), "NO", LENGTH_LONG).show();
                             if (estado.moveToFirst()) {
                                 db.update("estados", values, null, null);
                             }
@@ -166,36 +164,10 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                         public void onClick(DialogInterface aceptarVenta, int id) {
                             aceptarVenta .dismiss();
                             online.setChecked(true);
-                            Toast.makeText(getContext(), "ONLINE", LENGTH_LONG).show();
                         }
                     });
                     aceptarVenta .show();
                 }
-
-
-                    /*if(estado.moveToFirst()){
-                    if(online.isChecked()){
-                        Toast.makeText(getContext(), "ONLINE", LENGTH_LONG).show();
-                        values.put(ContractParaProductos.Columnas.ONLINE,  1);
-                    }
-                    else{
-                        Toast.makeText(getContext(), "NO", LENGTH_LONG).show();
-                        values.put(ContractParaProductos.Columnas.ONLINE,  0);
-                    }
-                    db.update("estados", values, null, null);
-                }
-                else{
-                    if(online.isChecked()){
-                        Toast.makeText(getContext(), "ONLINE", LENGTH_LONG).show();
-                        values.put(ContractParaProductos.Columnas.ONLINE,  1);
-                    }
-                    else{
-                        Toast.makeText(getContext(), "NO", LENGTH_LONG).show();
-                        values.put(ContractParaProductos.Columnas.ONLINE,  0);
-                    }
-                    db.insertOrThrow("estados", null, values);
-
-                }*/
 
             }});
         relleno(getContext());
@@ -222,10 +194,6 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                 online.setChecked(false);
             }
         }
-
-        /*else{
-            establecer.setText(" Establecer IP ");
-        }*/
         if(informacion.moveToFirst()){
             //if(!informacion.getString(0).isEmpty()){
                 nombre.setVisibility(View.VISIBLE);
@@ -244,10 +212,20 @@ public class Empleados extends Fragment {     /////Fragment de categoria ventas
                 itemsEmpleados.add(new Empleados_class(empleados.getString(0), empleados.getString(1), empleados.getInt(2), empleados.getString(3)));
             }
         }
+        datosAsincronizar();
         adapter = new Empleados_ventasAdapter(itemsEmpleados, fm);///llamamos al adaptador y le enviamos el array como parametro
         lManager = new LinearLayoutManager(context);  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
+    }
+    public static void datosAsincronizar (){
+        datosAun= db.rawQuery("select * from ventas where pendiente_insercion=1", null);
+        if(datosAun.moveToFirst()){
+            datos.setText("Hay datos por sincronizar");
+        }
+        else{
+            datos.setText(" ");
+        }
     }
 
 }

@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.DatabaseHelper;
 import com.example.ricardosernam.tienda.provider.ContractParaProductos;
@@ -59,7 +58,6 @@ public class Historial extends Fragment {
     public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         android.text.format.DateFormat df = new android.text.format.DateFormat();
         String fechaActual=String.valueOf(df.format("yyyy-MM-dd", new java.util.Date()));
-        Toast.makeText(getContext(), fechaActual, Toast.LENGTH_SHORT).show();
 
         itemsHistorial.clear();
         fm=getFragmentManager();
@@ -91,12 +89,11 @@ public class Historial extends Fragment {
 
     public static void rellenado_items(int idVenta, RecyclerView recycler, Context context){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         itemsProductosHistorial.clear();
-        fila2=db.rawQuery("select id_producto, cantidad, precio from venta_detalles where idRemota='"+idVenta+"'" ,null);
+        fila2=db.rawQuery("select id_producto, cantidad, precio from venta_detalles where local=1 and idRemota='"+idVenta+"'" ,null);
 
         if(fila2.moveToFirst()) {///si hay un elemento
             filaProducto=db.rawQuery("select nombre_producto, codigo_barras from inventario where idRemota='"+fila2.getInt(0)+"'" ,null);
             if(filaProducto.moveToFirst()) {///si hay un elemento}
-                Toast.makeText(context, filaProducto.getString(0)+" "+filaProducto.getString(1), Toast.LENGTH_LONG).show();
                 if(filaProducto.getString(1).equals("null")){   ///gramos
                     float subtotal=(fila2.getFloat(1)/1000)* fila2.getFloat(2);
                     total=total+subtotal;

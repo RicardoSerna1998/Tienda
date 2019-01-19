@@ -92,6 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContractParaProductos.Columnas.ID_PRODUCTO+ " INT, " +
                 ContractParaProductos.Columnas.PRECIO + " DOUBLE, " +
                 ContractParaProductos.Columnas.CANTIDAD + " DOUBLE, " +
+                ContractParaProductos.Columnas.LOCAL + " INT, " +
                 ContractParaProductos.Columnas.ESTADO + " INTEGER NOT NULL DEFAULT "+ ContractParaProductos.ESTADO_OK+"," +
                 ContractParaProductos.Columnas.PENDIENTE_INSERCION + " INTEGER NOT NULL DEFAULT 0)";
         database.execSQL(cmd5);

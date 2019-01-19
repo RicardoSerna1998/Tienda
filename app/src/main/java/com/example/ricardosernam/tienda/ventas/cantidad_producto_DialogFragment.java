@@ -196,7 +196,7 @@ public class cantidad_producto_DialogFragment extends android.support.v4.app.Dia
                         repetido(producto);
                         ContractParaProductos.itemsProductosVenta.add(new ProductosVenta_class(producto, Float.parseFloat(cantidad.getText().toString()),precio, tipo, Float.parseFloat(subtotal.getText().toString()) , productoElegido.getInt(0)));
                         dismiss();
-                        Toast.makeText(getContext(), "Agregado a Carrito "+ String.valueOf(tipo), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Agregado a Carrito", Toast.LENGTH_LONG).show();
                     }
                     //aceptarCompra.actualizar(0, null);
                 }

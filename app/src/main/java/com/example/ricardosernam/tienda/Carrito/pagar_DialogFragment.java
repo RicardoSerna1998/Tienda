@@ -119,6 +119,12 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                 cantidad.setText(String.valueOf(totalPagar));
                 }
         });
+        deuda.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cantidad.setText(String.valueOf(totalPagar));
+            }
+        });
 
 
         cantidad.addTextChangedListener(new TextWatcher() {
@@ -161,7 +167,9 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                             e.printStackTrace();
                         }
                     }
-                    insertarVenta();
+                    else{
+                        insertarVenta();
+                        }
 
                     /*else{
                         insertarVenta();
@@ -213,6 +221,8 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
         values.put(ContractParaProductos.Columnas.PENDIENTE_INSERCION, 1);
         db.insertOrThrow("ventas", null, values);
         Log.i("Venta", String.valueOf(values));    ////mostramos que valores se han insertado
+        com.example.ricardosernam.tienda.Empleados.Empleados.datosAsincronizar();
+
 
 /////////////////////////////////incersion-modificación ventas-inventario_detalles
         values2 = new ContentValues();
@@ -226,6 +236,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                 values2.put("id_producto", ContractParaProductos.itemsProductosVenta.get(i).getIdRemota());
                 values2.put("cantidad", ContractParaProductos.itemsProductosVenta.get(i).getCantidad());
                 values2.put("precio",ContractParaProductos.itemsProductosVenta.get(i).getPrecio());
+                values2.put("local",1);
                 db.insertOrThrow("venta_detalles", null, values2);
                 Log.i("Venta_detalles", String.valueOf(values2));    ////mostramos que valores se han insertado
             }
@@ -258,7 +269,6 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
             if(mBluetoothAdapter == null) {
-                myLabel.setText("No bluetooth adapter available");
                 //Toast.makeText(getContext(), "Enciende la impresora", LENGTH_LONG).show();
 
             }
@@ -276,12 +286,17 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                     // RPP300 is the name of the bluetooth printer device
                     // we got this name from the list of paired devices
                     if (device.getName().equals("BlueTooth Printer")) {
-                        myLabel.setText("Bluetooth device found.");
                         mmDevice = device;
+                        //insertarVenta();
                         break;
+                    }
+                    else{  ///si no esta vinculado
+                       myLabel.setText("Revisa tu conexión con la impresora");   ///aquí sino está vinculado
+                            //Toast.makeText(getContext(), "Revisa la conexión con tu impresora", LENGTH_LONG).show();
                     }
                 }
             }
+
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -299,7 +314,6 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
 
             beginListenForData();
 
-            myLabel.setText("Bluetooth Opened");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -354,7 +368,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                                         // tell the user data were sent to bluetooth printer device
                                         handler.post(new Runnable() {
                                             public void run() {
-                                                myLabel.setText(data);
+                                                //myLabel.setText(data);
 
                                             }
                                         });
@@ -418,14 +432,18 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
 
 
 
-            String indice="Producto Cant. $ Sub.";
+            String indice="---------";
             indice += "\n";
+
+            String rayas="--------------------------------";
+            rayas += "\n";
 
             mmOutputStream.write(nombre.getBytes());   ///// aqui imprime
             mmOutputStream.write(direccion.getBytes());   ///// aqui imprime
             mmOutputStream.write(telefono.getBytes());   ///// aqui imprime
             mmOutputStream.write(vendedor.getBytes());   ///// aqui imprime
-            mmOutputStream.write(indice.getBytes());   ///// aqui imprime
+            mmOutputStream.write(rayas.getBytes());   ///// aqui imprime
+
 
             for (int i = 0; i < ContractParaProductos.itemsProductosVenta.size(); i++) {
                 ////////////////venta detalles/////////////////////////////
@@ -433,22 +451,42 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                 filaProducto=db.rawQuery("select nombre_producto from inventario where idRemota='"+ContractParaProductos.itemsProductosVenta.get(i).getIdRemota()+"'" ,null);
                 if(filaProducto.moveToFirst()) {///si hay un elemento}
                     nombreProducto=filaProducto.getString(0);
+                    nombreProducto += "\n";
                 }
+                String subtotal;
+                if(ContractParaProductos.itemsProductosVenta.get(i).getTipo()==0) { ////0 son gramos
+                    subtotal=String.valueOf((ContractParaProductos.itemsProductosVenta.get(i).getCantidad()/1000)*ContractParaProductos.itemsProductosVenta.get(i).getPrecio());
 
-                String subtotal=String.valueOf(ContractParaProductos.itemsProductosVenta.get(i).getCantidad()*ContractParaProductos.itemsProductosVenta.get(i).getPrecio());
+                }
+                else{ //1 es piezas*/
+                    subtotal=String.valueOf(ContractParaProductos.itemsProductosVenta.get(i).getCantidad()*ContractParaProductos.itemsProductosVenta.get(i).getPrecio());
 
-                String items=String.valueOf(nombreProducto+"   "+ContractParaProductos.itemsProductosVenta.get(i).getCantidad()+" "+ContractParaProductos.itemsProductosVenta.get(i).getPrecio()+" "+subtotal);
+                }
+                /*String items=String.valueOf(nombreProducto+" "+ContractParaProductos.itemsProductosVenta.get(i).getCantidad()+" "+ContractParaProductos.itemsProductosVenta.get(i).getPrecio()+" "+subtotal);
                     items += "\n";
-                    mmOutputStream.write(items.getBytes());   ///// aqui imprime
+                    mmOutputStream.write(items.getBytes());   *////// aqui imprime
+                mmOutputStream.write(nombreProducto.getBytes());
+
+                String items=String.valueOf("Cant "+ContractParaProductos.itemsProductosVenta.get(i).getCantidad()+" $"+ContractParaProductos.itemsProductosVenta.get(i).getPrecio()+" Sub. $"+subtotal);
+                items += "\n";
+                mmOutputStream.write(items.getBytes());
+                mmOutputStream.write(indice.getBytes());   ///// aqui imprime
+
 
 
             }
+            mmOutputStream.write(rayas.getBytes());   ///// aqui imprime
+            String total="                Total $"+totalPagar;
+            total += "\n";
+            mmOutputStream.write(total.getBytes());   ///// aqui imprime
+
+
             String espacio=" ";
             espacio += "\n ";
 
             mmOutputStream.write(espacio.getBytes());   ///// aqui imprime
 
-            String gracias="      Gracias por su compra";
+            String gracias="     Gracias por su compra";
             gracias += "\n \n \n \n \n";
 
             mmOutputStream.write(gracias.getBytes());   ///// aqui imprime
@@ -483,8 +521,8 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             mmOutputStream.close();
             mmInputStream.close();
             mmSocket.close();
-            ///myLabel.setText("Bluetooth Closed");
-        } catch (Exception e) {
+            insertarVenta();
+            } catch (Exception e) {
             e.printStackTrace();
         }
     }

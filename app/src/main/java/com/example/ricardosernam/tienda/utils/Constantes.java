@@ -28,7 +28,6 @@ public class Constantes {
 
 ////TURNO (DUDA)
 
-
     //private static final String PUERTO_HOST = "";
 
     private static final String PUERTO_HOST = ":82";
