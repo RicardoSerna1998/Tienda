@@ -69,15 +69,15 @@
             android:layout_height="match_parent"
             android:text="IP: " />
 
-        <EditText
-            android:id="@+id/ETip"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:backgroundTint="@android:color/holo_blue_light"
-            android:hint="Ej. 192.168.0.13"
-            android:inputType="numberDecimal"
-            android:textSize="20sp" />
+            <EditText
+                android:id="@+id/ETip"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:backgroundTint="@android:color/holo_blue_light"
+                android:hint="Ej. 192.168.0.13"
+                android:inputType="text"
+                android:textSize="20sp" />
 
         <Button
             android:id="@+id/BtnEstablecer"
