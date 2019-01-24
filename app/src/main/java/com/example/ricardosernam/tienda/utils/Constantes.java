@@ -28,9 +28,9 @@ public class Constantes {
 
 ////TURNO (DUDA)
 
-    //private static final String PUERTO_HOST = "";
+    private static final String PUERTO_HOST = "";
 
-    private static final String PUERTO_HOST = ":82";
+    //private static final String PUERTO_HOST = ":82";
 
     public Constantes(String ip){
         GET_URL_INFORMACION= ip + PUERTO_HOST + "/Eduardo/informacion/obtener_informacion.php";

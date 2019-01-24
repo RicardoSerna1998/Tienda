@@ -157,15 +157,19 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                 if(validar(totalPagar)){   /////si  ya se pago todo bien
                     if(imprimir.isChecked()){
                         ///imprimimos el recibo
-                        try {
+                        cancelar.setEnabled(false);
+                        aceptar.setEnabled(false);
+                        imprimir.setEnabled(false);
+
+                        // try {
                             findBT();
-                            openBT();
-                            sendData();
-                            closeBT();
-                        }
-                        catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                         //   openBT();
+                           // sendData();
+                            //loseBT();
+                       // }
+                       // catch (IOException e) {
+                         //   e.printStackTrace();
+                       // }
                     }
                     else{
                         insertarVenta();
@@ -287,11 +291,16 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
                     // we got this name from the list of paired devices
                     if (device.getName().equals("BlueTooth Printer")) {
                         mmDevice = device;
+                        openBT();
+
                         //insertarVenta();
                         break;
                     }
                     else{  ///si no esta vinculado
                        myLabel.setText("Revisa tu conexión con la impresora");   ///aquí sino está vinculado
+                        cancelar.setEnabled(true);
+                        aceptar.setEnabled(true);
+                        imprimir.setEnabled(true);
                             //Toast.makeText(getContext(), "Revisa la conexión con tu impresora", LENGTH_LONG).show();
                     }
                 }
@@ -388,6 +397,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             });
 
             workerThread.start();
+            sendData();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -496,7 +506,7 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             //String msg = cantidad.getText().toString();
             // tell the user data were sent
             //myLabel.setText("Data sent.");
-
+            closeBT();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -522,6 +532,9 @@ public class pagar_DialogFragment extends android.support.v4.app.DialogFragment 
             mmInputStream.close();
             mmSocket.close();
             insertarVenta();
+            cancelar.setEnabled(true);
+            aceptar.setEnabled(true);
+            imprimir.setEnabled(true);
             } catch (Exception e) {
             e.printStackTrace();
         }
