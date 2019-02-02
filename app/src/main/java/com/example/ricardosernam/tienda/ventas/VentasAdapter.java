@@ -7,10 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ricardosernam.tienda.R;
+import com.example.ricardosernam.tienda.ventas.Productos.modificarProducto_DialogFragment;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -30,11 +32,13 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
     public  class Productos_ventasViewHolder extends RecyclerView.ViewHolder{    ////clase donde van los elementos del cardview
         // Campos respectivos de un item
         public TextView producto, precio, existentes;
+        public Button modificar;
         public Productos_ventasViewHolder(final View v) {   ////lo que se programe aqui es para cuando se le de clic a un item del recycler
             super(v);
             producto = v.findViewById(R.id.TVproducto);  ////Textview donde se coloca el nombre del producto
             precio=v.findViewById(R.id.TVprecio);
             existentes=v.findViewById(R.id.TVexistentes);
+            modificar=v.findViewById(R.id.BtnmodificarProducto);
         }
     }
 
@@ -75,6 +79,18 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
                     new cantidad_producto_DialogFragment(itemsProductos.get(position).getNombre(), itemsProductos.get(position).getPrecio(), 1).show(fm, "Producto_ventas");
                 }
                 }
+        });
+        ///para modificar producto
+        holder.modificar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(itemsProductos.get(position).getCodigo_barras().equals("null")) { ////0 son gramos
+                    new modificarProducto_DialogFragment(itemsProductos.get(position).getNombre(), itemsProductos.get(position).getPrecio()).show(fm, "Modificar_producto");
+                }
+                else{ //1 es piezas
+                    new modificarProducto_DialogFragment(itemsProductos.get(position).getNombre(), itemsProductos.get(position).getPrecio()).show(fm, "Modificar_producto");
+                }
+            }
         });
         }
     }

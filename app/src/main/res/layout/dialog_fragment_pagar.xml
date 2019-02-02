@@ -7,7 +7,14 @@
     android:background="@android:color/holo_blue_bright"
     android:backgroundTint="@android:color/holo_blue_bright"
     android:orientation="vertical">
-
+    <ScrollView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/LLtotalApagar"
         android:background="?attr/colorButtonNormal"
@@ -95,7 +102,7 @@
     <CheckBox
         android:id="@+id/CBimprimir"
         android:textSize="20dp"
-        android:checked="true"
+        android:checked="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Imprimir recibo" />
@@ -130,4 +137,6 @@
             android:text="Aceptar"
             android:background="@drawable/botones_cobrar"/>
     </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

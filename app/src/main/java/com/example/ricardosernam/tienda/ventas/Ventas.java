@@ -1,6 +1,7 @@
 package com.example.ricardosernam.tienda.ventas;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -35,16 +36,16 @@ import java.util.ArrayList;
 
 public class Ventas extends Fragment implements KeyListener {
     private SearchView nombreCodigo;
-    private Cursor fila, filaBusqueda, datoEscaneado, ventas;
-    private SQLiteDatabase db;
-    private RecyclerView recycler;
-    private RecyclerView.Adapter adapter;
-    private android.support.v4.app.FragmentManager fm;
-    private RecyclerView.LayoutManager lManager;
+    private static Cursor fila, filaBusqueda, datoEscaneado, ventas;
+    private static SQLiteDatabase db;
+    private static RecyclerView recycler;
+    private static RecyclerView.Adapter adapter;
+    private static android.support.v4.app.FragmentManager fm;
+    private static RecyclerView.LayoutManager lManager;
     private Button escanear, carrito, historial;
     private android.support.v7.app.ActionBar actionBar;
 
-    private ArrayList<Productos_class> itemsProductos= new ArrayList <>(); ///Arraylist que contiene los productos///
+    private static ArrayList<Productos_class> itemsProductos= new ArrayList <>(); ///Arraylist que contiene los productos///
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,8 @@ public class Ventas extends Fragment implements KeyListener {
         historial= view.findViewById(R.id.BtnHistorial);
         actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
         nombreCodigo=view.findViewById(R.id.ETnombreProducto);
+
+        fm=getFragmentManager();
 
         carrito.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
@@ -123,18 +126,17 @@ public class Ventas extends Fragment implements KeyListener {
                     }
                 }  ////esta vacio
                 else {
-                    rellenado_total();
+                    rellenado_total(getContext());
                 }
                 adapter.notifyDataSetChanged();
                 return false;
             }
 
         });
-        rellenado_total();
+        rellenado_total(getContext());
         return view;
     }
-    public void rellenado_total(){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
-        fm=getFragmentManager();
+    public static void rellenado_total(Context context){  ////volvemos a llenar el racycler despues de actualizar, o de una busqueda
         fila=db.rawQuery("select nombre_producto, precio, codigo_barras, existente2 from inventario order by codigo_barras" ,null);
 
         if(fila.moveToFirst()) {///si hay un elemento
@@ -144,9 +146,9 @@ public class Ventas extends Fragment implements KeyListener {
                 itemsProductos.add(new Productos_class(fila.getString(0), fila.getFloat(1), fila.getString(2), fila.getFloat(3)));
             }
         }
-        adapter = new VentasAdapter(itemsProductos, fm, getContext());///llamamos al adaptador y le enviamos el array como parametro
+        adapter = new VentasAdapter(itemsProductos, fm, context);///llamamos al adaptador y le enviamos el array como parametro
         //lManager = new LinearLayoutManager(this.getActivity());  //declaramos el layoutmanager
-        lManager = new GridLayoutManager(this.getActivity(), 3);  //declaramos el layoutmanager
+        lManager = new GridLayoutManager(context, 3);  //declaramos el layoutmanager
         recycler.setLayoutManager(lManager);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();

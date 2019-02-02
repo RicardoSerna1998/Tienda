@@ -89,9 +89,14 @@ public class Utilidades {
         }
         else if (url.equals(Constantes.UPDATE_URL_INVENTARIO)) {
             Double existenteFinal;
+            Double precio;
             existenteFinal=c.getDouble(0)-c.getDouble(1);
+            precio=c.getDouble(3);
+
             try {
                 jObject.put(ContractParaProductos.Columnas.EXISTENTES, existenteFinal);
+                jObject.put(ContractParaProductos.Columnas.PRECIO, precio);
+
             }
             catch (JSONException e) {
                 e.printStackTrace();

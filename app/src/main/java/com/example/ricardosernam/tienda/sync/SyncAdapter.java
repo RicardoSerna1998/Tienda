@@ -338,7 +338,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         Sincronizar.buscar.setEnabled(true);
                         Sincronizar.buscar.setText(" Buscar carritos ");
                         Sincronizar.buscar.getBackground().setColorFilter(null);  //habilitado*/
-                        Toast.makeText(getContext(), "Existen datos no insertados, verififica tus datos", Toast.LENGTH_LONG).show();  ////error con los carritos
+                        Toast.makeText(getContext(), "Existen datos no insertados, verifica tus datos", Toast.LENGTH_LONG).show();  ////error con los carritos
                     //}
                     /*else if(url.equals(Constantes.GET_URL_INVENTARIO)){   ///el carrro seleccionado ya no existe
                         new android.os.Handler().postDelayed(
@@ -960,7 +960,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
         else if (url.equals(UPDATE_URL_INVENTARIO)) {  ///actualizamos al importar
             iniciarActualizacion(url);
-            final Cursor c = db.rawQuery("select existente, existente2, idRemota from inventario where pendiente_insercion=1", null);
+            final Cursor c = db.rawQuery("select existente, existente2, idRemota, precio from inventario where pendiente_insercion=1", null);
             Log.i(TAG, "Se encontraron " + c.getCount() + " registros sucios INVENTARIO");
             cuentaInventario=c.getCount();
             if (c.getCount() > 0) {  ///api 19
