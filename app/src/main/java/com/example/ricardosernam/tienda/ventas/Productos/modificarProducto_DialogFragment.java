@@ -33,17 +33,20 @@ public class modificarProducto_DialogFragment extends android.support.v4.app.Dia
     private LinearLayout botones;
     private Cursor productoElegido;
     private SQLiteDatabase db;
-    private Button aceptar, cancelar;
-    private TextView productoSelecionado;
-    private EditText precioNuevo;
+    private Button aceptar, cancelar,sumar;
+    private TextView productoSelecionado, unidad;
+    private EditText precioNuevo, existente, nuevosExistente;
     private static ContentValues values;
-    private float precio;
+    private float precio, existentes;
     private String producto;
+    private int tipo;
 
     @SuppressLint("ValidFragment")
-    public modificarProducto_DialogFragment(String producto, float precio) {
+    public modificarProducto_DialogFragment(String producto, float precio, float existentes, int tipo) {
         this.producto = producto;
         this.precio = precio;
+        this.existentes = existentes;
+        this.tipo=tipo;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -56,16 +59,24 @@ public class modificarProducto_DialogFragment extends android.support.v4.app.Dia
         precioNuevo = rootView.findViewById(R.id.ETprecioModificar);
         botones = rootView.findViewById(R.id.LLBotones);
         aceptar = rootView.findViewById(R.id.BtnAceptarPago);
+        sumar = rootView.findViewById(R.id.BtnsumarNuevos);
         cancelar = rootView.findViewById(R.id.BtnCancelarPago);
         final DecimalFormat df = new DecimalFormat("#.00");
-
+        unidad = rootView.findViewById(R.id.TVunidad);
+        existente = rootView.findViewById(R.id.ETexistenteModificar);
+        nuevosExistente = rootView.findViewById(R.id.ETexistenteSumar);
 
         //cantidad.setText("0");
         precioNuevo.setText(String.valueOf(precio));
+        existente.setText(String.valueOf(existentes));
+
         values = new ContentValues();
 
-
-
+        if (tipo == 1) {   ///pieza
+            unidad.setText("Pieza(s)");
+        } else {  ///gramos
+            unidad.setText("Gramos");
+        }
         //cantidad.setSelection(cantidad.getText().length());
         DatabaseHelper admin = new DatabaseHelper(getContext(), ContractParaProductos.DATABASE_NAME, null, ContractParaProductos.DATABASE_VERSION);
         db = admin.getWritableDatabase();
@@ -76,6 +87,23 @@ public class modificarProducto_DialogFragment extends android.support.v4.app.Dia
 
         productoSelecionado.setText(producto);
 
+
+        sumar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(((TextUtils.isEmpty(nuevosExistente.getText())))) {  /// es vacio
+                    nuevosExistente.setError("Ingresa una cantidad");
+                }
+                else if((Float.parseFloat(nuevosExistente.getText().toString())==0)) {  /// es vacio
+                    nuevosExistente.setError("Ingresa una cantidad valida");
+                }
+                else{
+                    existente.setText(String.valueOf(Float.parseFloat(existente.getText().toString())+Float.parseFloat(nuevosExistente.getText().toString())));
+                    nuevosExistente.setText("");
+                }
+            }
+        });
+
         aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,6 +111,8 @@ public class modificarProducto_DialogFragment extends android.support.v4.app.Dia
                     productoElegido= db.rawQuery("select idRemota, existente from inventario where nombre_producto='"+producto+"'", null);
                     if(productoElegido.moveToFirst()){
                         values.put("precio", Float.parseFloat(precioNuevo.getText().toString()));
+                        values.put("existente2", Float.parseFloat(existente.getText().toString()));
+
                         db.update("inventario", values, "idRemota='" + productoElegido.getString(0) + "'", null);
                         Ventas.rellenado_total(getContext());
 
@@ -112,6 +142,14 @@ public class modificarProducto_DialogFragment extends android.support.v4.app.Dia
         else if((Float.parseFloat(precioNuevo.getText().toString())==0)) {  /// es vacio
             validado=false;
             precioNuevo.setError("Ingresa una cantidad valida");
+        }
+        else if(((TextUtils.isEmpty(existente.getText())))) {  /// es vacio
+            validado=false;
+            existente.setError("Ingresa una cantidad");
+        }
+        else if((Float.parseFloat(existente.getText().toString())==0)) {  /// es vacio
+            validado=false;
+            existente.setError("Ingresa una cantidad valida");
         }
         return validado;
     }

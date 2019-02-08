@@ -85,10 +85,10 @@ public class VentasAdapter extends RecyclerView.Adapter <VentasAdapter.Productos
             @Override
             public void onClick(View view) {
                 if(itemsProductos.get(position).getCodigo_barras().equals("null")) { ////0 son gramos
-                    new modificarProducto_DialogFragment(itemsProductos.get(position).getNombre(), itemsProductos.get(position).getPrecio()).show(fm, "Modificar_producto");
+                    new modificarProducto_DialogFragment(itemsProductos.get(position).getNombre(), itemsProductos.get(position).getPrecio(), itemsProductos.get(position).getExistentes(), 0).show(fm, "Modificar_producto");
                 }
                 else{ //1 es piezas
-                    new modificarProducto_DialogFragment(itemsProductos.get(position).getNombre(), itemsProductos.get(position).getPrecio()).show(fm, "Modificar_producto");
+                    new modificarProducto_DialogFragment(itemsProductos.get(position).getNombre(), itemsProductos.get(position).getPrecio(), itemsProductos.get(position).getExistentes(), 1).show(fm, "Modificar_producto");
                 }
             }
         });
